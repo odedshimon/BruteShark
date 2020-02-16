@@ -1,6 +1,6 @@
 # Brute Shark
 
-BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspiction of a network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstract TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
+BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstract TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
 
 The main goal of the project is to provide solution to security researchers and network administrators with the task of network traffic analysis while they try to identify weaknesses that can be used by a potential attacker to gain access to critical points on the network.
 
@@ -33,8 +33,8 @@ Linux Users - run BruteSharkCli using MONO.
 ![](readme_media/Network.PNG)
 
 # Architecture
-The solution is designed with three layer architecture, including a one or projects at each layer - DAL, BLL and PL.
-The separation between layers is created by the fact that each project refers only its objects.
+The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
+The separation between layers is created by the fact that each project refers only its own objects.
 ##### PcapProcessor (DAL)
 As the Data Accesss Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
 Can analyze a list of files at once, and provides additional features like reconstraction of all TCP Sessions (using the awesome project TcpRecon).
@@ -63,7 +63,7 @@ private void _initilyzeModulesList()
 ##### BruteSharkDesktop (PL)
 Desktop application for Windows based on WinForms.
 Uses a cross-cutting project by the meaning it referers both the DAL and BLL layers.
-This is done by composing each of the layers, register to thier events, when event is trigerd, castin the event object to the next layer objects, and send it to next layer.
+This is done by composing each of the layers, register to thier events, when event is triggerd, cast the event object to the next layer equivalent object, and send it to next layer.
 ```csharp
 public MainForm()
 {
