@@ -30,7 +30,7 @@ Linux Users - run BruteSharkCli using MONO.
 ##### Hashes Extracting (HTTP-Digest, NTLM, CRAM-MD5)
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
-![](readme_media/Network.mp4)
+![](readme_media/Network.PNG)
 
 # Architecture
 The solution is designed with three layer architecture, including a one or projects at each layer - DAL, BLL and PL.
@@ -39,4 +39,25 @@ The separation between layers is created by the fact that each project refers on
 As the Data Accesss Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
 Can analyze a list of files at once, and provides additional features like reconstraction of all TCP Sessions (using the awesome project TcpRecon).
 ##### PcapAnalyzer (BLL)
-The Bussiness Logic Layer, the 
+The Bussiness Logic Layer, responsible for analyzing network information (packet, TCP Session etc), implements a plugable mechanism.
+Each plugin is basicly a class that implements the interface *IModule*. All plugins are loaded using reflection:
+```csharp
+private void _iniitilyzeModulesList()
+        {
+            // Create an instance for any available modules by looking for every class that 
+            // implements IModule.
+            this._modules = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(s => s.GetTypes())
+                            .Where(p => typeof(IModule).IsAssignableFrom(p) && !p.IsInterface)
+                            .Select(t => (IModule)Activator.CreateInstance(t))
+                            .ToList();
+
+            // Register to each module event.
+            foreach(var m in _modules)
+            {
+                m.ParsedItemDetected += (s, e) => this.ParsedItemDetected(s, e);
+            }
+            
+        }
+```
+##### BruteSharkDesktop, BruteSharkCLI (PL)
