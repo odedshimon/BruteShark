@@ -21,13 +21,13 @@ Linux Users - run BruteSharkCli using MONO.
 
 # Examples
 ##### How do i crack (by mistake!) Windows 10 user NTLM password
-![](NTLM_With_Comments.mp4)
+![](readme_media/NTLM_With_Comments.mp4)
 ##### Password Extracting (HTTP, TELNET, IMAP, FTP, SMTP)
-![](Passwords.PNG)
+![](readme_media/Passwords.PNG)
 ##### Hashes Extracting (HTTP-Digest, NTLM, CRAM-MD5)
-![](Hashes.PNG)
+![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
-![](Network_Map.mp4)
+![](readme_media/Network_Map.mp4)
 
 # Architecture
 The solution is designed with three layer architecture, including a one or projects at each layer - DAL, BLL and PL.
