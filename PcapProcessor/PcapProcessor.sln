@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapProcessor", "PcapProcessor\PcapProcessor.csproj", "{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcapProcessorTest", "PcapProcessorTest\PcapProcessorTest.csproj", "{9B087183-652A-4842-BCA0-F9C604A1F437}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapAnalyzer", "PcapAnalyzer\PcapAnalyzer.csproj", "{581824EF-9C88-4B3B-BF52-687C4248FC92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcapAnalyzerTest", "PcapAnalyzerTest\PcapAnalyzerTest.csproj", "{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BruteSharkCli", "BruteSharkCli\BruteSharkCli.csproj", "{18953BCA-4A67-49F1-8A03-08D684A96952}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BruteSharkDesktop", "BruteSharkDesktop\BruteSharkDesktop.csproj", "{34A40CB7-D65A-404C-A872-DC343FB8E8D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BruteForce", "BruteForce\BruteForce.csproj", "{197117F1-5170-477E-8D78-E0A59A690437}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{58CF6E5D-3319-4AE0-B4A1-844A6D978ABC}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B087183-652A-4842-BCA0-F9C604A1F437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B087183-652A-4842-BCA0-F9C604A1F437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B087183-652A-4842-BCA0-F9C604A1F437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B087183-652A-4842-BCA0-F9C604A1F437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{581824EF-9C88-4B3B-BF52-687C4248FC92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{581824EF-9C88-4B3B-BF52-687C4248FC92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{581824EF-9C88-4B3B-BF52-687C4248FC92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{581824EF-9C88-4B3B-BF52-687C4248FC92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18953BCA-4A67-49F1-8A03-08D684A96952}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18953BCA-4A67-49F1-8A03-08D684A96952}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18953BCA-4A67-49F1-8A03-08D684A96952}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18953BCA-4A67-49F1-8A03-08D684A96952}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34A40CB7-D65A-404C-A872-DC343FB8E8D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34A40CB7-D65A-404C-A872-DC343FB8E8D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34A40CB7-D65A-404C-A872-DC343FB8E8D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34A40CB7-D65A-404C-A872-DC343FB8E8D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{197117F1-5170-477E-8D78-E0A59A690437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{197117F1-5170-477E-8D78-E0A59A690437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{197117F1-5170-477E-8D78-E0A59A690437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{197117F1-5170-477E-8D78-E0A59A690437}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF06311D-66DB-444E-8A55-D45ABBB1AA11}
+	EndGlobalSection
+EndGlobal
