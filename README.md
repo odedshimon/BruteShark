@@ -31,6 +31,13 @@ Linux Users - run BruteSharkCli using MONO.
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
 ![](readme_media/Network.PNG)
+##### Reconstract all TCP Sessions
+![](readme_media/TcpSessions.PNG)
+
+##### Run Brute Shark CLI on Ubuntu with Mono
+
+[![Watch the video](https://img.youtube.com/vi/am1xU_kAxiI/hqdefault.jpg)](https://youtu.be/am1xU_kAxiI)
+
 
 # Architecture
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
@@ -100,3 +107,12 @@ public MainForm()
     this.modulesTreeView.ExpandAll();
 }
 ```
+##### BruteSharkCLI (PL)
+Command Line Interface version of Brute Shark.
+Cross platform Windows and Linux (with Mono).
+Availble commands: 
+(1). add-file
+(2). start
+(3). show-passwords
+(4). show-hashes
+(5). exit
