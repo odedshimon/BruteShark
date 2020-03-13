@@ -1,22 +1,22 @@
 # Brute Shark
 
-BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstract TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
+BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
 
 The main goal of the project is to provide solution to security researchers and network administrators with the task of network traffic analysis while they try to identify weaknesses that can be used by a potential attacker to gain access to critical points on the network.
 
-Two BruteShark versions are availble, A GUI based application (Windows) and a Command Line Interface tool (Windows and Linux).  
+Two BruteShark versions are available, A GUI based application (Windows) and a Command Line Interface tool (Windows and Linux).  
 The various projects in the solution can also be used independently as infrastructure for analyzing network traffic on Linux or Windows machines. For further details see the Architecture section.
 
-The project was developed in my spare time to address two main passions of mine: software arichtecture and analyzing network data.
+The project was developed in my spare time to address two main passions of mine: software architecture and analyzing network data.
 
 ## What it can do
 * Extracting and encoding user credentials 
 * Extract authentication hashes and crack them using Hashcat
 * Build visual network diagram
-* Reconstract all TCP Sessions
+* Reconstruct all TCP Sessions
 
 ## Installation
-Windows - Clone and run defauelt Visual Studio Compiler
+Windows - Clone and run default Visual Studio Compiler
 Linux Users - run BruteSharkCli using MONO.
 
 # Examples
@@ -31,7 +31,7 @@ Linux Users - run BruteSharkCli using MONO.
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
 ![](readme_media/Network.PNG)
-##### Reconstract all TCP Sessions
+##### Reconstruct all TCP Sessions
 ![](readme_media/TcpSessions.PNG)
 
 ##### Run Brute Shark CLI on Ubuntu with Mono
@@ -43,11 +43,11 @@ Linux Users - run BruteSharkCli using MONO.
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
 The separation between layers is created by the fact that each project refers only its own objects.
 ##### PcapProcessor (DAL)
-As the Data Accesss Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
-Can analyze a list of files at once, and provides additional features like reconstraction of all TCP Sessions (using the awesome project TcpRecon).
+As the Data Access Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
+Can analyze a list of files at once, and provides additional features like reconstruction of all TCP Sessions (using the awesome project TcpRecon).
 ##### PcapAnalyzer (BLL)
-The Bussiness Logic Layer, responsible for analyzing network information (packet, TCP Session etc), implements a plugable mechanism.
-Each plugin is basicly a class that implements the interface *IModule*. All plugins are loaded using reflection:
+The Business Logic Layer, responsible for analyzing network information (packet, TCP Session etc.), implements a pluggable mechanism.
+Each plugin is basically a class that implements the interface *IModule*. All plugins are loaded using reflection:
 ```csharp
 private void _initilyzeModulesList()
 {
@@ -69,8 +69,8 @@ private void _initilyzeModulesList()
 ```
 ##### BruteSharkDesktop (PL)
 Desktop application for Windows based on WinForms.
-Uses a cross-cutting project by the meaning it referers both the DAL and BLL layers.
-This is done by composing each of the layers, register to thier events, when event is triggerd, cast the event object to the next layer equivalent object, and send it to next layer.
+Uses a cross-cutting project by the meaning it referrers both the DAL and BLL layers.
+This is done by composing each of the layers, register to their events, when event is triggered, cast the event object to the next layer equivalent object, and send it to next layer.
 ```csharp
 public MainForm()
 {
@@ -110,7 +110,7 @@ public MainForm()
 ##### BruteSharkCLI (PL)
 Command Line Interface version of Brute Shark.
 Cross platform Windows and Linux (with Mono).
-Availble commands: 
+Available commands: 
 (1). add-file
 (2). start
 (3). show-passwords
