@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,11 +6,11 @@
 
   <ItemGroup>
     <Reference Include="PacketDotNet">
-      <HintPath>..\..\..\..\Desktop\Research\Sniffing\SharpPcap-4.3.0\Release\PacketDotNet.dll</HintPath>
+      <HintPath>.\ExternalDependencies\Desktop\Research\Sniffing\SharpPcap-4.3.0\Release\PacketDotNet.dll</HintPath>
       <Private>true</Private>
     </Reference>
     <Reference Include="SharpPcap">
-      <HintPath>..\..\..\..\Desktop\Research\Sniffing\SharpPcap-4.3.0\Release\SharpPcap.dll</HintPath>
+      <HintPath>.\ExternalDependencies\SharpPcap-4.3.0\Release\SharpPcap.dll</HintPath>
       <Private>true</Private>
     </Reference>
   </ItemGroup>
