@@ -9,6 +9,8 @@ The various projects in the solution can also be used independently as infrastru
 
 The project was developed in my spare time to address two main passions of mine: software architecture and analyzing network data.
 
+Contact me on <oded.shimon89@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
+
 ## What it can do
 * Extracting and encoding user credentials 
 * Extract authentication hashes and crack them using Hashcat
