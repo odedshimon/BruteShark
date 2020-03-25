@@ -20,12 +20,14 @@ namespace BruteSharkCli
             // Add the help command
             this.AddCommand(new CliShellCommand(
                 "help",
-                 param => this.PrintCommandsWithDescription()));
+                 param => this.PrintCommandsWithDescription(), 
+                 "Print help menu"));
 
             // Add the exit command
             this.AddCommand(new CliShellCommand(
                 "exit",
-                 param => this._exit = true));
+                 param => this._exit = true,
+                 "Exit CLI"));
         }
 
         public void AddCommand(CliShellCommand cliShellCommand)
@@ -40,13 +42,13 @@ namespace BruteSharkCli
 
         internal void Start()
         {
-            this._exit = false;
+            _exit = false;
 
             do
             {
                 HandleUserInput();
             }
-            while (!this._exit);
+            while (!_exit);
         }
 
         private void HandleUserInput()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -46,10 +47,11 @@ namespace BruteSharkCli
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
 
             // Add commands to the Cli Shell.
-            _shell.AddCommand(new CliShellCommand("add-file", p => this._files.Add(p), "Add file to analyze"));
-            _shell.AddCommand(new CliShellCommand("start", p => StartAnalyzing(), "Add file to analyze"));
-            _shell.AddCommand(new CliShellCommand("show-passwords", p => PrintPasswords(), "Print Passwords"));
+            _shell.AddCommand(new CliShellCommand("add-file", p => _files.Add(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
+            _shell.AddCommand(new CliShellCommand("start", p => StartAnalyzing(), "Start analyzing"));
+            _shell.AddCommand(new CliShellCommand("show-passwords", p => PrintPasswords(), "Print passwords."));
             _shell.AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
+            _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
 
         }
 
@@ -141,6 +143,45 @@ namespace BruteSharkCli
         {
             _processor.ProcessPcaps(this._files);
             Console.SetCursorPosition(0, Console.CursorTop + 4);
+        }
+
+        public string MakeUnique(string path)
+        {
+            string dir = Path.GetDirectoryName(path);
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string fileExt = Path.GetExtension(path);
+
+            for (int i = 1; ; ++i)
+            {
+                if (!File.Exists(path))
+                    return new FileInfo(path).FullName;
+
+                path = Path.Combine(dir, fileName + " " + i + fileExt);
+            }
+        }
+
+        private void ExportHashes(string filePath)
+        {
+            // Run on each Hash Type we found.
+            foreach (string hashType in _hashes.Select(h => h.HashType).Distinct())
+            {
+                // Convert all hashes from that type to Hashcat format.
+                var hashesToExport = _hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
+                                            .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
+                                                         Casting.CastAnalyzerHashToBruteForceHash(h)));
+
+                var outputFilePath = MakeUnique(Path.Combine(filePath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+
+                using (var streamWriter = new StreamWriter(outputFilePath, true))
+                {
+                    foreach (var hash in hashesToExport)
+                    {
+                        streamWriter.WriteLine(hash);
+                    }
+                }
+
+                Console.WriteLine("Hashes file created: " + outputFilePath);
+            }
         }
     
     }
