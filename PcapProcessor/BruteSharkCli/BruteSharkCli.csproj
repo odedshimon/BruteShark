@@ -42,7 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Casting.cs" />
     <Compile Include="Cli.cs" />
+    <Compile Include="CliShell.cs" />
+    <Compile Include="CliShellCommand.cs" />
     <Compile Include="PrintDataExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +55,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BruteForce\BruteForce.csproj">
+      <Project>{197117f1-5170-477e-8d78-e0a59a690437}</Project>
+      <Name>BruteForce</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PcapAnalyzer\PcapAnalyzer.csproj">
       <Project>{581824ef-9c88-4b3b-bf52-687c4248fc92}</Project>
       <Name>PcapAnalyzer</Name>
