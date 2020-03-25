@@ -19,6 +19,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private object _printingLock;
+        private CliShell _shell;
         
 
         public Cli()
@@ -32,6 +33,7 @@ namespace BruteSharkCli
 
             _processor = new PcapProcessor.Processor();
             _analyzer = new PcapAnalyzer.Analyzer();
+            _shell = new CliShell(seperator:"Brute-Shark > ");
 
             // TODO: create command for this.
             _processor.BuildTcpSessions = true;
@@ -42,6 +44,13 @@ namespace BruteSharkCli
             _processor.TcpSessionArived += (s, e) => this.UpdateTcpSessionsCount();
             _processor.TcpSessionArived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
+
+            // Add commands to the Cli Shell.
+            _shell.AddCommand(new CliShellCommand("add-file", p => this._files.Add(p), "Add file to analyze"));
+            _shell.AddCommand(new CliShellCommand("start", p => StartAnalyzing(), "Add file to analyze"));
+            _shell.AddCommand(new CliShellCommand("show-passwords", p => PrintPasswords(), "Print Passwords"));
+            _shell.AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
+
         }
 
         private void OnParsedItemDetected(object sender, ParsedItemDetectedEventArgs e)
@@ -115,13 +124,7 @@ namespace BruteSharkCli
 
         internal void Start()
         {
-            bool exit = true;
-
-            do
-            {
-                exit = HandleUserInput();
-            }
-            while (!exit);
+            _shell.Start();
         }
 
         private void PrintPasswords()
@@ -134,51 +137,11 @@ namespace BruteSharkCli
             this._hashes.ToDataTable().Print();
         }
 
-        private bool HandleUserInput()
+        private void StartAnalyzing()
         {
-            var result = false;
-            bool legalInput;
-
-            // TODO: refactor this (verify, organize, catch exceptions).
-            do
-            {
-                PrintCli();
-                legalInput = true;
-                string userInput = Console.ReadLine();
-                string[] inputParts = userInput.Split();
-
-                switch (inputParts[0])
-                {
-                    case "start":
-                        _processor.ProcessPcaps(this._files);
-                        Console.SetCursorPosition(0, Console.CursorTop + 4);
-                        break;
-                    case "add-file":
-                        this._files.Add(userInput.Substring(9));
-                        break;
-                    case "exit":
-                        result = true;
-                        break;
-                    case "show-passwords":
-                        PrintPasswords();
-                        break;
-                    case "show-hashes":
-                        PrintHashes();
-                        break;
-                    default:
-                        Console.WriteLine("Illegal Input.");
-                        legalInput = false;
-                        break;
-                }
-            }
-            while (!legalInput);
-
-            return result;
+            _processor.ProcessPcaps(this._files);
+            Console.SetCursorPosition(0, Console.CursorTop + 4);
         }
-
-        private void PrintCli()
-        {
-            Console.Write("Brute-Shark > ");
-        }
+    
     }
 }
