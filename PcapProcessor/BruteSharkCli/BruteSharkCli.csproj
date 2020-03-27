@@ -43,9 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Casting.cs" />
-    <Compile Include="Cli.cs" />
-    <Compile Include="CliShell.cs" />
-    <Compile Include="CliShellCommand.cs" />
+    <Compile Include="BruteSharkCli.cs" />
+    <Compile Include="Cli\CliShell.cs" />
+    <Compile Include="Cli\CliShellCommand.cs" />
     <Compile Include="PrintDataExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
