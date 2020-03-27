@@ -10,7 +10,7 @@ using PcapAnalyzer;
 
 namespace BruteSharkCli
 {
-    internal class Cli
+    internal class BruteSharkCli
     {
         private ulong _tcpPacketsCount;
         private int _tcpSessionsCount;
@@ -23,7 +23,7 @@ namespace BruteSharkCli
         private CliShell _shell;
         
 
-        public Cli()
+        public BruteSharkCli()
         {
             _tcpPacketsCount = 0;
             _tcpSessionsCount = 0;
@@ -126,6 +126,8 @@ namespace BruteSharkCli
 
         internal void Start()
         {
+            Utilities.PrintBruteSharkAsciiArt();
+            _shell.RunCommand("help");
             _shell.Start();
         }
 
@@ -136,7 +138,7 @@ namespace BruteSharkCli
 
         private void PrintHashes()
         {
-            this._hashes.ToDataTable().Print();
+            this._hashes.ToDataTable(itemLengthLimit:15).Print();
         }
 
         private void StartAnalyzing()

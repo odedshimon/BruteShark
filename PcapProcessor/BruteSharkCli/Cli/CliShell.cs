@@ -58,27 +58,33 @@ namespace BruteSharkCli
             do
             {
                 Console.Write(this.Seperator);
-                legalInput = true;
                 string userInput = Console.ReadLine();
-                string[] inputParts = userInput.Split();
+                legalInput = RunCommand(userInput);
 
-                CliShellCommand wanted_command = this._commands.Where(c => c.Keyword == inputParts[0]).FirstOrDefault();
-
-                if (wanted_command != null)
-                {
-                    // Run command.
-                    string commandData = userInput.Substring(userInput.IndexOf(" ") + 1);
-                    wanted_command.Action(commandData);
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Illegal Input.");
-                    legalInput = false;
-                    break;
-                }
             }
             while (!legalInput);
+        }
+
+        public bool RunCommand(string userInput)
+        {
+            bool legalInput = true;
+            string[] inputParts = userInput.Split();
+
+            CliShellCommand wanted_command = this._commands.Where(c => c.Keyword == inputParts[0]).FirstOrDefault();
+
+            if (wanted_command != null)
+            {
+                // Run command.
+                string commandData = userInput.Substring(userInput.IndexOf(" ") + 1);
+                wanted_command.Action(commandData);
+            }
+            else
+            {
+                Console.WriteLine("Illegal Input.");
+                legalInput = false;
+            }
+
+            return legalInput;
         }
 
 
