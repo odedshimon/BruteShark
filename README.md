@@ -27,6 +27,8 @@ Linux Users - run BruteSharkCli using MONO.
 [![Watch the video](https://img.youtube.com/vi/AreguLxCCz4/hqdefault.jpg)](https://youtu.be/AreguLxCCz4)
 
 ![](readme_media/NTLM_With_Comments.mp4)
+##### Brute Shark CLI 
+![](readme_media/BruteSharkCli.PNG)
 ##### Password Extracting (HTTP, TELNET, IMAP, FTP, SMTP)
 ![](readme_media/Passwords.PNG)
 ##### Hashes Extracting (HTTP-Digest, NTLM, CRAM-MD5)
