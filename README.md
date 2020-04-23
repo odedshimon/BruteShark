@@ -18,8 +18,8 @@ Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://gith
 * Reconstruct all TCP Sessions
 
 ## Download
-Windows - download [windows installer](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkDesktopInstaller_x64.msi).
-Linux Users - download [BruteSharkCli Folder](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) unzip and run BruteSharkCli.exe using MONO.
+* Windows - download [windows installer](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkDesktopInstaller_x64.msi).
+* Linux Users - download [BruteSharkCli Folder](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) unzip and run BruteSharkCli.exe using MONO.
 
 # Examples
 ##### How do i crack (by mistake!) Windows 10 user NTLM password
@@ -115,8 +115,10 @@ public MainForm()
 Command Line Interface version of Brute Shark.
 Cross platform Windows and Linux (with Mono).
 Available commands: 
-(1). add-file
-(2). start
-(3). show-passwords
-(4). show-hashes
-(5). exit
+(1). help  
+(2). add-file  
+(3). start  
+(4). show-passwords  
+(5). show-hashes  
+(6). export-hashes  
+(7). exit 
