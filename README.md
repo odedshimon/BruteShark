@@ -9,7 +9,7 @@ The various projects in the solution can also be used independently as infrastru
 
 The project was developed in my spare time to address two main passions of mine: software architecture and analyzing network data.
 
-Contact me on <oded.shimon89@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
+Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
 ## What it can do
 * Extracting and encoding user credentials 
@@ -17,9 +17,9 @@ Contact me on <oded.shimon89@gmail.com> or [create new issue](https://github.com
 * Build visual network diagram
 * Reconstruct all TCP Sessions
 
-## Installation
-Windows - Clone and run default Visual Studio Compiler
-Linux Users - run BruteSharkCli using MONO.
+## Download
+Windows - download [windows installer](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkDesktopInstaller_x64.msi).
+Linux Users - download [BruteSharkCli Folder](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) unzip and run BruteSharkCli.exe using MONO.
 
 # Examples
 ##### How do i crack (by mistake!) Windows 10 user NTLM password
