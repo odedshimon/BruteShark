@@ -9,6 +9,7 @@ namespace PcapAnalyzer
         string Name { get; }
         event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
+        void Analyze(UdpPacket udpPacket);
         void Analyze(TcpPacket tcpPacket);
         void Analyze(TcpSession tcpSession);
     }

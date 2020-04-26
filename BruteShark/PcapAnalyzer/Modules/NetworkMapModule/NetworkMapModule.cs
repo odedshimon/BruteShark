@@ -17,6 +17,8 @@ namespace PcapAnalyzer
             _connections = new HashSet<NetworkConnection>();
         }
 
+        public void Analyze(UdpPacket tcpPacket) { }
+
         public void Analyze(TcpPacket tcpPacket)
         {
             var connection = new NetworkConnection()

@@ -36,6 +36,15 @@ namespace PcapAnalyzer
             
         }
 
+        // TODO: use template instead this 3 functions (or change all design)
+        public void Analyze(UdpPacket udpPacket)
+        {
+            foreach (var module in _modules)
+            {
+                module.Analyze(udpPacket);
+            }
+        }
+
         public void Analyze(TcpPacket tcpPacket)
         {
             foreach (var module in _modules)
