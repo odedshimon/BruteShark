@@ -56,6 +56,9 @@
     <None Include="Test Files\HTTP - Small File.pcap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Test Files\Kerberos - UDP.pcap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Test Files\TCP - 5 Packets.pcap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

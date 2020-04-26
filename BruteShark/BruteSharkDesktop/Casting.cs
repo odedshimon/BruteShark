@@ -33,6 +33,18 @@ namespace BruteSharkDesktop
             };
         }
 
+        public static PcapAnalyzer.UdpPacket CastProcessorUdpPacketToAnalyzerUdpPacket(PcapProcessor.UdpPacket udpPacket)
+        {
+            return new PcapAnalyzer.UdpPacket()
+            {
+                SourceIp = udpPacket.SourceIp,
+                DestinationIp = udpPacket.DestinationIp,
+                SourcePort = udpPacket.SourcePort,
+                DestinationPort = udpPacket.DestinationPort,
+                Data = udpPacket.Data
+            };
+        }
+
         public static PcapAnalyzer.TcpPacket CastProcessorTcpPacketToAnalyzerTcpPacket(PcapProcessor.TcpPacket tcpPacket)
         {
             return new PcapAnalyzer.TcpPacket()

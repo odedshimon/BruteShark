@@ -31,6 +31,8 @@ namespace PcapAnalyzer
                                     .ToList();
         }
 
+        public void Analyze(UdpPacket tcpPacket) { }
+
         public void Analyze(TcpPacket tcpPacket)
         {
             foreach (var parsrer in this._passwordParsers)
