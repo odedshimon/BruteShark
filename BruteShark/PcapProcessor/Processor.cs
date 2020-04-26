@@ -11,6 +11,8 @@ namespace PcapProcessor
     // TODO: use interface
     public class Processor
     {
+        public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
+        public event UdpPacketArivedEventHandler UdpPacketArived;
         public delegate void TcpPacketArivedEventHandler(object sender, TcpPacketArivedEventArgs e);
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
@@ -101,7 +103,19 @@ namespace PcapProcessor
 
                 if (udpPacket != null)
                 {
-                    var ipPacket = (PacketDotNet.IpPacket)tcpPacket.ParentPacket;
+                    var ipPacket = (PacketDotNet.IpPacket)udpPacket.ParentPacket;
+
+                    UdpPacketArived?.Invoke(this, new UdpPacketArivedEventArgs
+                    {
+                        Packet = new UdpPacket
+                        {
+                            SourcePort = udpPacket.SourcePort,
+                            DestinationPort = udpPacket.DestinationPort,
+                            SourceIp = ipPacket.SourceAddress.ToString(),
+                            DestinationIp = ipPacket.DestinationAddress.ToString(),
+                            Data = udpPacket.PayloadData ?? new byte[] { }
+                        }
+                    });
                 }
                 else if (tcpPacket != null)
                 {
