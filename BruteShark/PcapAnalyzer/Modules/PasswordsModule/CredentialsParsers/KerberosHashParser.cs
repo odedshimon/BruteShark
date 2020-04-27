@@ -16,7 +16,6 @@ namespace PcapAnalyzer
 
         public NetworkCredential Parse(UdpPacket udpPacket)
         {
-
             byte msgType = udpPacket.Data[17];
             byte encType = udpPacket.Data[39];
 
@@ -37,19 +36,27 @@ namespace PcapAnalyzer
                         hash.SubArray(0, 16).CopyTo(switchedHash, 36);
                         string hashString = NtlmsspHashParser.ByteArrayToHexString(switchedHash);
 
-                        int nameLen = (int)udpPacket.Data[144];
-                        string name = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145, nameLen));
+                        int userNameLen = (int)udpPacket.Data[144];
+                        string userName = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145, userNameLen));
 
-                        int domainLen = (int)udpPacket.Data[145 + nameLen + 3];
-                        string domain = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145 + nameLen + 4 , domainLen));
-                    }
-                    else if (hashLen == 53)
-                    {
+                        int domainLen = (int)udpPacket.Data[145 + userNameLen + 3];
+                        string domain = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145 + userNameLen + 4 , domainLen));
 
+                        var kerberosHash = new KerberosHash()
+                        {
+                            HashType = "Kerberos V5",
+                            Protocol = "UDP",
+                            Source = udpPacket.DestinationIp,
+                            Destination = udpPacket.SourceIp,
+                            User = userName,
+                            Domain = domain,
+                            Hash = hashString
+                        };
+
+                        return kerberosHash;
                     }
                 }
             }
-
 
             return null;
         }
@@ -58,15 +65,6 @@ namespace PcapAnalyzer
         public NetworkCredential Parse(TcpPacket tcpPacket) => null;
 
         public NetworkCredential Parse(TcpSession tcpSession) => null;
-
-        private bool isKerberos(UdpPacket tcpSession)
-        {
-            var msgType = tcpSession.Data[21];
-            var encType = tcpSession.Data[43];
-            var MessageType = tcpSession.Data[32];
-
-            return msgType == this.msgType && encType == this.encType && MessageType == this.MessageType;
-        }
 
     }
 }

@@ -35,7 +35,16 @@ namespace PcapAnalyzer
 
         public void Analyze(UdpPacket udpPacket)
         {
-            this._kerberosParser.Parse(udpPacket);
+            NetworkCredential credential = this._kerberosParser.Parse(udpPacket);
+
+            if (credential != null)
+            {
+                // Raise event.
+                this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                {
+                    ParsedItem = credential
+                });
+            }
         }
 
         public void Analyze(TcpPacket tcpPacket)
