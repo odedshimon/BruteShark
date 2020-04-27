@@ -20,12 +20,24 @@ namespace BruteForce
             {
                 res = ConvertToHashcatFormat(hash as NtlmHash);
             }
+            else if (hash is KerberosHash)
+            {
+                res = ConvertToHashcatFormat(hash as KerberosHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
             }
 
             return res;
+        }
+
+        public static string ConvertToHashcatFormat(KerberosHash kerberosHash)
+        {
+            return string.Format("$krb5pa$23${0}${1}$dummy${2}",
+                kerberosHash.User,
+                kerberosHash.Domain,
+                kerberosHash.HashedData);
         }
 
         public static string ConvertToHashcatFormat(HttpDigestHash httpDigestHash)
