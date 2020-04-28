@@ -32,20 +32,28 @@ namespace PcapAnalyzer
                 NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
             {
                 var paddingLen = 0;
+                var hashOffset = 44;
+                var userNameOffset = 144;
                 var hashItemLen = (int)udpPacket.Data[41];
 
                 if (hashItemLen == 53)
                     paddingLen = 1;
+                if (hashItemLen != 54 && hashItemLen != 53)
+                {
+                    hashItemLen = (int)udpPacket.Data[48];
+                    hashOffset = 49;
+                    userNameOffset = hashItemLen + 97;
+                }
 
                 var hashLen = 52 - paddingLen;
-                byte[] hash = udpPacket.Data.SubArray(44, hashLen);
+                byte[] hash = udpPacket.Data.SubArray(hashOffset, hashLen);
                 byte[] switchedHash = new byte[hashLen];
                 hash.SubArray(16, 36).CopyTo(switchedHash, 0);
                 hash.SubArray(0, 16).CopyTo(switchedHash, 36);
                 string hashString = NtlmsspHashParser.ByteArrayToHexString(switchedHash);
 
-                var userName = ExtractKerberosMessageItem(udpPacket.Data, 144 - paddingLen, out int userNameLength);
-                string domain = ExtractKerberosMessageItem(udpPacket.Data, 145 + userNameLength + 3 - paddingLen, out int domainLength);
+                var userName =  ExtractKerberosMessageItem(udpPacket.Data, userNameOffset - paddingLen, out int userNameLength);
+                string domain = ExtractKerberosMessageItem(udpPacket.Data, userNameOffset + userNameLength - paddingLen + 4, out int domainLength);
 
                 return new KerberosHash()
                 {
