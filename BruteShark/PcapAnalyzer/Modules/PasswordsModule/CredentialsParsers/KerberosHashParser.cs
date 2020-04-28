@@ -5,66 +5,87 @@ using System.Text;
 
 namespace PcapAnalyzer
 {
+    // Algorithm inspired from https://github.com/lgandx/PCredz/blob/master/Pcredz
     public class KerberosHashParser : IPasswordParser
     {
-        private readonly byte msgType = 0x0a;
-        private readonly byte encType = 0x17;
-        private readonly byte MessageType = 0x02; 
-        private readonly byte[] sig = new byte[] { 0xa2, 0x36, 0x04, 0x34 };   // Hash length = 0x36 = 54
-        private readonly byte[] sig2 = new byte[] { 0xa2, 0x35, 0x04, 0x33 };  // Hash length = 0x35 = 53
+        // Kerberos message type, we look for 'krb-as-req' (decimal value 10) which means
+        // pre-authentication request.
+        private readonly byte asMsgType = 0x0a;
+
+        // etype = eTYPE-ARCFOUR-HMAC-MD5 (23)
+        private readonly byte rc4encType = 0x17;
+
+        // PA-DATA means 'pre-authentication data', is used to augment the initial 
+        // authentication with the KDC.
+        private readonly byte[] pa_data_signiture = new byte[] { 0xa2, 0x36, 0x04, 0x34 };   // Hash length = 0x36 = 54
+        private readonly byte[] pa_data_signiture2 = new byte[] { 0xa2, 0x35, 0x04, 0x33 };  // Hash length = 0x35 = 53
 
 
         public NetworkCredential Parse(UdpPacket udpPacket)
         {
-            byte msgType = udpPacket.Data[17];
-            byte encType = udpPacket.Data[39];
+            if (!isKerberos(udpPacket))
+                return null;
 
-            if (msgType == this.msgType || encType == this.encType)
+            byte[] sig_part = udpPacket.Data.SubArray(40, 4);
+
+            if (NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture) == 0 ||
+                NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
             {
-                byte[] sig_part = udpPacket.Data.SubArray(40, 4);
+                var paddingLen = 0;
+                var hashItemLen = (int)udpPacket.Data[41];
 
-                if (NtlmsspHashParser.SearchForSubarray(sig_part, this.sig) == 0 ||
-                    NtlmsspHashParser.SearchForSubarray(sig_part, this.sig2) == 0)
+                if (hashItemLen == 53)
+                    paddingLen = 1;
+
+                var hashLen = 52 - paddingLen;
+                byte[] hash = udpPacket.Data.SubArray(44, hashLen);
+                byte[] switchedHash = new byte[hashLen];
+                hash.SubArray(16, 36).CopyTo(switchedHash, 0);
+                hash.SubArray(0, 16).CopyTo(switchedHash, 36);
+                string hashString = NtlmsspHashParser.ByteArrayToHexString(switchedHash);
+
+                var userName = ExtractKerberosMessageItem(udpPacket.Data, 144 - paddingLen, out int userNameLength);
+                string domain = ExtractKerberosMessageItem(udpPacket.Data, 145 + userNameLength + 3 - paddingLen, out int domainLength);
+
+                return new KerberosHash()
                 {
-                    int hashLen = (int)udpPacket.Data[41];
-
-                    if (hashLen == 54)
-                    {
-                        byte[] hash = udpPacket.Data.SubArray(44, 52);
-                        byte[] switchedHash = new byte[52];
-                        hash.SubArray(16, 36).CopyTo(switchedHash, 0);
-                        hash.SubArray(0, 16).CopyTo(switchedHash, 36);
-                        string hashString = NtlmsspHashParser.ByteArrayToHexString(switchedHash);
-
-                        int userNameLen = (int)udpPacket.Data[144];
-                        string userName = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145, userNameLen));
-
-                        int domainLen = (int)udpPacket.Data[145 + userNameLen + 3];
-                        string domain = Encoding.ASCII.GetString(udpPacket.Data.SubArray(145 + userNameLen + 4 , domainLen));
-
-                        var kerberosHash = new KerberosHash()
-                        {
-                            HashType = "Kerberos V5",
-                            Protocol = "UDP",
-                            Source = udpPacket.DestinationIp,
-                            Destination = udpPacket.SourceIp,
-                            User = userName,
-                            Domain = domain,
-                            Hash = hashString
-                        };
-
-                        return kerberosHash;
-                    }
-                }
+                    HashType = "Kerberos V5",
+                    Protocol = "UDP",
+                    Source = udpPacket.DestinationIp,
+                    Destination = udpPacket.SourceIp,
+                    User = userName,
+                    Domain = domain,
+                    Hash = hashString
+                };
             }
-
+            
             return null;
         }
-
 
         public NetworkCredential Parse(TcpPacket tcpPacket) => null;
 
         public NetworkCredential Parse(TcpSession tcpSession) => null;
 
+        private bool isKerberos(UdpPacket udpPacket)
+        {
+            byte msgType = udpPacket.Data[17];
+            byte encType = udpPacket.Data[39];
+
+            return msgType == this.asMsgType || encType == this.rc4encType;
+        }
+
+        private string ExtractKerberosMessageItem(byte[] kerberosMessageData, int itemIndex, out int itemLength)
+        {
+            itemLength = (int)kerberosMessageData[itemIndex];
+            var itemData = Encoding.ASCII.GetString(
+                kerberosMessageData.SubArray(
+                    itemIndex + 1,
+                    itemLength));
+
+            return itemData;
+        }
     }
 }
+
+
+//private readonly byte MessageType = 0x02;
