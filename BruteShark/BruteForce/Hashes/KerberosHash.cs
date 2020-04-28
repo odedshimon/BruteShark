@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BruteForce.Hashes
+namespace BruteForce
 {
-    class KerberosHash
+    public class KerberosHash : Hash
     {
+        public string User { get; set; }
+        public string Domain { get; set; }
     }
 }
