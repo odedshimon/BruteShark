@@ -24,6 +24,10 @@ namespace BruteSharkCli
             {
                 res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.NtlmHash);
             }
+            else if (hash is PcapAnalyzer.KerberosHash)
+            {
+                res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.KerberosHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
@@ -68,6 +72,16 @@ namespace BruteSharkCli
             {
                 HashedData = cramMd5Hash.Hash,
                 Challenge = cramMd5Hash.Challenge
+            };
+        }
+
+        public static BruteForce.Hash CastAnalyzerrHashToBruteForceHash(PcapAnalyzer.KerberosHash kerberosHash)
+        {
+            return new BruteForce.KerberosHash()
+            {
+                User = kerberosHash.User,
+                Domain = kerberosHash.Domain,
+                HashedData = kerberosHash.Hash
             };
         }
     }

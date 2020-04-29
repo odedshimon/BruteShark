@@ -40,6 +40,7 @@ namespace BruteSharkCli
             _processor.BuildTcpSessions = true;
 
             // Contract the events.
+            _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
             _processor.TcpSessionArived += (s, e) => this.UpdateTcpSessionsCount();
@@ -97,6 +98,18 @@ namespace BruteSharkCli
                 Console.SetCursorPosition(0, Console.CursorTop - 4);
                 Console.ForegroundColor = ConsoleColor.White;
             }
+        }
+
+        public static PcapAnalyzer.UdpPacket CastProcessorUdpPacketToAnalyzerUdpPacket(PcapProcessor.UdpPacket udpPacket)
+        {
+            return new PcapAnalyzer.UdpPacket()
+            {
+                SourceIp = udpPacket.SourceIp,
+                DestinationIp = udpPacket.DestinationIp,
+                SourcePort = udpPacket.SourcePort,
+                DestinationPort = udpPacket.DestinationPort,
+                Data = udpPacket.Data
+            };
         }
 
         private PcapAnalyzer.TcpPacket CastProcessorTcpPacketToAnalyzerTcpPacket(PcapProcessor.TcpPacket tcpPacket)
