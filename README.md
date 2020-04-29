@@ -30,16 +30,16 @@ mono BruteSharkCli/BruteSharkCli.exe
 ##### Videos
 [**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
 [**Run Brute Shark CLI on Ubuntu with Mono**](https://youtu.be/am1xU_kAxiI)  
-##### Brute Shark CLI 
-![](readme_media/BruteSharkCli.PNG)
-##### Password Extracting (HTTP, TELNET, IMAP, FTP, SMTP)
-![](readme_media/Passwords.PNG)
-##### Hashes Extracting (HTTP-Digest, NTLM, CRAM-MD5)
+##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
+##### Password Extracting
+![](readme_media/Passwords.PNG)
 ##### Building a Network Diagram
 ![](readme_media/Network.PNG)
 ##### Reconstruct all TCP Sessions
 ![](readme_media/TcpSessions.PNG)
+##### Brute Shark CLI 
+![](readme_media/BruteSharkCli.PNG)
 
 # Architecture
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
