@@ -12,14 +12,14 @@ The project was developed in my spare time to address two main passions of mine:
 Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
 ## What it can do
-* Extracting and encoding user credentials (HTTP, FTP, Telnet, IMAP, SMTP...)
+* Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
 * Build visual network diagram
 * Reconstruct all TCP Sessions
 
 ## Download
 * Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkDesktopInstaller_x64.msi).
-* Linux Users - download [BruteSharkCli Folder](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) unzip and run BruteSharkCli.exe using MONO:
+* Linux - download [BruteSharkCli.zip](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) and run BruteSharkCli.exe using MONO:
 ```bash
 wget https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip
 unzip BruteSharkCli.zip 
@@ -28,8 +28,8 @@ mono BruteSharkCli/BruteSharkCli.exe
 
 # Examples
 ##### Videos
-[**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)
-[**Run Brute Shark CLI on Ubuntu with Mono**](https://youtu.be/am1xU_kAxiI)
+[**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
+[**Run Brute Shark CLI on Ubuntu with Mono**](https://youtu.be/am1xU_kAxiI)  
 ##### Brute Shark CLI 
 ![](readme_media/BruteSharkCli.PNG)
 ##### Password Extracting (HTTP, TELNET, IMAP, FTP, SMTP)
