@@ -7,7 +7,8 @@ namespace PcapAnalyzer
 {
     class PasswordsModule : IModule
     {
-        
+
+        private KerberosHashParser _kerberosParser;
         private List<IPasswordParser> _passwordParsers;
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
@@ -17,6 +18,7 @@ namespace PcapAnalyzer
 
         public PasswordsModule()
         {
+            this._kerberosParser = new KerberosHashParser();
             _initilyzePasswordParsersList();
         }
 
@@ -31,7 +33,19 @@ namespace PcapAnalyzer
                                     .ToList();
         }
 
-        public void Analyze(UdpPacket tcpPacket) { }
+        public void Analyze(UdpPacket udpPacket)
+        {
+            NetworkCredential credential = this._kerberosParser.Parse(udpPacket);
+
+            if (credential != null)
+            {
+                // Raise event.
+                this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                {
+                    ParsedItem = credential
+                });
+            }
+        }
 
         public void Analyze(TcpPacket tcpPacket)
         {

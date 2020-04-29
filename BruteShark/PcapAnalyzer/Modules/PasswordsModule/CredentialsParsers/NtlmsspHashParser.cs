@@ -118,7 +118,7 @@ namespace PcapAnalyzer
                                .ToArray());
         }
 
-        private string ByteArrayToHexString(byte[] input)
+        public static string ByteArrayToHexString(byte[] input)
         {
             StringBuilder hex = new StringBuilder(input.Length * 2);
 
@@ -130,7 +130,7 @@ namespace PcapAnalyzer
             return hex.ToString();
         }
 
-        static int SearchForSubarray(byte[] input, byte[] subarray)
+        public static int SearchForSubarray(byte[] input, byte[] subarray)
         {
             var len = subarray.Length;
             var limit = input.Length - len;
