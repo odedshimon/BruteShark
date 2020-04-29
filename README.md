@@ -18,10 +18,10 @@ Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://gith
 * Reconstruct all TCP Sessions
 
 ## Download
-* Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkDesktopInstaller_x64.msi).
-* Linux - download [BruteSharkCli.zip](https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip) and run BruteSharkCli.exe using MONO:
+* Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).
+* Linux - download [BruteSharkCli.zip](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.zip) and run BruteSharkCli.exe using MONO:
 ```bash
-wget https://github.com/odedshimon/BruteShark/releases/download/v1.0/BruteSharkCli.zip
+wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.zip
 unzip BruteSharkCli.zip 
 mono BruteSharkCli/BruteSharkCli.exe
 ```
