@@ -17,14 +17,22 @@ namespace PcapAnalyzer
             _connections = new HashSet<NetworkConnection>();
         }
 
-        public void Analyze(UdpPacket tcpPacket) { }
+        public void Analyze(UdpPacket udpPacket)
+        {
+            RaiseParsedItemDetected(udpPacket.SourceIp, udpPacket.DestinationIp);
+        }
 
         public void Analyze(TcpPacket tcpPacket)
         {
+            RaiseParsedItemDetected(tcpPacket.SourceIp, tcpPacket.DestinationIp);
+        }
+
+        private void RaiseParsedItemDetected(string source, string destination)
+        {
             var connection = new NetworkConnection()
             {
-                Source = tcpPacket.SourceIp,
-                Destination = tcpPacket.DestinationIp
+                Source = source,
+                Destination = destination
             };
 
             if (_connections.Add(connection))

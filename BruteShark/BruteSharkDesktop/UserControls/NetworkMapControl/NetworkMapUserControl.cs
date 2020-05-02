@@ -51,6 +51,9 @@ namespace BruteSharkDesktop
                 _edges.Add(newEdge);
             }
 
+            _graph.FindNode(source).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+            _graph.FindNode(destination).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+
             _viewer.Graph = _graph;
             this.ResumeLayout();
         }
@@ -76,14 +79,15 @@ namespace BruteSharkDesktop
                 var edgeText = $"{hash.HashType} Hash";
 
                 AddEdge(displayUserName.ToString(), hash.Destination, edgeText);
+                _graph.FindNode(displayUserName.ToString()).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
             }
-
         }
 
         public void HandlePassword(PcapAnalyzer.NetworkPassword password)
         {
-                var edgeText = $"{password.Protocol} Password";
-                AddEdge(password.Username, password.Destination, edgeText);
+            var edgeText = $"{password.Protocol} Password";
+            AddEdge(password.Username, password.Destination, edgeText);
+            _graph.FindNode(password.Username).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
         }
 
 
