@@ -146,13 +146,17 @@ namespace BruteSharkDesktop
         {
             if (e.ParsedItem is PcapAnalyzer.NetworkPassword)
             {
-                _passwordsUserControl.AddDataToTable(e.ParsedItem as PcapAnalyzer.NetworkPassword);
+                var password = e.ParsedItem as PcapAnalyzer.NetworkPassword;
+                _passwordsUserControl.AddDataToTable(password);
                 this.modulesTreeView.Nodes["CredentialsNode"].Nodes["PasswordsNode"].Text = $"Passwords ({_passwordsUserControl.ItemsCount})";
+                _networkMapUserControl.HandlePassword(password);
             }
             else if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
-                _hashesUserControl.AddHash(e.ParsedItem as PcapAnalyzer.NetworkHash);
+                var hash = e.ParsedItem as PcapAnalyzer.NetworkHash;
+                _hashesUserControl.AddHash(hash);
                 this.modulesTreeView.Nodes["CredentialsNode"].Nodes["HashesNode"].Text = $"Hashes ({_hashesUserControl.HashesCount})";
+                _networkMapUserControl.HandleHash(hash);
             }
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
@@ -161,6 +165,8 @@ namespace BruteSharkDesktop
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
         }
+
+       
 
         private void addFilesButton_Click(object sender, EventArgs e)
         {
