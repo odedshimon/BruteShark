@@ -57,22 +57,23 @@
     <Compile Include="Casting.cs" />
     <Compile Include="Objects\TcpPacket.cs" />
     <Compile Include="Objects\TcpSession.cs" />
-    <Compile Include="UserControls\SessionsExplorerUserControl.cs">
+    <Compile Include="UserControls\NetworkMapControl\NetworkMapEdge.cs" />
+    <Compile Include="UserControls\SessionsControl\SessionsExplorerUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\SessionsExplorerUserControl.Designer.cs">
+    <Compile Include="UserControls\SessionsControl\SessionsExplorerUserControl.Designer.cs">
       <DependentUpon>SessionsExplorerUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\SessionViewerUserControl.cs">
+    <Compile Include="UserControls\SessionsControl\SessionViewerUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\SessionViewerUserControl.Designer.cs">
+    <Compile Include="UserControls\SessionsControl\SessionViewerUserControl.Designer.cs">
       <DependentUpon>SessionViewerUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NetworkMapUserControl.cs">
+    <Compile Include="UserControls\NetworkMapControl\NetworkMapUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\NetworkMapUserControl.Designer.cs">
+    <Compile Include="UserControls\NetworkMapControl\NetworkMapUserControl.Designer.cs">
       <DependentUpon>NetworkMapUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\GenericTableUserControl.cs">
@@ -81,10 +82,10 @@
     <Compile Include="UserControls\GenericTableUserControl.Designer.cs">
       <DependentUpon>GenericTableUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\HashesUserControl.cs">
+    <Compile Include="UserControls\HashesControl\HashesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\HashesUserControl.Designer.cs">
+    <Compile Include="UserControls\HashesControl\HashesUserControl.Designer.cs">
       <DependentUpon>HashesUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
@@ -95,16 +96,16 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="UserControls\SessionsExplorerUserControl.resx">
+    <EmbeddedResource Include="UserControls\SessionsControl\SessionsExplorerUserControl.resx">
       <DependentUpon>SessionsExplorerUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\SessionViewerUserControl.resx">
+    <EmbeddedResource Include="UserControls\SessionsControl\SessionViewerUserControl.resx">
       <DependentUpon>SessionViewerUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\GenericTableUserControl.resx">
       <DependentUpon>GenericTableUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\HashesUserControl.resx">
+    <EmbeddedResource Include="UserControls\HashesControl\HashesUserControl.resx">
       <DependentUpon>HashesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
@@ -120,7 +121,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UserControls\NetworkMapUserControl.resx">
+    <EmbeddedResource Include="UserControls\NetworkMapControl\NetworkMapUserControl.resx">
       <DependentUpon>NetworkMapUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
