@@ -1,3 +1,5 @@
+[![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)
+
 # Brute Shark
 
 BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
@@ -11,10 +13,12 @@ The project was developed in my spare time to address two main passions of mine:
 
 Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
+Please ⭐️ this repository if this project helped you!
+
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
-* Build visual network diagram
+* Build visual network diagram (Network nodes & users)
 * Reconstruct all TCP Sessions
 
 ## Download
@@ -35,7 +39,7 @@ mono BruteSharkCli/BruteSharkCli.exe
 ##### Password Extracting
 ![](readme_media/Passwords.PNG)
 ##### Building a Network Diagram
-![](readme_media/Network.PNG)
+![](readme_media/NetworkMap.png)
 ##### Reconstruct all TCP Sessions
 ![](readme_media/TcpSessions.PNG)
 ##### Brute Shark CLI 
