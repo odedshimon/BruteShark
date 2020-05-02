@@ -80,6 +80,13 @@ namespace BruteSharkDesktop
 
         }
 
+        public void HandlePassword(PcapAnalyzer.NetworkPassword password)
+        {
+                var edgeText = $"{password.Protocol} Password";
+                AddEdge(password.Username, password.Destination, edgeText);
+        }
+
+
         private static object GetPropValue(object src, string propName)
         {
             return src.GetType().GetProperty(propName)?.GetValue(src, null);

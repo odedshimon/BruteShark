@@ -146,8 +146,10 @@ namespace BruteSharkDesktop
         {
             if (e.ParsedItem is PcapAnalyzer.NetworkPassword)
             {
-                _passwordsUserControl.AddDataToTable(e.ParsedItem as PcapAnalyzer.NetworkPassword);
+                var password = e.ParsedItem as PcapAnalyzer.NetworkPassword;
+                _passwordsUserControl.AddDataToTable(password);
                 this.modulesTreeView.Nodes["CredentialsNode"].Nodes["PasswordsNode"].Text = $"Passwords ({_passwordsUserControl.ItemsCount})";
+                _networkMapUserControl.HandlePassword(password);
             }
             else if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
@@ -155,8 +157,6 @@ namespace BruteSharkDesktop
                 _hashesUserControl.AddHash(hash);
                 this.modulesTreeView.Nodes["CredentialsNode"].Nodes["HashesNode"].Text = $"Hashes ({_hashesUserControl.HashesCount})";
                 _networkMapUserControl.HandleHash(hash);
-
-                
             }
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
