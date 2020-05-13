@@ -98,12 +98,12 @@ namespace PcapProcessor
             try
             {
                 var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-                var tcpPacket = (PacketDotNet.TcpPacket)packet.Extract(typeof(PacketDotNet.TcpPacket));
-                var udpPacket = (PacketDotNet.UdpPacket)packet.Extract(typeof(PacketDotNet.UdpPacket));
+                var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
+                var udpPacket = packet.Extract<PacketDotNet.UdpPacket>();
 
                 if (udpPacket != null)
                 {
-                    var ipPacket = (PacketDotNet.IpPacket)udpPacket.ParentPacket;
+                    var ipPacket = (PacketDotNet.IPPacket)udpPacket.ParentPacket;
 
                     UdpPacketArived?.Invoke(this, new UdpPacketArivedEventArgs
                     {
@@ -119,7 +119,7 @@ namespace PcapProcessor
                 }
                 else if (tcpPacket != null)
                 {
-                    var ipPacket = (PacketDotNet.IpPacket)tcpPacket.ParentPacket;
+                    var ipPacket = (PacketDotNet.IPPacket)tcpPacket.ParentPacket;
 
                     // Raise event Tcp packet arived event.
                     TcpPacketArived?.Invoke(this, new TcpPacketArivedEventArgs

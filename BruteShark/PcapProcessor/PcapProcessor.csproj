@@ -2,17 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="PacketDotNet">
-      <HintPath>.\ExternalDependencies\Desktop\Research\Sniffing\SharpPcap-4.3.0\Release\PacketDotNet.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="SharpPcap">
-      <HintPath>.\ExternalDependencies\SharpPcap-4.3.0\Release\SharpPcap.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
+    <PackageReference Include="SharpPcap" Version="5.1.0" />
   </ItemGroup>
 
 </Project>

@@ -25,8 +25,8 @@ namespace PcapProcessor
                     Data = kvp.Value.Data,
                     Packets = kvp.Value.packets.Select(p => new PcapProcessor.TcpPacket()
                     {
-                        SourceIp = ((PacketDotNet.IpPacket)p.ParentPacket).SourceAddress.ToString(),
-                        DestinationIp = ((PacketDotNet.IpPacket)p.ParentPacket).DestinationAddress.ToString(),
+                        SourceIp = ((PacketDotNet.IPPacket)p.ParentPacket).SourceAddress.ToString(),
+                        DestinationIp = ((PacketDotNet.IPPacket)p.ParentPacket).DestinationAddress.ToString(),
                         SourcePort = p.SourcePort,
                         DestinationPort = p.DestinationPort,
                         Data = p.PayloadData
@@ -45,9 +45,9 @@ namespace PcapProcessor
         {
             var session = new TcpSession()
             {
-                SourceIp = ((PacketDotNet.IpPacket)tcpPacket.ParentPacket).SourceAddress.ToString(),
+                SourceIp = ((PacketDotNet.IPPacket)tcpPacket.ParentPacket).SourceAddress.ToString(),
                 SourcePort = tcpPacket.SourcePort,
-                DestinationIp = ((PacketDotNet.IpPacket)tcpPacket.ParentPacket).DestinationAddress.ToString(),
+                DestinationIp = ((PacketDotNet.IPPacket)tcpPacket.ParentPacket).DestinationAddress.ToString(),
                 DestinationPort = tcpPacket.DestinationPort
             };
 

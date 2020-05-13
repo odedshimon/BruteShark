@@ -81,7 +81,7 @@ namespace PcapProcessor
         public void ReassemblePacket(PacketDotNet.TcpPacket tcpPacket)
         {
             // if the paylod length is zero bail out
-            ulong length = (ulong)(tcpPacket.Bytes.Length - tcpPacket.Header.Length);
+            ulong length = (ulong)(tcpPacket.Bytes.Length - tcpPacket.HeaderData.Length);
             if (length == 0) return;
 
             reassemble_tcp(
@@ -89,9 +89,9 @@ namespace PcapProcessor
                 length,
                 tcpPacket.PayloadData,
                 (ulong)tcpPacket.PayloadData.Length,
-                tcpPacket.Syn,
-                IpAddressToLong(((PacketDotNet.IpPacket)tcpPacket.ParentPacket).SourceAddress.ToString()),
-                IpAddressToLong(((PacketDotNet.IpPacket)tcpPacket.ParentPacket).DestinationAddress.ToString()),
+                tcpPacket.Synchronize,
+                IpAddressToLong(tcpPacket.ParentPacket.Extract<PacketDotNet.IPPacket>().SourceAddress.ToString()),
+                IpAddressToLong(tcpPacket.ParentPacket.Extract<PacketDotNet.IPPacket>().DestinationAddress.ToString()),
                 (uint)tcpPacket.SourcePort,
                 (uint)tcpPacket.DestinationPort,
                 tcpPacket);
