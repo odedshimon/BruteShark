@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace PcapAnalyzer
@@ -28,6 +29,33 @@ namespace PcapAnalyzer
             }
 
             return -1;
+        }
+
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
+
+        public static byte[] GetDataBetweenHeaderAndFooter(byte[] data, byte[] header, byte[] footer)
+        {
+            int header_position = Utilities.SearchForSubarray(data, header);
+
+            if (header_position > 0)
+            {
+                // TODO: check if this skip is memory inefficient, if not refactor SearchForSubarray to get optional
+                // parameter of start index
+                int footer_position = Utilities.SearchForSubarray(data.Skip(header_position).ToArray(), footer);
+
+                if (footer_position > 0)
+                {
+                    return data.SubArray(index: header_position, length: footer_position);
+                }
+            }
+
+            return null;
         }
 
     }
