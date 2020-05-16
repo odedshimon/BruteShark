@@ -48,7 +48,7 @@ namespace PcapAnalyzer
                 // Look for server challenge.
                 if (serverState == NtlmServerState.WaitForChallenge)
                 {
-                    int challengeSigniturePos = SearchForSubarray(packet.Data, _ntlmChallengeSigniture);
+                    int challengeSigniturePos = Utilities.SearchForSubarray(packet.Data, _ntlmChallengeSigniture);
 
                     if (challengeSigniturePos != -1)
                     {
@@ -69,7 +69,7 @@ namespace PcapAnalyzer
                 // Look for client response.
                 else if (serverState == NtlmServerState.WaitForResponse && packet.SourceIp == ntlmHash.Source)
                 {
-                    int responseSigniturePos = SearchForSubarray(packet.Data, _ntlmResponseSigniture);
+                    int responseSigniturePos = Utilities.SearchForSubarray(packet.Data, _ntlmResponseSigniture);
 
                     if (responseSigniturePos != -1)
                     {
@@ -130,24 +130,6 @@ namespace PcapAnalyzer
             return hex.ToString();
         }
 
-        public static int SearchForSubarray(byte[] input, byte[] subarray)
-        {
-            var len = subarray.Length;
-            var limit = input.Length - len;
-
-            for (var i = 0; i <= limit; i++)
-            {
-                var k = 0;
-
-                for (; k < len; k++)
-                {
-                    if (subarray[k] != input[i + k]) break;
-                }
-
-                if (k == len) return i;
-            }
-
-            return -1;
-        }
+        
     }
 }

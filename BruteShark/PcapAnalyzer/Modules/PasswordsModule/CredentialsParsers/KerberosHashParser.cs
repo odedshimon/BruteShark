@@ -28,8 +28,8 @@ namespace PcapAnalyzer
 
             byte[] sig_part = udpPacket.Data.SubArray(40, 4);
 
-            if (NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture) == 0 ||
-                NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
+            if (Utilities.SearchForSubarray(sig_part, this.pa_data_signiture) == 0 ||
+                Utilities.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
             {
                 var paddingLen = 0;
                 var hashOffset = 44;
@@ -92,8 +92,7 @@ namespace PcapAnalyzer
 
             return itemData;
         }
+
     }
 }
 
-
-//private readonly byte MessageType = 0x02;

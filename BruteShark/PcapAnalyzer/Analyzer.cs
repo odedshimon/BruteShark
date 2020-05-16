@@ -37,6 +37,7 @@ namespace PcapAnalyzer
         }
 
         // TODO: use template instead this 3 functions (or change all design)
+        // TODO: try catch so if one module will fail..
         public void Analyze(UdpPacket udpPacket)
         {
             foreach (var module in _modules)
