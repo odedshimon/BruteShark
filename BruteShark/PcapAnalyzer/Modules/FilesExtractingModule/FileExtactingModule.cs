@@ -15,7 +15,11 @@ namespace PcapAnalyzer.Modules.FilesExtractingModule
 
         private List<(string, string, string)> _filesSignitures = new List<(string header, string footer, string extention)>
         {
-            (header: "ffd8", footer: "ffd9", extention: "jpg")
+            (header: "FFD8FF", footer: "FFD9", extention: "jpg"),
+            (header: "89504E470D0A1A0A", footer: "49454E44AE426082", "png"),
+            (header: "474946383761", footer: "003B", "gif"),
+            (header: "000001BA", footer: "000001B7", "mpg"),
+            (header: "000001B3", footer: "000001B7", "mpg")
         };
 
 

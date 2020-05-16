@@ -35,13 +35,14 @@
             // 
             // mainSplitContainer
             // 
-            this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.mainSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.mainSplitContainer.Name = "mainSplitContainer";
-            this.mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.mainSplitContainer.Size = new System.Drawing.Size(653, 392);
-            this.mainSplitContainer.SplitterDistance = 217;
+            this.mainSplitContainer.SplitterDistance = 381;
             this.mainSplitContainer.TabIndex = 0;
             // 
             // FilesUserControl

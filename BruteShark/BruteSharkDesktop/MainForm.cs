@@ -47,6 +47,7 @@ namespace BruteSharkDesktop
             _passwordsUserControl = new GenericTableUserControl();
             _passwordsUserControl.Dock = DockStyle.Fill;
             _filesUserControl = new FilesUserControl();
+            _filesUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));

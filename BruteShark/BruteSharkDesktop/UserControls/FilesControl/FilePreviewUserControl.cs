@@ -13,7 +13,7 @@ namespace BruteSharkDesktop
 {
     public partial class FilePreviewUserControl : UserControl
     {
-        private readonly List<string> _imagesFilesExtentions = new List<string> {"jpg"};
+        private readonly List<string> _imagesFilesExtentions = new List<string> {"jpg", "png", "gif"};
 
         public FilePreviewUserControl()
         {
@@ -26,8 +26,8 @@ namespace BruteSharkDesktop
             {
                 if (_imagesFilesExtentions.Contains(extention))
                 {
-                    this.mainSplitContainer.Panel1.Controls.Clear();
-                    this.mainSplitContainer.Panel1.BackgroundImage = byteArrayToImage(data);
+                    this.filePreviewSplitContainer.Panel2.Controls.Clear();
+                    this.filePreviewSplitContainer.Panel2.BackgroundImage = byteArrayToImage(data);
                 }
             }
             catch 

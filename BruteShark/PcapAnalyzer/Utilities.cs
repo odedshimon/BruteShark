@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PcapAnalyzer
 {
-    internal static class Utilities
+    public static class Utilities
     {
         internal static string DecodeAsciiBase64(string input)
         {
@@ -51,7 +51,7 @@ namespace PcapAnalyzer
 
                 if (footer_position > 0)
                 {
-                    return data.SubArray(index: header_position, length: footer_position);
+                    return data.SubArray(index: header_position, length: footer_position + footer.Length);
                 }
             }
 

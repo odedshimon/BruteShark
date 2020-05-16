@@ -18,7 +18,7 @@ namespace PcapAnalyzerTest
             var modulesList = analyzer.AvailableModulesNames;
 
             // Assert.
-            Assert.AreEqual(2, modulesList.Count);
+            Assert.AreEqual(3, modulesList.Count);
         }
 
         [TestMethod]
@@ -223,6 +223,23 @@ Accept: text/html,application/xhtml+xml");
             Assert.AreEqual("DENYDC", hash.Domain);
             Assert.AreEqual(hash.Hash, "32d396a914a4d0a78e979ba75d4ff53c1db7294141760fee05e434c12ecf8d5b9aa5839e09a2244893aff5f384f79c37883f154a");
         }
+
+        [TestMethod]
+        public void Utilities_GetDataBetweenHeaderAndFooter_ParseSuccess()
+        {
+            // Arrange
+            var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a };
+            var header = new byte[] { 0x02, 0x03 };
+            var footer = new byte[] { 0x06, 0x07 };
+            var expected = new byte[] { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+
+            // Act
+            var res = PcapAnalyzer.Utilities.GetDataBetweenHeaderAndFooter(data, header, footer);
+
+            // Assert
+            Assert.IsTrue(res.SequenceEqual(expected));
+        }
+
 
         private PcapAnalyzer.TcpPacket mockPacket(string sourceIp, string destinationIp, int sourcePort, int destinationPort, string data)
         {
