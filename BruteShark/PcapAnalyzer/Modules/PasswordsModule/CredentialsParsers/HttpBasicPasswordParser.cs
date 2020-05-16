@@ -9,7 +9,7 @@ namespace PcapAnalyzer
     {
         private Regex _httpBasicAuthenticationRegex = new Regex(@"(.*)HTTP([\s\S]*)(Authorization: Basic )(?<Credentials>.*)");
 
-        public NetworkCredential Parse(TcpPacket tcpPacket)
+        public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             NetworkPassword credential = null;
             var packetData = Encoding.UTF8.GetString(tcpPacket.Data);
@@ -45,6 +45,6 @@ namespace PcapAnalyzer
             return credential;
         }
 
-        public NetworkCredential Parse(TcpSession tcpSession) => null;
+        public NetworkLayerObject Parse(TcpSession tcpSession) => null;
     }
 }

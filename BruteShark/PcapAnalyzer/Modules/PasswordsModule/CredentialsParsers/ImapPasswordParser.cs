@@ -24,11 +24,11 @@ namespace PcapAnalyzer
         private Regex _imapAuthenticateLoginRegex = new Regex($@"({ImapCommandTag})?((?i)AUTHENTICATE PLAIN)((\r\n(\+ )\r\n)| )(?<CredentialsBase64>.*)(\r\n)({ImapCommandTag})?OK");
         private Regex _imapCramMd5Regex =           new Regex($@"({ImapCommandTag})?((?i)AUTHENTICATE CRAM-MD5)\r\n\+ (?<Challenge>.*)\r\n(?<Response>.*)\r\n({ImapCommandTag})?OK");
 
-        public NetworkCredential Parse(TcpPacket tcpPacket) => null;
+        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
 
-        public NetworkCredential Parse(TcpSession tcpSession)
+        public NetworkLayerObject Parse(TcpSession tcpSession)
         {
-            NetworkCredential credential = null;
+            NetworkLayerObject credential = null;
             var sessionData = Encoding.ASCII.GetString(tcpSession.Data);
 
             if ((credential = SearchImapPlaintextLogin(tcpSession, sessionData)) != null)
@@ -47,7 +47,7 @@ namespace PcapAnalyzer
             return credential;
         }
 
-        private NetworkCredential SearchImapCramMd5Hash(TcpSession tcpSession, string sessionData)
+        private NetworkLayerObject SearchImapCramMd5Hash(TcpSession tcpSession, string sessionData)
         {
             NetworkHash hash = null;
             Match match = _imapCramMd5Regex.Match(sessionData);

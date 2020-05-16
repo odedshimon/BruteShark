@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PcapAnalyzer
 {
-    public class NetworkHash : NetworkCredential
+    public class NetworkHash : NetworkLayerObject
     {
         public string Hash { get; set; }
         public string HashType { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace PcapAnalyzer
 {
-    public class NetworkPassword : NetworkCredential
+    public class NetworkPassword : NetworkLayerObject
     {
         public string Username { get; set; }
         public string Password { get; set; }
