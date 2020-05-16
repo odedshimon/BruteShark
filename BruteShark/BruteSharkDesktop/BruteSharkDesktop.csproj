@@ -57,6 +57,18 @@
     <Compile Include="Casting.cs" />
     <Compile Include="Objects\TcpPacket.cs" />
     <Compile Include="Objects\TcpSession.cs" />
+    <Compile Include="UserControls\FilesControl\FilePreviewUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\FilesControl\FilePreviewUserControl.Designer.cs">
+      <DependentUpon>FilePreviewUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\FilesControl\FilesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\FilesControl\FilesUserControl.Designer.cs">
+      <DependentUpon>FilesUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\NetworkMapControl\NetworkMapEdge.cs" />
     <Compile Include="UserControls\SessionsControl\SessionsExplorerUserControl.cs">
       <SubType>UserControl</SubType>
@@ -96,6 +108,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UserControls\FilesControl\FilePreviewUserControl.resx">
+      <DependentUpon>FilePreviewUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\FilesControl\FilesUserControl.resx">
+      <DependentUpon>FilesUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\SessionsControl\SessionsExplorerUserControl.resx">
       <DependentUpon>SessionsExplorerUserControl.cs</DependentUpon>
     </EmbeddedResource>

@@ -38,6 +38,9 @@
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
             treeNode4,
             treeNode5});
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode7});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.secondaryUpperSplitContainer = new System.Windows.Forms.SplitContainer();
             this.runButton = new System.Windows.Forms.Button();
@@ -151,6 +154,7 @@
             this.sizeColumnHeader,
             this.statusColumnHeader});
             this.filesListView.FullRowSelect = true;
+            this.filesListView.HideSelection = false;
             this.filesListView.Location = new System.Drawing.Point(7, 7);
             this.filesListView.Margin = new System.Windows.Forms.Padding(0);
             this.filesListView.Name = "filesListView";
@@ -224,9 +228,14 @@
             treeNode5.Text = "Tcp Sessions";
             treeNode6.Name = "NetworkNode";
             treeNode6.Text = "Network";
+            treeNode7.Name = "FilesNode";
+            treeNode7.Text = "Files";
+            treeNode8.Name = "DataNode";
+            treeNode8.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode3,
-            treeNode6});
+            treeNode6,
+            treeNode8});
             this.modulesTreeView.Size = new System.Drawing.Size(229, 384);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);

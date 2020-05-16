@@ -44,7 +44,8 @@ namespace PcapAnalyzer.Modules.FilesExtractingModule
                             Destination = tcpSession.DestinationIp,
                             FileData = file_data,
                             Extention = extention,
-                            Protocol = "TCP"
+                            Protocol = "TCP",
+                            Algorithm = "Header-Footer Extraction"
                         };
 
                         // Raise event.

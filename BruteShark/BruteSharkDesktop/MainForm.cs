@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BruteSharkDesktop;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,7 @@ namespace BruteSharkDesktop
         private HashesUserControl _hashesUserControl;
         private NetworkMapUserControl _networkMapUserControl;
         private SessionsExplorerUserControl _sessionsExplorerUserControl;
+        private FilesUserControl _filesUserControl;
 
 
         public MainForm()
@@ -44,6 +46,7 @@ namespace BruteSharkDesktop
             _hashesUserControl.Dock = DockStyle.Fill;
             _passwordsUserControl = new GenericTableUserControl();
             _passwordsUserControl.Dock = DockStyle.Fill;
+            _filesUserControl = new FilesUserControl();
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
@@ -164,6 +167,12 @@ namespace BruteSharkDesktop
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
+            else if (e.ParsedItem is PcapAnalyzer.NetworkFile)
+            {
+                var fileObject = e.ParsedItem as PcapAnalyzer.NetworkFile;
+                _filesUserControl.AddFile(fileObject);
+                this.modulesTreeView.Nodes["DataNode"].Nodes["FilesNode"].Text = $"Files ({_filesUserControl.FilesCount})";
+            }
         }
 
        
@@ -222,6 +231,9 @@ namespace BruteSharkDesktop
                     break;
                 case "SessionsNode":
                     this.modulesSplitContainer.Panel2.Controls.Add(_sessionsExplorerUserControl);
+                    break;
+                case "FilesNode":
+                    this.modulesSplitContainer.Panel2.Controls.Add(_filesUserControl);
                     break;
                 default:
                     break;
