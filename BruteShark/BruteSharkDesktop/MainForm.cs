@@ -61,7 +61,16 @@ namespace BruteSharkDesktop
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
 
             InitilizeFilesIconsList();
+            InitilizeModulesCheckedListBox();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeModulesCheckedListBox()
+        {
+            foreach (var module_name in _analyzer.AvailableModulesNames)
+            {
+                this.modulesCheckedListBox.Items.Add(module_name, isChecked: false);
+            }
         }
 
         private void OnProcessingFinished(object sender, EventArgs e)
@@ -176,8 +185,6 @@ namespace BruteSharkDesktop
             }
         }
 
-       
-
         private void addFilesButton_Click(object sender, EventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
@@ -249,6 +256,21 @@ namespace BruteSharkDesktop
                 item.Remove();
             } 
         }
+
+        private void modulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var module_name = ((CheckedListBox)sender).Text;
+
+            if (e.NewValue == CheckState.Checked)
+            {
+                _analyzer.AddModule(module_name);
+            }
+            else
+            {
+                _analyzer.RemoveModule(module_name);
+            }
+        }
+
     }
 }
     

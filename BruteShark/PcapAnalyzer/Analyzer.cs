@@ -10,16 +10,50 @@ namespace PcapAnalyzer
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
-        public List<string> AvailableModulesNames => this._modules.Select(m => m.Name).ToList();
+        public List<string> AvailableModulesNames;
 
 
         public Analyzer()
         {
-            _iniitilyzeModulesList();
+            InitilyzeModulesList();
         }
 
-        private void _iniitilyzeModulesList()
+        public void RemoveModule(string module_name)
         {
+            VerfiyModuleExist(module_name);
+            _modules.Remove(
+                _modules.Where(
+                    m => m.Name == module_name).First());
+        }
+
+        public void AddModule(string module_name)
+        {
+            VerfiyModuleExist(module_name);
+
+            // TODO: Use local list of modules + write some tests
+            var module = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(s => s.GetTypes())
+                        .Where(p => typeof(IModule).IsAssignableFrom(p) && !p.IsInterface)
+                        .Select(t => (IModule)Activator.CreateInstance(t))
+                        .Where(m => m.Name == module_name)
+                        .First();
+
+            module.ParsedItemDetected += (s, e) => this.ParsedItemDetected(s, e);
+            _modules.Add(module);
+        }
+
+        private void VerfiyModuleExist(string module_name)
+        {
+            if (!this.AvailableModulesNames.Contains(module_name))
+            {
+                throw new Exception($"No module named {module_name}");
+            }
+        }
+
+        private void InitilyzeModulesList()
+        {
+            this.AvailableModulesNames = new List<string>();
+
             // Create an instance for any available modules by looking for every class that 
             // implements IModule.
             this._modules = AppDomain.CurrentDomain.GetAssemblies()
@@ -32,6 +66,7 @@ namespace PcapAnalyzer
             foreach(var m in _modules)
             {
                 m.ParsedItemDetected += (s, e) => this.ParsedItemDetected(s, e);
+                this.AvailableModulesNames.Add(m.Name);
             }
             
         }
@@ -62,7 +97,6 @@ namespace PcapAnalyzer
             }
         }
 
-        
 
     }
 }

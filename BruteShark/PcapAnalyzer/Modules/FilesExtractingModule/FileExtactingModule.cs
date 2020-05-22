@@ -49,7 +49,7 @@ namespace PcapAnalyzer.Modules.FilesExtractingModule
                             FileData = file_data,
                             Extention = extention,
                             Protocol = "TCP",
-                            Algorithm = "Header-Footer Extraction"
+                            Algorithm = "Header-Footer Carving"
                         };
 
                         // Raise event.

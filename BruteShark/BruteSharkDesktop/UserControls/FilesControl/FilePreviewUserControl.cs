@@ -27,6 +27,7 @@ namespace BruteSharkDesktop
                 if (_imagesFilesExtentions.Contains(extention))
                 {
                     this.filePreviewSplitContainer.Panel2.Controls.Clear();
+                    this.filePreviewSplitContainer.Panel2.BackgroundImageLayout = ImageLayout.Center;
                     this.filePreviewSplitContainer.Panel2.BackgroundImage = byteArrayToImage(data);
                 }
             }
