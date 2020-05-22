@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Passwords");
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Hashes");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
-            treeNode33,
-            treeNode34});
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Network Map");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Tcp Sessions");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
-            treeNode36,
-            treeNode37});
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Files");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
-            treeNode39});
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Passwords");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Hashes");
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
+            treeNode17,
+            treeNode18});
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Network Map");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Tcp Sessions");
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
+            treeNode20,
+            treeNode21});
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode23});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.secondaryUpperSplitContainer = new System.Windows.Forms.SplitContainer();
             this.runButton = new System.Windows.Forms.Button();
@@ -224,26 +224,26 @@
             this.modulesTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.modulesTreeView.Location = new System.Drawing.Point(0, 0);
             this.modulesTreeView.Name = "modulesTreeView";
-            treeNode33.Name = "PasswordsNode";
-            treeNode33.Text = "Passwords";
-            treeNode34.Name = "HashesNode";
-            treeNode34.Text = "Hashes";
-            treeNode35.Name = "CredentialsNode";
-            treeNode35.Text = "Credentials";
-            treeNode36.Name = "NetworkMapNode";
-            treeNode36.Text = "Network Map";
-            treeNode37.Name = "SessionsNode";
-            treeNode37.Text = "Tcp Sessions";
-            treeNode38.Name = "NetworkNode";
-            treeNode38.Text = "Network";
-            treeNode39.Name = "FilesNode";
-            treeNode39.Text = "Files";
-            treeNode40.Name = "DataNode";
-            treeNode40.Text = "Data";
+            treeNode17.Name = "PasswordsNode";
+            treeNode17.Text = "Passwords";
+            treeNode18.Name = "HashesNode";
+            treeNode18.Text = "Hashes";
+            treeNode19.Name = "CredentialsNode";
+            treeNode19.Text = "Credentials";
+            treeNode20.Name = "NetworkMapNode";
+            treeNode20.Text = "Network Map";
+            treeNode21.Name = "SessionsNode";
+            treeNode21.Text = "Tcp Sessions";
+            treeNode22.Name = "NetworkNode";
+            treeNode22.Text = "Network";
+            treeNode23.Name = "FilesNode";
+            treeNode23.Text = "Files";
+            treeNode24.Name = "DataNode";
+            treeNode24.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode35,
-            treeNode38,
-            treeNode40});
+            treeNode19,
+            treeNode22,
+            treeNode24});
             this.modulesTreeView.Size = new System.Drawing.Size(229, 384);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
@@ -262,7 +262,7 @@
             this.modulesGroupBox.Dock = System.Windows.Forms.DockStyle.Left;
             this.modulesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.modulesGroupBox.Name = "modulesGroupBox";
-            this.modulesGroupBox.Size = new System.Drawing.Size(220, 168);
+            this.modulesGroupBox.Size = new System.Drawing.Size(257, 168);
             this.modulesGroupBox.TabIndex = 0;
             this.modulesGroupBox.TabStop = false;
             this.modulesGroupBox.Text = "Modules";
@@ -275,7 +275,7 @@
             this.modulesCheckedListBox.FormattingEnabled = true;
             this.modulesCheckedListBox.Location = new System.Drawing.Point(7, 20);
             this.modulesCheckedListBox.Name = "modulesCheckedListBox";
-            this.modulesCheckedListBox.Size = new System.Drawing.Size(207, 139);
+            this.modulesCheckedListBox.Size = new System.Drawing.Size(244, 139);
             this.modulesCheckedListBox.TabIndex = 0;
             this.modulesCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.modulesCheckedListBox_ItemCheck);
             // 

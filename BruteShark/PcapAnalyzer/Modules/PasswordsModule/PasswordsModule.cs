@@ -13,7 +13,7 @@ namespace PcapAnalyzer
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
-        public string Name => "Passwords Extractor";
+        public string Name => "Credentials Extractor (Passwords, Hashes)";
 
 
         public PasswordsModule()

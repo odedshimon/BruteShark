@@ -19,6 +19,7 @@ Please ⭐️ this repository if this project helped you!
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
 * Build visual network diagram (Network nodes & users)
 * Reconstruct all TCP Sessions
+* File Carving
 
 ## Download
 * Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).
