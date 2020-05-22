@@ -13,7 +13,7 @@ namespace PcapAnalyzer
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
-        public string Name => "Passwords Extractor";
+        public string Name => "Credentials Extractor (Passwords, Hashes)";
 
 
         public PasswordsModule()
@@ -35,7 +35,7 @@ namespace PcapAnalyzer
 
         public void Analyze(UdpPacket udpPacket)
         {
-            NetworkCredential credential = this._kerberosParser.Parse(udpPacket);
+            NetworkLayerObject credential = this._kerberosParser.Parse(udpPacket);
 
             if (credential != null)
             {
@@ -51,7 +51,7 @@ namespace PcapAnalyzer
         {
             foreach (var parsrer in this._passwordParsers)
             {
-                NetworkCredential credential = parsrer.Parse(tcpPacket);
+                NetworkLayerObject credential = parsrer.Parse(tcpPacket);
 
                 if (credential != null)
                 {
@@ -69,7 +69,7 @@ namespace PcapAnalyzer
         {
             foreach (var parsrer in this._passwordParsers)
             {
-                NetworkCredential credential = parsrer.Parse(tcpSession);
+                NetworkLayerObject credential = parsrer.Parse(tcpSession);
 
                 if (credential != null)
                 {

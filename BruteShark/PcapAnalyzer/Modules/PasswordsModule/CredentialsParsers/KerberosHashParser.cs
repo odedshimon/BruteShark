@@ -21,15 +21,15 @@ namespace PcapAnalyzer
         private readonly byte[] pa_data_signiture2 = new byte[] { 0xa2, 0x35, 0x04, 0x33 };  // Hash length = 0x35 = 53
 
 
-        public NetworkCredential Parse(UdpPacket udpPacket)
+        public NetworkLayerObject Parse(UdpPacket udpPacket)
         {
             if (!isKerberos(udpPacket))
                 return null;
 
             byte[] sig_part = udpPacket.Data.SubArray(40, 4);
 
-            if (NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture) == 0 ||
-                NtlmsspHashParser.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
+            if (Utilities.SearchForSubarray(sig_part, this.pa_data_signiture) == 0 ||
+                Utilities.SearchForSubarray(sig_part, this.pa_data_signiture2) == 0)
             {
                 var paddingLen = 0;
                 var hashOffset = 44;
@@ -70,9 +70,9 @@ namespace PcapAnalyzer
             return null;
         }
 
-        public NetworkCredential Parse(TcpPacket tcpPacket) => null;
+        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
 
-        public NetworkCredential Parse(TcpSession tcpSession) => null;
+        public NetworkLayerObject Parse(TcpSession tcpSession) => null;
 
         private bool isKerberos(UdpPacket udpPacket)
         {
@@ -92,8 +92,7 @@ namespace PcapAnalyzer
 
             return itemData;
         }
+
     }
 }
 
-
-//private readonly byte MessageType = 0x02;

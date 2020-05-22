@@ -20,7 +20,7 @@ namespace PcapAnalyzer
             WaitForPassword,
         }
 
-        public NetworkCredential Parse(TcpPacket tcpPacket)
+        public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             return null;
         }
@@ -33,7 +33,7 @@ namespace PcapAnalyzer
         //
         // The algorithm should work on both Line-Mode (RFC 1116) and Character-Mode (the default 
         // Telnet mode). 
-        public NetworkCredential Parse(TcpSession tcpSession)
+        public NetworkLayerObject Parse(TcpSession tcpSession)
         {
             int serverPort;
             int clientPort;

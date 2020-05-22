@@ -14,7 +14,7 @@ namespace PcapAnalyzer
         private const string _httpDigestClientHeader = "Authorization: Digest";
         private Regex _clientHeaderRegex = new Regex($@"{_httpDigestClientHeader} (?<HeaderData>.*)\r\n");
 
-        public NetworkCredential Parse(TcpPacket tcpPacket)
+        public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             HttpDigestHash hash = null;
 
@@ -47,7 +47,7 @@ namespace PcapAnalyzer
             return hash;
         }
 
-        public NetworkCredential Parse(TcpSession tcpSession) => null;
+        public NetworkLayerObject Parse(TcpSession tcpSession) => null;
 
         // Parse the Server \ Client header data to a dictionary.
         // The header elements are separated with comma, a value can be wrapped with quotation mark or not.

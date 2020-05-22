@@ -6,7 +6,7 @@ namespace PcapAnalyzer
 {
     interface IPasswordParser
     {
-        NetworkCredential Parse(TcpPacket tcpPacket);
-        NetworkCredential Parse(TcpSession tcpSession);
+        NetworkLayerObject Parse(TcpPacket tcpPacket);
+        NetworkLayerObject Parse(TcpSession tcpSession);
     }
 }

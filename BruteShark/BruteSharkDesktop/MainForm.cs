@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BruteSharkDesktop;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,7 @@ namespace BruteSharkDesktop
         private HashesUserControl _hashesUserControl;
         private NetworkMapUserControl _networkMapUserControl;
         private SessionsExplorerUserControl _sessionsExplorerUserControl;
+        private FilesUserControl _filesUserControl;
 
 
         public MainForm()
@@ -44,6 +46,8 @@ namespace BruteSharkDesktop
             _hashesUserControl.Dock = DockStyle.Fill;
             _passwordsUserControl = new GenericTableUserControl();
             _passwordsUserControl.Dock = DockStyle.Fill;
+            _filesUserControl = new FilesUserControl();
+            _filesUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
@@ -57,7 +61,16 @@ namespace BruteSharkDesktop
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
 
             InitilizeFilesIconsList();
+            InitilizeModulesCheckedListBox();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeModulesCheckedListBox()
+        {
+            foreach (var module_name in _analyzer.AvailableModulesNames)
+            {
+                this.modulesCheckedListBox.Items.Add(module_name, isChecked: false);
+            }
         }
 
         private void OnProcessingFinished(object sender, EventArgs e)
@@ -164,9 +177,13 @@ namespace BruteSharkDesktop
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
+            else if (e.ParsedItem is PcapAnalyzer.NetworkFile)
+            {
+                var fileObject = e.ParsedItem as PcapAnalyzer.NetworkFile;
+                _filesUserControl.AddFile(fileObject);
+                this.modulesTreeView.Nodes["DataNode"].Nodes["FilesNode"].Text = $"Files ({_filesUserControl.FilesCount})";
+            }
         }
-
-       
 
         private void addFilesButton_Click(object sender, EventArgs e)
         {
@@ -223,6 +240,9 @@ namespace BruteSharkDesktop
                 case "SessionsNode":
                     this.modulesSplitContainer.Panel2.Controls.Add(_sessionsExplorerUserControl);
                     break;
+                case "FilesNode":
+                    this.modulesSplitContainer.Panel2.Controls.Add(_filesUserControl);
+                    break;
                 default:
                     break;
             }
@@ -236,6 +256,21 @@ namespace BruteSharkDesktop
                 item.Remove();
             } 
         }
+
+        private void modulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var module_name = ((CheckedListBox)sender).Text;
+
+            if (e.NewValue == CheckState.Checked)
+            {
+                _analyzer.AddModule(module_name);
+            }
+            else
+            {
+                _analyzer.RemoveModule(module_name);
+            }
+        }
+
     }
 }
     

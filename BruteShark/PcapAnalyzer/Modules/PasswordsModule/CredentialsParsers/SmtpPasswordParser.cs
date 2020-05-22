@@ -15,12 +15,12 @@ namespace PcapAnalyzer
         private Regex _smtpAuthLoginRegex = new Regex(string.Format(@"AUTH LOGIN{0}334 VXNlcm5hbWU6{0}(?<Username>.*){0}334 UGFzc3dvcmQ6{0}(?<Password>.*){0}235", AsciiNewLine));
         private Regex _smtpCramMd5Regex =   new Regex(string.Format(@"AUTH CRAM-MD5({0})334\s(?<Challenge>.*)({0})(?<Hash>.*)({0})235", AsciiNewLine));
 
-        public NetworkCredential Parse(TcpPacket tcpPacket) => null;
+        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
 
-        public NetworkCredential Parse(TcpSession tcpSession)
+        public NetworkLayerObject Parse(TcpSession tcpSession)
         {
             // TODO: determine the autentication direction
-            NetworkCredential credential = null;
+            NetworkLayerObject credential = null;
             var sessionData = Encoding.ASCII.GetString(tcpSession.Data);
 
             if((credential = SearchSmtpAuthLogin(tcpSession, sessionData)) != null)
