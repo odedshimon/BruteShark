@@ -12,16 +12,21 @@ namespace PcapAnalyzer.Modules.FilesExtractingModule
         public string Name => "File Extracintg";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
-
+        // File signitures examples:
+        // 1. Scalpel (https://github.com/machn1k/Scalpel-2.0/blob/master/conf/scalpel.conf)
+        // 2. OpenForensics (https://github.com/ethanbayne/OpenForensics/blob/master/OpenForensics/FileTypes.xml)
         private List<(string, string, string)> _filesSignitures = new List<(string header, string footer, string extention)>
         {
             (header: "FFD8FF", footer: "FFD9", extention: "jpg"),
             (header: "89504E470D0A1A0A", footer: "49454E44AE426082", "png"),
+            (header: "504E47", footer: "FFFCFDFE", "png"),
             (header: "474946383761", footer: "003B", "gif"),
-            (header: "000001BA", footer: "000001B7", "mpg"),
-            (header: "000001B3", footer: "000001B7", "mpg")
+            (header: "474946383961", footer: "00003B", "gif"),
+            (header: "000001BA", footer: "000001B9", "mpg"),
+            (header: "000001B3", footer: "000001B7", "mpg"),
+            (header: "504B030414", footer: "504B050600", "zip")
         };
-
+            
 
         public void Analyze(UdpPacket udpPacket) { }
 

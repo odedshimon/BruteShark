@@ -22,7 +22,7 @@ namespace PcapAnalyzerTest
         }
 
         [TestMethod]
-        public void Analyzer_AddModule_Adduccess()
+        public void Analyzer_AddModule_AddSuccess()
         {
             // Arrange.
             var analyzer = new PcapAnalyzer.Analyzer();
@@ -47,6 +47,17 @@ namespace PcapAnalyzerTest
 
             // Assert.
             Assert.AreEqual(1, analyzer.LoadedModulesNames.Count);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void Analyzer_AddWrangModuleName_AddFail()
+        {
+            // Arrange.
+            var analyzer = new PcapAnalyzer.Analyzer();
+
+            // Act.
+            analyzer.AddModule("not-a-real-module-name");
         }
 
         [TestMethod]
