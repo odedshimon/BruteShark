@@ -37,6 +37,8 @@ mono BruteSharkCli/BruteSharkCli.exe
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
 ![](readme_media/NetworkMap.png)
+##### File Carving
+![](readme_media/FilesCarving.png)
 ##### Password Extracting
 ![](readme_media/Passwords.PNG)
 ##### Reconstruct all TCP Sessions
