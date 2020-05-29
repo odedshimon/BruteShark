@@ -120,7 +120,7 @@ public MainForm()
 ##### BruteSharkCLI (PL)
 Command Line Interface version of Brute Shark.
 Cross platform Windows and Linux (with Mono).
-Available commands: 
+Available commands:  
 (1). help  
 (2). add-file  
 (3). start  

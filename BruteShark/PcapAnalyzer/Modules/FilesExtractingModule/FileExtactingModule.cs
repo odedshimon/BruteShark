@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 
 
-namespace PcapAnalyzer.Modules.FilesExtractingModule
+namespace PcapAnalyzer
 {
-    class FileExtactingModule : IModule
+    public class FileExtactingModule : IModule
     {
         public string Name => "File Extracintg";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
