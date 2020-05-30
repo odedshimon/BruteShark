@@ -12,7 +12,8 @@ The various projects in the solution can also be used independently as infrastru
 
 The project was developed in my spare time to address two main passions of mine: software architecture and analyzing network data.
 
-Contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
+I love to get feedbacks from BruteShark users, your opinion is important to me!
+Feel free to contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
 Please ⭐️ this repository if this project helped you!
 
