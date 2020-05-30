@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 
-namespace PcapAnalyzer.Modules.FilesExtractingModule
+namespace PcapAnalyzer
 {
-    class FileExtactingModule : IModule
+    public class FileExtactingModule : IModule
     {
         public string Name => "File Extracintg";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
@@ -39,29 +40,48 @@ namespace PcapAnalyzer.Modules.FilesExtractingModule
             {
                 foreach (var (header, footer, extention) in _filesSignitures)
                 {
-                    // TODO: add session object one side stream data getter
-                    var file_data = Utilities.GetDataBetweenHeaderAndFooter(
-                        tcpSession.Data, 
-                        Utilities.StringToByteArray(header), 
-                        Utilities.StringToByteArray(footer));
+                    var startIndex = 0;
+                    var footerPosition = 0;
+                    var dummy = 0;
 
-                    if (file_data != null)
+                    // We need a while loop incase there are more than on file from each type in the session data.
+                    while (startIndex != -1)
                     {
-                        var file = new NetworkFile()
-                        {
-                            Source = tcpSession.SourceIp,
-                            Destination = tcpSession.DestinationIp,
-                            FileData = file_data,
-                            Extention = extention,
-                            Protocol = "TCP",
-                            Algorithm = "Header-Footer Carving"
-                        };
+                        // TODO: add session one side data stream getter.
+                        // Algorythm: each iteration search from the last footer position (if found any file).
+                        var file_data = Utilities.GetDataBetweenHeaderAndFooter
+                        (
+                            data: tcpSession.Data.Skip(startIndex).ToArray(),
+                            header: Utilities.StringToByteArray(header),
+                            footer: Utilities.StringToByteArray(footer), 
+                            headerPosition: ref dummy, 
+                            footerPosition: ref footerPosition
+                        );
 
-                        // Raise event.
-                        this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                        if (file_data != null)
                         {
-                            ParsedItem = file
-                        });
+                            var file = new NetworkFile()
+                            {
+                                Source = tcpSession.SourceIp,
+                                Destination = tcpSession.DestinationIp,
+                                FileData = file_data,
+                                Extention = extention,
+                                Protocol = "TCP",
+                                Algorithm = "Header-Footer Carving"
+                            };
+
+                            // Raise event.
+                            this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                            {
+                                ParsedItem = file
+                            });
+
+                            // If file was found, update the search start index.
+                            startIndex += footerPosition + footer.Length;
+                            continue;
+                        }
+
+                        startIndex = -1;
                     }
                 }
                 
