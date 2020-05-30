@@ -41,7 +41,15 @@ namespace PcapAnalyzer
 
         public static byte[] GetDataBetweenHeaderAndFooter(byte[] data, byte[] header, byte[] footer)
         {
+            var x = 0;
+            var y = 0;
+            return GetDataBetweenHeaderAndFooter(data, header, footer, ref x, ref y);
+        }
+
+        public static byte[] GetDataBetweenHeaderAndFooter(byte[] data, byte[] header, byte[] footer, ref int headerPosition, ref int footerPosition)
+        {
             int header_position = Utilities.SearchForSubarray(data, header);
+            headerPosition = header_position;
 
             if (header_position > 0)
             {
@@ -51,6 +59,7 @@ namespace PcapAnalyzer
 
                 if (footer_position > 0)
                 {
+                    footerPosition = header_position + footer_position;
                     return data.SubArray(index: header_position, length: footer_position + footer.Length);
                 }
             }

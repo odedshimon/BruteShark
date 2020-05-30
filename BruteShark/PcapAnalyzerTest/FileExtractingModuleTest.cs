@@ -10,6 +10,31 @@ namespace PcapAnalyzerTest
     [TestClass]
     public class FileExtractingModuleTest
     {
+        public TcpSession SingleJpgSession { get; set; }
+        public TcpSession TwoJpgSession { get; set; }
+
+        public FileExtractingModuleTest()
+        {
+            // Dummy jpg data wrapped by two 0xff from each side
+            var dummyJpgData = new byte[] { 0xff, 0xff, 0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0xff, 0xd9, 0xff, 0xff };
+
+            // Create a sesion with dummy jpg data.
+            this.SingleJpgSession = new PcapAnalyzer.TcpSession
+            {
+                SourceIp = "1.1.1.1",
+                DestinationIp = "2.2.2.2",
+                Data = dummyJpgData
+            };
+
+            this.TwoJpgSession = new PcapAnalyzer.TcpSession
+            {
+                SourceIp = "1.1.1.1",
+                DestinationIp = "2.2.2.2",
+                Data = dummyJpgData.Concat(dummyJpgData).ToArray()
+            };
+        }
+
+
         [TestMethod]
         public void Utilities_GetDataBetweenHeaderAndFooter_ParseSuccess()
         {
@@ -27,29 +52,37 @@ namespace PcapAnalyzerTest
         }
 
         [TestMethod]
-        public void FileExtractingModule_ParseJpgFile_ParseSuccess()
+        public void FileExtractingModule_ParseSingleJpgFile_ParseSuccess()
         {
-            // Arrange. Create a sesion with dummy jpg data wrapped by two 0xff from each side.
+            // Arrange. Create e.
             var fileExtractingModule = new PcapAnalyzer.FileExtactingModule();
             var parsedFiles = new List<PcapAnalyzer.NetworkFile>();
-
             fileExtractingModule.ParsedItemDetected += 
                 (object sender, ParsedItemDetectedEventArgs e) => parsedFiles.Add(e.ParsedItem as PcapAnalyzer.NetworkFile);
 
-            var session = new PcapAnalyzer.TcpSession
-            {
-                SourceIp = "1.1.1.1",
-                DestinationIp = "2.2.2.2",
-                Data = new byte[] {0xff, 0xff, 0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0xff, 0xd9, 0xff, 0xff }
-            };
-
             // Act.
-            fileExtractingModule.Analyze(session);
+            fileExtractingModule.Analyze(this.SingleJpgSession);
 
-            // Assert (the file has 32 packets).
+            // Assert.
             Assert.AreEqual(1, parsedFiles.Count);
         }
 
-  
+        [TestMethod]
+        public void FileExtractingModule_ParseTwoJpgFile_ParseSuccess()
+        {
+            // Arrange. Create e.
+            var fileExtractingModule = new PcapAnalyzer.FileExtactingModule();
+            var parsedFiles = new List<PcapAnalyzer.NetworkFile>();
+            fileExtractingModule.ParsedItemDetected +=
+                (object sender, ParsedItemDetectedEventArgs e) => parsedFiles.Add(e.ParsedItem as PcapAnalyzer.NetworkFile);
+
+            // Act.
+            fileExtractingModule.Analyze(this.TwoJpgSession);
+
+            // Assert.
+            Assert.AreEqual(2, parsedFiles.Count);
+        }
+
+
     }
 }
