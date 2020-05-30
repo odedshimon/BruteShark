@@ -7128,8 +7128,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Brute Shark"
-        "ProductCode" = "8:{FE654F77-245B-4A8E-8EB1-DE86492EDCAD}"
-        "PackageCode" = "8:{F75272AA-B930-4334-B98A-2B02C73DC27F}"
+        "ProductCode" = "8:{4A6B7BA6-FE9D-4C6A-93F0-EA91B4C351A6}"
+        "PackageCode" = "8:{88F39B20-0934-4E27-8A5F-9ADA199AF62B}"
         "UpgradeCode" = "8:{7BC0B535-E9FF-42C9-9E4C-CBBCE13EC25F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

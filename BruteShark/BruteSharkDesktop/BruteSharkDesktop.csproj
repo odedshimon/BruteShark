@@ -177,6 +177,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="brute.ico" />
     <Content Include="BruteSharkIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
