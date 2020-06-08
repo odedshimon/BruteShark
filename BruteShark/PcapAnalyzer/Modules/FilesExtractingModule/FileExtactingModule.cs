@@ -44,7 +44,7 @@ namespace PcapAnalyzer
                     var footerPosition = 0;
                     var dummy = 0;
 
-                    // We need a while loop incase there are more than on file from each type in the session data.
+                    // We need a while loop incase there are more than one file from each type in the session data.
                     while (startIndex != -1)
                     {
                         // TODO: add session one side data stream getter.
