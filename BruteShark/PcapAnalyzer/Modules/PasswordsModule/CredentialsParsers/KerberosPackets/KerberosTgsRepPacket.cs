@@ -26,7 +26,7 @@ namespace PcapAnalyzer
         public string Crealm { get; private set; }
         public AsnElt Cname { get; private set; }
         public AsnElt Padata { get; private set; }
-        public AsnElt Ticket { get; private set; }
+        public KerberosTicket Ticket { get; private set; }
         public AsnElt EncPart { get; private set; }
 
         public KerberosTgsRepPacket(AsnElt[] kdc_rep)
@@ -51,7 +51,7 @@ namespace PcapAnalyzer
                         this.Cname = s.Sub[0];
                         break;
                     case 5:
-                        this.Ticket = s.Sub[0].Sub[0];
+                        this.Ticket = new KerberosTicket(ticketData: s.Sub[0].Sub[0]);
                         break;
                     case 6:
                         this.EncPart = s.Sub[0];

@@ -5,10 +5,9 @@ using Asn1;
 
 namespace PcapAnalyzer
 {
+    // All objects definitions are from: http://web.mit.edu/freebsd/head/crypto/heimdal/lib/asn1/krb5.asn1
     public static class KerberosPacketParser
     {
-        
-
         // 13 - Get service ticket (Response to KRB_TGS_REQ request)
         public enum MessageType : byte
         {
