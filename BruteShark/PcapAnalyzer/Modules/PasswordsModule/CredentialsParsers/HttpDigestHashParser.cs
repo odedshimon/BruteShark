@@ -14,6 +14,9 @@ namespace PcapAnalyzer
         private const string _httpDigestClientHeader = "Authorization: Digest";
         private Regex _clientHeaderRegex = new Regex($@"{_httpDigestClientHeader} (?<HeaderData>.*)\r\n");
 
+
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             HttpDigestHash hash = null;

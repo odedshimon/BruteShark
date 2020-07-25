@@ -9,6 +9,9 @@ namespace PcapAnalyzer
     {
         private Regex _httpBasicAuthenticationRegex = new Regex(@"(.*)HTTP([\s\S]*)(Authorization: Basic )(?<Credentials>.*)");
 
+
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             NetworkPassword credential = null;

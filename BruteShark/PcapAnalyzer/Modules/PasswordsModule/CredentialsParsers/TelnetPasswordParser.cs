@@ -20,6 +20,8 @@ namespace PcapAnalyzer
             WaitForPassword,
         }
 
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             return null;

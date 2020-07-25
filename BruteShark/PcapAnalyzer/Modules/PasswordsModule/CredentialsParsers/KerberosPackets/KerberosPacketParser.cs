@@ -19,19 +19,17 @@ namespace PcapAnalyzer
             object result = null;
             byte[] asn_buffer = AsnIO.FindBER(kerberosBuffer);
 
-            if (asn_buffer is null)
+            if (asn_buffer != null)
             {
-                throw new Exception("Not a valid Kerberos V5 data");
-            }
+                AsnElt asn_object = AsnElt.Decode(asn_buffer);
 
-            AsnElt asn_object = AsnElt.Decode(asn_buffer);
-
-            // Get the application number
-            switch (asn_object.TagValue)
-            {
-                case (int)MessageType.krb_tgs_rep:
-                    result = new KerberosTgsRepPacket(kdc_rep: asn_object.Sub[0].Sub);
-                    break;
+                // Get the application number
+                switch (asn_object.TagValue)
+                {
+                    case (int)MessageType.krb_tgs_rep:
+                        result = new KerberosTgsRepPacket(kdc_rep: asn_object.Sub[0].Sub);
+                        break;
+                }
             }
 
             return result;

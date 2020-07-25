@@ -32,6 +32,8 @@ namespace PcapAnalyzer
         private readonly byte[] _ntlmChallengeSigniture = new byte[] { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00 };
         private readonly byte[] _ntlmResponseSigniture =  new byte[] { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x03, 0x00, 0x00, 0x00 };
 
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket)
         {
             return null;
