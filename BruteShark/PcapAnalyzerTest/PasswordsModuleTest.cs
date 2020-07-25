@@ -215,8 +215,8 @@ Accept: text/html,application/xhtml+xml");
         [TestMethod]
         public void KerberosPacket_Create_CreateSuccess()
         {
-            // Arrange
-            var data = new byte[]
+            // Arrange.
+            var kerberosTgsRepBuffer = new byte[]
             {
                 0x6d, 0x82, 0x05, 0x08, 0x30, 0x82,
                 0x05, 0x04, 0xa0, 0x03, 0x02, 0x01, 0x05, 0xa1, 0x03, 0x02, 0x01, 0x0d, 0xa3, 0x0c, 0x1b, 0x0a,
@@ -302,8 +302,12 @@ Accept: text/html,application/xhtml+xml");
                 0xb6, 0x93, 0xd2, 0x1e, 0x4d, 0xa3
             };
 
-            // Act + Assert (no exception thrown)
-            var kerberosParser = new KerberosPacket(data);
+            // Act.
+            var kerberosTgsRepPacket = KerberosPacketParser.GetKerberosPacket(kerberosTgsRepBuffer) as KerberosTgsRepPacket;
+
+            // Assert.
+            Assert.AreEqual(kerberosTgsRepPacket.Pvno, 5);
+            Assert.AreEqual(kerberosTgsRepPacket.Crealm, "DENYDC.COM");
         }
 
         private PcapAnalyzer.TcpPacket mockPacket(string sourceIp, string destinationIp, int sourcePort, int destinationPort, string data)
