@@ -6,9 +6,17 @@ namespace PcapAnalyzer
 {
     class KerberosTicketHashParser : IPasswordParser
     {
-        public NetworkLayerObject Parse(UdpPacket udpPacket)
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => 
+            this.GetKerberosTicketsHash(udpPacket.SourceIp, udpPacket.DestinationIp, udpPacket.Data);
+
+        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null; 
+            // this.GetKerberosTicketsHash(tcpPacket.SourceIp, tcpPacket.DestinationIp, tcpPacket.Data);
+
+        public NetworkLayerObject Parse(TcpSession tcpSession) => null;
+
+        private NetworkLayerObject GetKerberosTicketsHash(string source, string destination, byte[] data)
         {
-            var kerberosPacket = KerberosPacketParser.GetKerberosPacket(udpPacket.Data);
+            var kerberosPacket = KerberosPacketParser.GetKerberosPacket(data);
 
             if (kerberosPacket is null)
             {
@@ -23,8 +31,8 @@ namespace PcapAnalyzer
                 {
                     return new KerberosTgsRepHash()
                     {
-                        Source = udpPacket.SourceIp,
-                        Destination = udpPacket.DestinationIp,
+                        Source = source,
+                        Destination = destination,
                         Realm = kerberosTgsRepPacket.Ticket.Realm,
                         Etype = 23,
                         Username = kerberosTgsRepPacket.Cname.Name,
@@ -38,9 +46,5 @@ namespace PcapAnalyzer
 
             return null;
         }
-
-        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
-
-        public NetworkLayerObject Parse(TcpSession tcpSession) => null;
     }
 }

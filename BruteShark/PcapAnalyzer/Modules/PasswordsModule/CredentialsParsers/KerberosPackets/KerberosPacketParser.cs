@@ -23,12 +23,19 @@ namespace PcapAnalyzer
             {
                 AsnElt asn_object = AsnElt.Decode(asn_buffer);
 
-                // Get the application number
-                switch (asn_object.TagValue)
+                try
                 {
-                    case (int)MessageType.krb_tgs_rep:
-                        result = new KerberosTgsRepPacket(kdc_rep: asn_object.Sub[0].Sub);
-                        break;
+                    // Get the application number
+                    switch (asn_object.TagValue)
+                    {
+                        case (int)MessageType.krb_tgs_rep:
+                            result = new KerberosTgsRepPacket(kdc_rep: asn_object.Sub[0].Sub);
+                            break;
+                    }
+                }
+                catch
+                { 
+                    // TODO: log
                 }
             }
 

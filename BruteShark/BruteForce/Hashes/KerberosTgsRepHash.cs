@@ -9,6 +9,5 @@ namespace BruteForce
         public string Realm { get; set; }
         public string Username { get; set; }
         public string ServiceName { get; set; }
-
     }
 }
