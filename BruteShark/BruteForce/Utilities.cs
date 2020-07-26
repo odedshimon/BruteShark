@@ -24,12 +24,27 @@ namespace BruteForce
             {
                 res = ConvertToHashcatFormat(hash as KerberosHash);
             }
+            else if (hash is KerberosTgsRepHash)
+            {
+                res = ConvertToHashcatFormat(hash as KerberosTgsRepHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
             }
 
             return res;
+        }
+
+        // $krb5tgs$23$*user$realm$test/spn*$63386d22d359fe42230300d56852c9eb$891ad31d09ab89c6b3b8c5e5de6....
+        public static string ConvertToHashcatFormat(KerberosTgsRepHash kerberosHash)
+        {
+            return string.Format("$krb5tgs$23${0}${1}${2}${3}${4}",
+                kerberosHash.Username,
+                kerberosHash.Realm,
+                kerberosHash.ServiceName,
+                kerberosHash.HashedData.Substring(0, 32),
+                kerberosHash.HashedData.Substring(32));
         }
 
         public static string ConvertToHashcatFormat(KerberosHash kerberosHash)

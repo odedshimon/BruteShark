@@ -27,8 +27,8 @@ namespace PcapAnalyzer
                         Destination = udpPacket.DestinationIp,
                         Realm = kerberosTgsRepPacket.Ticket.Realm,
                         Etype = 23,
-                        Username = kerberosTgsRepPacket.Ticket.Sname.Username,
-                        ServiceName = kerberosTgsRepPacket.Ticket.Sname.ServiceName,
+                        Username = kerberosTgsRepPacket.Cname.Name,
+                        ServiceName = kerberosTgsRepPacket.Ticket.Sname.Name,
                         Hash = NtlmsspHashParser.ByteArrayToHexString(kerberosTgsRepPacket.Ticket.EncrytedPart.Cipher),
                         Protocol = "UDP",
                         HashType = "Kerberos TGS Rep Etype 23"

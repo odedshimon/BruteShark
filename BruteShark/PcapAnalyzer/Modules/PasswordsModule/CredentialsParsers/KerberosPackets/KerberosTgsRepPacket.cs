@@ -24,7 +24,7 @@ namespace PcapAnalyzer
         public long Pvno { get; private set; }
         public long Msg_type { get; private set; }
         public string Crealm { get; private set; }
-        public AsnElt Cname { get; private set; }
+        public KerberosPrincipalName Cname { get; private set; }
         public AsnElt Padata { get; private set; }
         public KerberosTicket Ticket { get; private set; }
         public AsnElt EncPart { get; private set; }
@@ -48,7 +48,7 @@ namespace PcapAnalyzer
                         this.Crealm = Encoding.ASCII.GetString(s.Sub[0].GetOctetString());
                         break;
                     case 4:
-                        this.Cname = s.Sub[0];
+                        this.Cname = new KerberosPrincipalName(principalNameData: s.Sub[0]);
                         break;
                     case 5:
                         this.Ticket = new KerberosTicket(ticketData: s.Sub[0].Sub[0]);

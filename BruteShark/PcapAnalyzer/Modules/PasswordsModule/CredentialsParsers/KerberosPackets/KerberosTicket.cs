@@ -65,32 +65,26 @@ namespace PcapAnalyzer
     //      KRB5_NT_MS_PRINCIPAL_AND_ID(-129), -- NT style name and SID
     //      KRB5_NT_NTLM(-1200) -- NTLM name, realm is domain
     // }
-
     public class KerberosPrincipalName
     {
-        const int KRB5_NT_SRV_INST = 2;
+        const int KRB5_NT_PRINCIPAL = 1;
+        const int KRB5_NT_SRV_INST =  2;
 
         public int NameType { get; private set; }
         public List<string> NameString { get; private set; }
-        public string Username
-        {
-            get 
-            {
-                if (this.NameType == KRB5_NT_SRV_INST && this.NameString.Count >= 2)
-                {
-                    return this.NameString[0];
-                }
-                return null;
-            }
-        }
-        public string ServiceName
+        public string Name
         {
             get
             {
-                if (this.NameType == KRB5_NT_SRV_INST && this.NameString.Count >= 2)
+                if (this.NameType == KRB5_NT_PRINCIPAL && this.NameString.Count >= 1)
                 {
-                    return this.NameString[1];
+                    return this.NameString[0];
                 }
+                else if (this.NameType == KRB5_NT_SRV_INST && this.NameString.Count >= 2)
+                {
+                    return this.NameString[0] + "/" + this.NameString[1];
+                }
+
                 return null;
             }
         }
