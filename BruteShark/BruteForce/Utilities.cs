@@ -24,12 +24,34 @@ namespace BruteForce
             {
                 res = ConvertToHashcatFormat(hash as KerberosHash);
             }
+            else if (hash is KerberosTgsRepHash)
+            {
+                res = ConvertToHashcatFormat(hash as KerberosTgsRepHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
             }
 
             return res;
+        }
+
+        
+        public static string ConvertToHashcatFormat(KerberosTgsRepHash kerberosHash)
+        {
+            // Acording to Hashcat examples page this is the format:
+            // $krb5tgs$23$*user$realm$test/spn*$63386d22d359fe42230300d56852c9eb$891ad31d09ab89c6b3b8c5e5de6....
+            // return string.Format("$krb5tgs$23${0}${1}${2}${3}${4}",
+            //     kerberosHash.Username,
+            //     kerberosHash.Realm,
+            //     kerberosHash.ServiceName,
+            //     kerberosHash.HashedData.Substring(0, 32),
+            //     kerberosHash.HashedData.Substring(32));
+
+            // But at other places i saw this format, this is worked great with Hashcat 6.0.
+            return string.Format("$krb5tgs$23${0}${1}",
+                kerberosHash.HashedData.Substring(0, 32),
+                kerberosHash.HashedData.Substring(32));
         }
 
         public static string ConvertToHashcatFormat(KerberosHash kerberosHash)

@@ -9,6 +9,8 @@ namespace PcapAnalyzer
     {
         private Regex _ftpSuccessfullLoginRegex = new Regex(@"220(.*)\r\nUSER\s(?<Username>.*)\r\n331(.*)\r\nPASS\s(?<Password>.*)\r\n");
 
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
 
         public NetworkLayerObject Parse(TcpSession tcpSession)

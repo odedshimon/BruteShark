@@ -24,6 +24,8 @@ namespace PcapAnalyzer
         private Regex _imapAuthenticateLoginRegex = new Regex($@"({ImapCommandTag})?((?i)AUTHENTICATE PLAIN)((\r\n(\+ )\r\n)| )(?<CredentialsBase64>.*)(\r\n)({ImapCommandTag})?OK");
         private Regex _imapCramMd5Regex =           new Regex($@"({ImapCommandTag})?((?i)AUTHENTICATE CRAM-MD5)\r\n\+ (?<Challenge>.*)\r\n(?<Response>.*)\r\n({ImapCommandTag})?OK");
 
+        public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
+
         public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
 
         public NetworkLayerObject Parse(TcpSession tcpSession)
