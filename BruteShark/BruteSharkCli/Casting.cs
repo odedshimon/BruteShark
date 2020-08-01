@@ -28,12 +28,27 @@ namespace BruteSharkCli
             {
                 res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.KerberosHash);
             }
+            else if (hash is PcapAnalyzer.KerberosTgsRepHash)
+            {
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosTgsRepHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
             }
 
             return res;
+        }
+
+        private static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.KerberosTgsRepHash kerberosTgsRepHash)
+        {
+            return new BruteForce.KerberosTgsRepHash()
+            {
+                ServiceName = kerberosTgsRepHash.ServiceName,
+                Realm = kerberosTgsRepHash.Realm,
+                HashedData = kerberosTgsRepHash.Hash,
+                Username = kerberosTgsRepHash.Username
+            };
         }
 
         public static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.HttpDigestHash httpDigestHash)

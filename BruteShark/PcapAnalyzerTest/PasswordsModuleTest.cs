@@ -309,8 +309,8 @@ Accept: text/html,application/xhtml+xml");
             Assert.AreEqual(kerberosTgsRepPacket.Pvno, 5);
             Assert.AreEqual(kerberosTgsRepPacket.Crealm, "DENYDC.COM");
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.Realm, "DENYDC.COM");
-            Assert.AreEqual(kerberosTgsRepPacket.Ticket.Sname.Username, "HTTP");
-            Assert.AreEqual(kerberosTgsRepPacket.Ticket.Sname.ServiceName, "upwin2003.denyDC.com");
+            Assert.AreEqual(kerberosTgsRepPacket.Cname.Name, "Administrator");
+            Assert.AreEqual(kerberosTgsRepPacket.Ticket.Sname.Name, "HTTP/upwin2003.denyDC.com");
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.EncrytedPart.Etype, 23);
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.EncrytedPart.Cipher.Length, 880);
 
