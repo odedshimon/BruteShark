@@ -38,6 +38,7 @@ namespace BruteSharkCli
 
             // TODO: create command for this.
             _processor.BuildTcpSessions = true;
+            LoadAllModules();
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
@@ -54,6 +55,14 @@ namespace BruteSharkCli
             _shell.AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
 
+        }
+
+        private void LoadAllModules()
+        {
+            foreach (string m in _analyzer.AvailableModulesNames)
+            {
+                _analyzer.AddModule(m);
+            }
         }
 
         private void OnParsedItemDetected(object sender, ParsedItemDetectedEventArgs e)
