@@ -58,32 +58,40 @@ namespace PcapAnalyzer
             
         }
 
-        // TODO: use template instead this 3 functions (or change all design)
-        // TODO: try catch so if one module will fail..
-        public void Analyze(UdpPacket udpPacket)
+        public void Analyze(object item)
         {
             foreach (var module in _loadedModules)
             {
-                module.Analyze(udpPacket);
+                if (item is UdpPacket)
+                {
+                    SafeRun(() => module.Analyze(item as UdpPacket));
+                }
+                else if (item is TcpPacket)
+                {
+                    SafeRun(() => module.Analyze(item as TcpPacket));
+                }
+                else if (item is TcpSession)
+                {
+                    SafeRun(() => module.Analyze(item as TcpSession));
+                }
+                else
+                {
+                    throw new Exception("Unsupported type for analyzer");
+                }
             }
         }
 
-        public void Analyze(TcpPacket tcpPacket)
+        private void SafeRun(Action method)
         {
-            foreach (var module in _loadedModules)
+            try
             {
-                module.Analyze(tcpPacket);
+                method();
+            }
+            catch (Exception ex)
+            {
+                // TODO: log
             }
         }
-
-        public void Analyze(TcpSession tcpSession)
-        {
-            foreach (var module in _loadedModules)
-            {
-                module.Analyze(tcpSession);
-            }
-        }
-
-
+        
     }
 }
