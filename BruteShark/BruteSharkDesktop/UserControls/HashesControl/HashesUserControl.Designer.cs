@@ -32,14 +32,14 @@
             this.hashViewSplitContainer = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.hashDataRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.selectedFolderTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.choseDirectoryButton = new System.Windows.Forms.Button();
+            this.createHashcatFileButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.hashesComboBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.createHashcatFileButton = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.choseDirectoryButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.selectedFolderTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel2.SuspendLayout();
             this.mainSplitContainer.SuspendLayout();
@@ -55,20 +55,23 @@
             this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.mainSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.mainSplitContainer.Name = "mainSplitContainer";
             this.mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // mainSplitContainer.Panel2
             // 
             this.mainSplitContainer.Panel2.Controls.Add(this.hashViewSplitContainer);
-            this.mainSplitContainer.Size = new System.Drawing.Size(595, 444);
-            this.mainSplitContainer.SplitterDistance = 257;
+            this.mainSplitContainer.Size = new System.Drawing.Size(694, 512);
+            this.mainSplitContainer.SplitterDistance = 324;
+            this.mainSplitContainer.SplitterWidth = 5;
             this.mainSplitContainer.TabIndex = 0;
             // 
             // hashViewSplitContainer
             // 
             this.hashViewSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hashViewSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.hashViewSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hashViewSplitContainer.Name = "hashViewSplitContainer";
             // 
             // hashViewSplitContainer.Panel1
@@ -80,16 +83,18 @@
             // 
             this.hashViewSplitContainer.Panel2.Controls.Add(this.panel1);
             this.hashViewSplitContainer.Panel2.Controls.Add(this.label2);
-            this.hashViewSplitContainer.Size = new System.Drawing.Size(595, 183);
-            this.hashViewSplitContainer.SplitterDistance = 347;
+            this.hashViewSplitContainer.Size = new System.Drawing.Size(694, 183);
+            this.hashViewSplitContainer.SplitterDistance = 404;
+            this.hashViewSplitContainer.SplitterWidth = 5;
             this.hashViewSplitContainer.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Location = new System.Drawing.Point(4, 0);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
+            this.label1.Size = new System.Drawing.Size(83, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Full Hash Data";
             // 
@@ -98,39 +103,13 @@
             this.hashDataRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hashDataRichTextBox.Location = new System.Drawing.Point(3, 16);
+            this.hashDataRichTextBox.Location = new System.Drawing.Point(4, 18);
+            this.hashDataRichTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hashDataRichTextBox.Name = "hashDataRichTextBox";
-            this.hashDataRichTextBox.Size = new System.Drawing.Size(341, 164);
+            this.hashDataRichTextBox.Size = new System.Drawing.Size(396, 161);
             this.hashDataRichTextBox.TabIndex = 0;
             this.hashDataRichTextBox.Text = "";
             this.hashDataRichTextBox.WordWrap = false;
-            // 
-            // hashesComboBox
-            // 
-            this.hashesComboBox.FormattingEnabled = true;
-            this.hashesComboBox.Location = new System.Drawing.Point(104, 11);
-            this.hashesComboBox.Name = "hashesComboBox";
-            this.hashesComboBox.Size = new System.Drawing.Size(101, 21);
-            this.hashesComboBox.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Brute Force";
-            // 
-            // createHashcatFileButton
-            // 
-            this.createHashcatFileButton.Location = new System.Drawing.Point(16, 72);
-            this.createHashcatFileButton.Name = "createHashcatFileButton";
-            this.createHashcatFileButton.Size = new System.Drawing.Size(189, 23);
-            this.createHashcatFileButton.TabIndex = 0;
-            this.createHashcatFileButton.Text = "Create Hashcat Hashes file";
-            this.createHashcatFileButton.UseVisualStyleBackColor = true;
-            this.createHashcatFileButton.Click += new System.EventHandler(this.createHashcatFileButton_Click);
             // 
             // panel1
             // 
@@ -140,54 +119,90 @@
             this.panel1.Controls.Add(this.createHashcatFileButton);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.hashesComboBox);
-            this.panel1.Location = new System.Drawing.Point(6, 16);
+            this.panel1.Location = new System.Drawing.Point(7, 18);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(220, 107);
+            this.panel1.Size = new System.Drawing.Size(257, 124);
             this.panel1.TabIndex = 4;
             // 
-            // label3
+            // selectedFolderTextBox
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 18);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Select hash type:";
+            this.selectedFolderTextBox.Location = new System.Drawing.Point(160, 52);
+            this.selectedFolderTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.selectedFolderTextBox.Name = "selectedFolderTextBox";
+            this.selectedFolderTextBox.ReadOnly = true;
+            this.selectedFolderTextBox.Size = new System.Drawing.Size(79, 23);
+            this.selectedFolderTextBox.TabIndex = 7;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 55);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(91, 15);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Select directory:";
             // 
             // choseDirectoryButton
             // 
-            this.choseDirectoryButton.Location = new System.Drawing.Point(104, 45);
+            this.choseDirectoryButton.Location = new System.Drawing.Point(121, 52);
+            this.choseDirectoryButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.choseDirectoryButton.Name = "choseDirectoryButton";
-            this.choseDirectoryButton.Size = new System.Drawing.Size(27, 20);
+            this.choseDirectoryButton.Size = new System.Drawing.Size(31, 23);
             this.choseDirectoryButton.TabIndex = 5;
             this.choseDirectoryButton.Text = "...";
             this.choseDirectoryButton.UseVisualStyleBackColor = true;
             this.choseDirectoryButton.Click += new System.EventHandler(this.choseDirectoryButton_Click);
             // 
-            // label4
+            // createHashcatFileButton
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 48);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Select directory:";
+            this.createHashcatFileButton.Location = new System.Drawing.Point(19, 83);
+            this.createHashcatFileButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.createHashcatFileButton.Name = "createHashcatFileButton";
+            this.createHashcatFileButton.Size = new System.Drawing.Size(220, 27);
+            this.createHashcatFileButton.TabIndex = 0;
+            this.createHashcatFileButton.Text = "Create Hashcat Hashes file";
+            this.createHashcatFileButton.UseVisualStyleBackColor = true;
+            this.createHashcatFileButton.Click += new System.EventHandler(this.createHashcatFileButton_Click);
             // 
-            // selectedFolderTextBox
+            // label3
             // 
-            this.selectedFolderTextBox.Location = new System.Drawing.Point(137, 45);
-            this.selectedFolderTextBox.Name = "selectedFolderTextBox";
-            this.selectedFolderTextBox.ReadOnly = true;
-            this.selectedFolderTextBox.Size = new System.Drawing.Size(68, 20);
-            this.selectedFolderTextBox.TabIndex = 7;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 21);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 15);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Select hash type:";
+            // 
+            // hashesComboBox
+            // 
+            this.hashesComboBox.FormattingEnabled = true;
+            this.hashesComboBox.Location = new System.Drawing.Point(121, 13);
+            this.hashesComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.hashesComboBox.Name = "hashesComboBox";
+            this.hashesComboBox.Size = new System.Drawing.Size(117, 23);
+            this.hashesComboBox.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(4, 0);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(67, 15);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Brute Force";
             // 
             // HashesUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.mainSplitContainer);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HashesUserControl";
-            this.Size = new System.Drawing.Size(595, 444);
+            this.Size = new System.Drawing.Size(694, 512);
             this.mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);
