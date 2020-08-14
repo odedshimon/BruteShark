@@ -5,6 +5,7 @@
 		<TargetFramework>netcoreapp3.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ApplicationIcon>BruteSharkIcon.ico</ApplicationIcon>
 	</PropertyGroup>
 	
 	<ItemGroup>
