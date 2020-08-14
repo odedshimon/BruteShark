@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	
+	<Product 
+		Id="CE452A31-5E74-41BE-A768-EBEE7B325862" 
+		Name="BruteSharkDesktopInstaller" 
+		Language="1033" Version="1.0.0.1" 
+		Manufacturer="Oded Shimon" 
+		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
+		
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+		
+		<Feature Id="ProductFeature" Title="BruteSharkDesktopInstaller" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentRef Id="ApplicationShortcutDesktop"/>
+		</Feature>
+		
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+
+			<Directory Id="DesktopFolder" Name="Desktop">
+				<Component Id="ApplicationShortcutDesktop" Guid="EE875EB0-FCFF-454F-8FF6-2F59B1085D5A">
+					<Shortcut Id="ApplicationDesktopShortcut"
+						Name="Brute Shark Desktop"
+						Description="Brute Shark Desktop"
+						Target="[INSTALLFOLDER]BruteSharkDesktop.exe"
+						WorkingDirectory="MYAPPDIRPROPERTY"/>
+					<RemoveFolder Id="DesktopFolder" On="uninstall"/>
+					<RegistryValue
+						Root="HKCU"
+						Key="Software/MyAppName"
+						Name="installed"
+						Type="integer"
+						Value="1"
+						KeyPath="yes"/>
+				</Component>
+			</Directory>
+			
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="BruteSharkDesktop" />
+			</Directory>
+			
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			
+			<!--
+			<Component Id="MainExecutable">
+				<File Source="$(var.BruteSharkDesktop.TargetPath)" />
+			</Component> -->
+
+			<Component Id="BruteSharkDesktop.exe">
+				<File Id="BruteSharkDesktop.exe" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.exe" />
+			</Component>
+			
+			<Component Id="Asn1.dll">
+				<File Id="Asn1.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Asn1.dll" />
+			</Component>
+
+			<Component Id="AutomaticGraphLayout.dll">
+				<File Id="AutomaticGraphLayout.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="AutomaticGraphLayout.dll" />
+			</Component>
+
+			<Component Id="AutomaticGraphLayout.Drawing.dll">
+				<File Id="AutomaticGraphLayout.Drawing.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="AutomaticGraphLayout.Drawing.dll" />
+			</Component>
+
+			<Component Id="BruteForce.dll">
+				<File Id="BruteForce.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteForce.dll" />
+			</Component>
+
+			<Component Id="BruteSharkDesktop.deps.json">
+				<File Id="BruteSharkDesktop.deps.json" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.deps.json" />
+			</Component>
+
+			<Component Id="BruteSharkDesktop.dll">
+				<File Id="BruteSharkDesktop.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.dll" />
+			</Component>
+
+			<Component Id="BruteSharkDesktop.dll.config">
+				<File Id="BruteSharkDesktop.dll.config" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.dll.config" />
+			</Component>
+
+			<Component Id="BruteSharkDesktop.runtimeconfig.dev.json">
+				<File Id="BruteSharkDesktop.runtimeconfig.dev.json" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.runtimeconfig.dev.json" />
+			</Component>
+
+			<Component Id="BruteSharkDesktop.runtimeconfig.json">
+				<File Id="BruteSharkDesktop.runtimeconfig.json" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.runtimeconfig.json" />
+			</Component>
+
+			<Component Id="Microsoft.Msagl.GraphViewerGdi.dll">
+				<File Id="Microsoft.Msagl.GraphViewerGdi.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Microsoft.Msagl.GraphViewerGdi.dll" />
+			</Component>
+
+			<Component Id="PacketDotNet.dll">
+				<File Id="PacketDotNet.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PacketDotNet.dll" />
+			</Component>
+
+			<Component Id="PcapAnalyzer.dll">
+				<File Id="PcapAnalyzer.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PcapAnalyzer.dll" />
+			</Component>
+
+			<Component Id="PcapProcessor.dll">
+				<File Id="PcapProcessor.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PcapProcessor.dll" />
+			</Component>
+
+			<Component Id="SharpPcap.dll">
+				<File Id="SharpPcap.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="SharpPcap.dll" />
+			</Component>
+
+
+		</ComponentGroup>
+	</Fragment>
+</Wix>
