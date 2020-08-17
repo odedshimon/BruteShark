@@ -3,14 +3,15 @@
 	
 	<Product 
 		Id="CE452A31-5E74-41BE-A768-EBEE7B325862" 
-		Name="BruteSharkDesktopInstaller" 
-		Language="1033" Version="1.0.0.1" 
+		Name="BruteSharkDesktop" 
+		Language="1033" Version="1.0.0.2" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes"/>
+		<UIRef Id="WixUI_Minimal" />
 		
 		<Feature Id="ProductFeature" Title="BruteSharkDesktopInstaller" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
@@ -21,12 +22,12 @@
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
-
+			
 			<Directory Id="DesktopFolder" Name="Desktop">
 				<Component Id="ApplicationShortcutDesktop" Guid="EE875EB0-FCFF-454F-8FF6-2F59B1085D5A">
 					<Shortcut Id="ApplicationDesktopShortcut"
-						Name="Brute Shark Desktop"
-						Description="Brute Shark Desktop"
+						Name="Brute Shark"
+						Description="Brute Shark"
 						Target="[INSTALLFOLDER]BruteSharkDesktop.exe"
 						WorkingDirectory="MYAPPDIRPROPERTY"/>
 					<RemoveFolder Id="DesktopFolder" On="uninstall"/>
@@ -49,11 +50,6 @@
 
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			
-			<!--
-			<Component Id="MainExecutable">
-				<File Source="$(var.BruteSharkDesktop.TargetPath)" />
-			</Component> -->
 
 			<Component Id="BruteSharkDesktop.exe">
 				<File Id="BruteSharkDesktop.exe" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BruteSharkDesktop.exe" />
