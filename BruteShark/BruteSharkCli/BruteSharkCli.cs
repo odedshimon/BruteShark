@@ -49,9 +49,10 @@ namespace BruteSharkCli
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
 
             // Add commands to the Cli Shell.
-            _shell.AddCommand(new CliShellCommand("add-file", p => _files.Add(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
+            _shell.AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
             _shell.AddCommand(new CliShellCommand("start", p => StartAnalyzing(), "Start analyzing"));
             _shell.AddCommand(new CliShellCommand("show-passwords", p => PrintPasswords(), "Print passwords."));
+            _shell.AddCommand(new CliShellCommand("show-modules", p => PrintModules(), "Print modules."));
             _shell.AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
 
@@ -146,6 +147,19 @@ namespace BruteSharkCli
             };
         }
 
+        private void AddFile(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                _files.Add(filePath);
+            }
+            else
+            {
+                Console.WriteLine("File does not exist.");
+            }
+
+        }
+
         internal void Start()
         {
             Utilities.PrintBruteSharkAsciiArt();
@@ -161,6 +175,14 @@ namespace BruteSharkCli
         private void PrintHashes()
         {
             this._hashes.ToDataTable(itemLengthLimit:15).Print();
+        }
+
+        private void PrintModules()
+        {
+            foreach (string module in this._analyzer.AvailableModulesNames)
+            {
+                Console.WriteLine($" - {module}");
+            }
         }
 
         private void StartAnalyzing()
