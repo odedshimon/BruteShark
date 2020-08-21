@@ -1,4 +1,5 @@
-﻿using SharpPcap;
+﻿using PcapProcessor.Objects;
+using SharpPcap;
 using SharpPcap.LibPcap;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace PcapProcessor
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArived;
+        public delegate void UdpStreamArrivedEventHandler(object sender, UdpStreamArrivedEventArgs e);
+        public event UdpStreamArrivedEventHandler UdpStreamArrived;
         public delegate void FileProcessingStartedEventHandler(object sender, FileProcessingStartedEventArgs e);
         public event FileProcessingStartedEventHandler FileProcessingStarted;
         public delegate void FileProcessingEndedEventHandler(object sender, FileProcessingEndedEventArgs e);
@@ -26,14 +29,18 @@ namespace PcapProcessor
         public event EventHandler ProcessingFinished;
 
         public bool BuildTcpSessions { get; set; }
+        public bool BuildUdpStreams { get; set; }
         private TcpSessionsBuilder _tcpSessionsBuilder;
+        private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
 
 
         public Processor()
         {
             this.BuildTcpSessions = false;
+            this.BuildUdpStreams = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
+            _udpStreamBuilder = new UdpStreamBuilder();
             _processingPrecentsPredicator = new ProcessingPrecentsPredicator();
             _processingPrecentsPredicator.ProcessingPrecentsChanged += OnPredicatorProcessingPrecentsChanged;
         }
@@ -83,6 +90,13 @@ namespace PcapProcessor
                         TcpSession = session
                     });
                 }
+                foreach (var session in this._udpStreamBuilder.Sessions)
+                {
+                    UdpStreamArrived?.Invoke(this, new UdpStreamArrivedEventArgs()
+                    {
+                        UdpStream = session
+                    });
+                }
 
                 _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
                 FileProcessingEnded?.Invoke(this, new FileProcessingEndedEventArgs() { FilePath = filePath });
@@ -116,6 +130,12 @@ namespace PcapProcessor
                             Data = udpPacket.PayloadData ?? new byte[] { }
                         }
                     });
+                    
+                    if (this.BuildUdpStreams)
+                    {
+                        this._udpStreamBuilder.HandlePacket(udpPacket);
+                    }
+                    _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
                 else if (tcpPacket != null)
                 {
