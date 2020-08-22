@@ -1,7 +1,7 @@
 ﻿namespace PcapProcessor
 {
-    public class TcpSessionArivedEventArgs
+    public class UdpStreamArrivedEventArgs
     {
-        public TcpSession TcpSession { get; set; }
+        public UdpStream UdpStream { get; set; }
     }
 }

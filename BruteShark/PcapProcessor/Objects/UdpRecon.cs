@@ -35,7 +35,7 @@ namespace PcapProcessor
         uint[] src_port = new uint[2];
         uint[] udp_port = new uint[2];
         uint[] bytes_written = new uint[2];
-        bool incomplete_tcp_stream = false;
+        bool incomplete_udp_stream = false;
         bool closed = false;
         byte[] data = new byte[] { };
         public byte[] Data
@@ -45,7 +45,7 @@ namespace PcapProcessor
         }
         public bool IncompleteStream
         {
-            get { return incomplete_tcp_stream; }
+            get { return incomplete_udp_stream; }
         }
         public bool EmptyStream { get; private set; } = true;
 
@@ -84,12 +84,10 @@ namespace PcapProcessor
             ulong length = (ulong)(udpPacket.Bytes.Length - udpPacket.HeaderData.Length);
             if (length == 0) return;
 
-            reassemble_tcp(
-                (ulong)udpPacket.SequenceNumber,
+            reassemble_udp(
                 length,
                 udpPacket.PayloadData,
                 (ulong)udpPacket.PayloadData.Length,
-                udpPacket.Synchronize,
                 IpAddressToLong(udpPacket.ParentPacket.Extract<PacketDotNet.IPPacket>().SourceAddress.ToString()),
                 IpAddressToLong(udpPacket.ParentPacket.Extract<PacketDotNet.IPPacket>().DestinationAddress.ToString()),
                 (uint)udpPacket.SourcePort,
@@ -124,20 +122,9 @@ namespace PcapProcessor
             return ret;
         }
 
-        /// <summary>
-        /// Reconstructs the tcp session
-        /// </summary>
-        /// <param name="sequence">Sequence number of the tcp packet</param>
-        /// <param name="length">The size of the original packet data</param>
-        /// <param name="data">The captured data</param>
-        /// <param name="data_length">The length of the captured data</param>
-        /// <param name="synflag"></param>
-        /// <param name="net_src">The source ip address</param>
-        /// <param name="net_dst">The destination ip address</param>
-        /// <param name="srcport">The source port</param>
-        /// <param name="dstport">The destination port</param>
-        private void reassemble_udp(ulong sequence, ulong length, byte[] data,
-                       ulong data_length, bool synflag, long net_src,
+        
+        private void reassemble_udp(ulong length, byte[] data,
+                       ulong data_length, long net_src,
                        long net_dst, uint srcport, uint dstport, PacketDotNet.UdpPacket udpPacket)
         {
             long srcx, dstx;
@@ -187,96 +174,9 @@ namespace PcapProcessor
 
             if (data_length < length)
             {
-                incomplete_tcp_stream = true;
+                incomplete_udp_stream = true;
             }
-
-            /* now that we have filed away the srcs, lets get the sequence number stuff
-            figured out */
-            if (first)
-            {
-                /* this is the first time we have seen this src's sequence number */
-                seq[src_index] = sequence + length;
-                if (synflag)
-                {
-                    seq[src_index]++;
-                }
-                /* write out the packet data */
-                write_packet_data(src_index, data, udpPacket);
-                return;
-            }
-            /* if we are here, we have already seen this src, let's
-            try and figure out if this packet is in the right place */
-            if (sequence < seq[src_index])
-            {
-                /* this sequence number seems dated, but
-                check the end to make sure it has no more
-                info than we have already seen */
-                newseq = sequence + length;
-                if (newseq > seq[src_index])
-                {
-                    ulong new_len;
-
-                    /* this one has more than we have seen. let's get the
-                    payload that we have not seen. */
-
-                    new_len = seq[src_index] - sequence;
-
-                    if (data_length <= new_len)
-                    {
-                        data = null;
-                        data_length = 0;
-                        incomplete_tcp_stream = true;
-                    }
-                    else
-                    {
-                        data_length -= new_len;
-                        byte[] tmpData = new byte[data_length];
-                        for (ulong i = 0; i < data_length; i++)
-                            tmpData[i] = data[i + new_len];
-
-                        data = tmpData;
-                    }
-                    sequence = seq[src_index];
-                    length = newseq - seq[src_index];
-
-                    /* this will now appear to be right on time :) */
-                }
-            }
-            if (sequence == seq[src_index])
-            {
-                /* right on time */
-                seq[src_index] += length;
-                if (synflag) seq[src_index]++;
-                if (data != null)
-                {
-                    write_packet_data(src_index, data, udpPacket);
-                }
-                /* done with the packet, see if it caused a fragment to fit */
-                while (check_fragments(src_index, udpPacket))
-                    ;
-            }
-            else
-            {
-                /* out of order packet */
-                if (data_length > 0 && sequence > seq[src_index])
-                {
-                    tmp_frag = new Udpfrag();
-                    tmp_frag.data = data;
-                    tmp_frag.seq = sequence;
-                    tmp_frag.len = length;
-                    tmp_frag.data_len = data_length;
-
-                    if (frags[src_index] != null)
-                    {
-                        tmp_frag.next = frags[src_index];
-                    }
-                    else
-                    {
-                        tmp_frag.next = null;
-                    }
-                    frags[src_index] = tmp_frag;
-                }
-            }
+            
         }
 
         /* here we search through all the frag we have collected to see if
@@ -321,7 +221,7 @@ namespace PcapProcessor
             int i;
 
             EmptyStream = true;
-            incomplete_tcp_stream = false;
+            incomplete_udp_stream = false;
             for (i = 0; i < 2; i++)
             {
                 seq[i] = 0;
