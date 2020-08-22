@@ -60,7 +60,6 @@ namespace BruteSharkCli
                 Console.Write(this.Seperator);
                 string userInput = Console.ReadLine();
                 legalInput = RunCommand(userInput);
-
             }
             while (!legalInput);
         }
