@@ -75,6 +75,7 @@ namespace PcapProcessor
             {
                 FileProcessingStarted?.Invoke(this, new FileProcessingStartedEventArgs() { FilePath = filePath });
                 _tcpSessionsBuilder.Clear();
+                _udpStreamBuilder.Clear();
 
                 // Get an offline device, handle packets registering for the Packet 
                 // Arrival event and start capturing from that file.

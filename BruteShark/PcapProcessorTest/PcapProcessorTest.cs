@@ -38,6 +38,24 @@ namespace PcapProcessorTest
             // Assert (the file has 32 packets).
             Assert.AreEqual(32, recievedPackets.Count);
         }
+        
+        [TestMethod]
+        public void PcapProcessor_reconstructUdpStreams_success()
+        {
+            // Arrange.
+            var recievedStreams = new List<UdpStream>();
+            var processor = new Processor();
+            processor.BuildUdpStreams = true;
+            processor.UdpStreamArrived +=
+                (object sender, UdpStreamArrivedEventArgs e) => recievedStreams.Add(e.UdpStream);
+
+            // Act.
+            processor.ProcessPcap(this.UdpFilePath);
+
+
+            // Assert 
+            Assert.AreEqual(16, recievedStreams.Count);
+        }
 
         [TestMethod]
         public void PcapProcessor_ReadTcpPackets_ReadSuccess()
