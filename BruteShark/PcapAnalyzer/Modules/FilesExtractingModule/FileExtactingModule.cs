@@ -94,7 +94,61 @@ namespace PcapAnalyzer
 
         public void Analyze(UdpStream udpStream)
         {
-            
-        }
+            // TODO: remove this try-except (implement at Analyzer class)
+            try
+            {
+                foreach (var (header, footer, extention) in _filesSignitures)
+                {
+                    var startIndex = 0;
+                    var footerPosition = 0;
+                    var dummy = 0;
+
+                    // We need a while loop incase there are more than one file from each type in the session data.
+                    while (startIndex != -1)
+                    {
+                        // TODO: add session one side data stream getter.
+                        // Algorythm: each iteration search from the last footer position (if found any file).
+                        var file_data = Utilities.GetDataBetweenHeaderAndFooter
+                        (
+                            data: udpStream.Data.Skip(startIndex).ToArray(),
+                            header: Utilities.StringToByteArray(header),
+                            footer: Utilities.StringToByteArray(footer),
+                            headerPosition: ref dummy,
+                            footerPosition: ref footerPosition
+                        );
+
+                        if (file_data != null)
+                        {
+                            var file = new NetworkFile()
+                            {
+                                Source = udpStream.SourceIp,
+                                Destination = udpStream.DestinationIp,
+                                FileData = file_data,
+                                Extention = extention,
+                                Protocol = "UDP",
+                                Algorithm = "Header-Footer Carving"
+                            };
+
+                            // Raise event.
+                            this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                            {
+                                ParsedItem = file
+                            });
+
+                            // If file was found, update the search start index.
+                            startIndex += footerPosition + footer.Length;
+                            continue;
+                        }
+
+                        startIndex = -1;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+
+            }
+        }      
     }
 }

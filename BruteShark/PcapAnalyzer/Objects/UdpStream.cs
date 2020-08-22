@@ -10,6 +10,7 @@ namespace PcapAnalyzer
         public int DestinationPort { get; set; }
         public byte[] Data { get; set; }
         public List<UdpPacket> Packets { get; set; }
+        
 
         public UdpStream()
         {
