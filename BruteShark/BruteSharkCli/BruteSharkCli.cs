@@ -13,7 +13,9 @@ namespace BruteSharkCli
     internal class BruteSharkCli
     {
         private ulong _tcpPacketsCount;
+        private ulong _udpPacketsCount;
         private int _tcpSessionsCount;
+        private int _udpStreamsCount;
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
         private List<string> _files;
@@ -44,7 +46,9 @@ namespace BruteSharkCli
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
+            _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
             _processor.TcpSessionArived += (s, e) => this.UpdateTcpSessionsCount();
+            _processor.UdpStreamArrived += (s, e) => this.UpdateUdpStreamsCount();
             _processor.TcpSessionArived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
 
@@ -87,6 +91,13 @@ namespace BruteSharkCli
             }
         }
 
+        private void UpdateUdpStreamsCount()
+        {
+            if (++_udpStreamsCount% 10 == 0)
+            {
+                UpdateAnalyzingStatus();
+            }
+        }
         private void UpdateTcpPacketsCount()
         {
             if (++_tcpPacketsCount % 10 == 0)
@@ -94,14 +105,22 @@ namespace BruteSharkCli
                 UpdateAnalyzingStatus();
             }
         }
-
+        private void UpdateUdpPacketsCount()
+        {
+            if (++_udpPacketsCount % 10 == 0)
+            {
+                UpdateAnalyzingStatus();
+            }
+        }
         private void UpdateAnalyzingStatus()
         {
             lock (_printingLock)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"\r[+] Packets Analyzed: {++_tcpPacketsCount}");
-                Console.WriteLine($"\r[+] Sessions Analyzed: {++_tcpSessionsCount}");
+                Console.WriteLine($"\r[+] TCP Packets Analyzed: {++_tcpPacketsCount}");
+                Console.WriteLine($"\r[+] UDP Packets Analyzed: {++_udpPacketsCount}");
+                Console.WriteLine($"\r[+] TCP Sessions Analyzed: {++_tcpSessionsCount}");
+                Console.WriteLine($"\r[+] UDP Streams Analyzed: {++_udpStreamsCount}");
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.SetCursorPosition(0, Console.CursorTop - 4);
