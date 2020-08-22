@@ -56,6 +56,24 @@ namespace PcapProcessorTest
             // Assert 
             Assert.AreEqual(16, recievedStreams.Count);
         }
+        
+        [TestMethod]
+        public void PcapProcessor_reconstructUdpStreams_zero_streams()
+        {
+            // Arrange.
+            var recievedStreams = new List<UdpStream>();
+            var processor = new Processor();
+            processor.BuildUdpStreams = true;
+            processor.UdpStreamArrived +=
+                (object sender, UdpStreamArrivedEventArgs e) => recievedStreams.Add(e.UdpStream);
+
+            // Act.
+            processor.ProcessPcap(this.TcpFivePacketsFilePath);
+
+
+            // Assert 
+            Assert.AreEqual(0, recievedStreams.Count);
+        }
 
         [TestMethod]
         public void PcapProcessor_ReadTcpPackets_ReadSuccess()
