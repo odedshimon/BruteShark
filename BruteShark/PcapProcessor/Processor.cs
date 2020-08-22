@@ -47,6 +47,10 @@ namespace PcapProcessor
 
         private void OnPredicatorProcessingPrecentsChanged(object sender, ProcessingPrecentsChangedEventArgs e)
         {
+            // TODO: think of make this check in a dedicated extention method for events (e.g SafeInvoke())
+            if (ProcessingPrecentsChanged is null)
+                return;
+
             ProcessingPrecentsChanged.Invoke(this, new ProcessingPrecentsChangedEventArgs()
             {
                 Precents = e.Precents
