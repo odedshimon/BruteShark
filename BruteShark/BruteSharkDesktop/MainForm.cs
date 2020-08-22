@@ -36,6 +36,7 @@ namespace BruteSharkDesktop
             _processor = new PcapProcessor.Processor();
             _analyzer = new PcapAnalyzer.Analyzer();
             _processor.BuildTcpSessions = true;
+            _processor.BuildUdpStreams = true;
 
             // Create the user controls. 
             _networkMapUserControl = new NetworkMapUserControl();

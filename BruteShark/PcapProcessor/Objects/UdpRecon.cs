@@ -18,7 +18,6 @@ namespace PcapProcessor
     /// </summary>
     internal class Udpfrag
     {
-        public ulong seq = 0;
         public ulong len = 0;
         public ulong data_len = 0;
         public byte[] data = null;
@@ -30,7 +29,6 @@ namespace PcapProcessor
         // frags - Holds two linked list of the session data, one for each direction    
         // seq - Holds the last sequence number for each direction
         Udpfrag[] frags = new Udpfrag[2];
-        ulong[] seq = new ulong[2];
         long[] src_addr = new long[2];
         uint[] src_port = new uint[2];
         uint[] udp_port = new uint[2];
@@ -53,7 +51,7 @@ namespace PcapProcessor
 
         public UdpRecon()
         {
-            reset_tcp_reassembly();
+            reset_udp_reassembly();
             this.packets = new List<PacketDotNet.UdpPacket>();
         }
 
@@ -64,7 +62,7 @@ namespace PcapProcessor
         {
             if (!closed)
             {
-                reset_tcp_reassembly();
+                reset_udp_reassembly();
                 closed = true;
             }
         }
@@ -188,14 +186,14 @@ namespace PcapProcessor
             current = frags[index];
             while (current != null)
             {
-                if (current.seq == seq[index])
-                {
+                
+                
                     /* this fragment fits the stream */
                     if (current.data != null)
                     {
                         write_packet_data(index, current.data, udpPacket);
                     }
-                    seq[index] += current.len;
+               
                     if (prev != null)
                     {
                         prev.next = current.next;
@@ -207,7 +205,7 @@ namespace PcapProcessor
                     current.data = null;
                     current = null;
                     return true;
-                }
+                
                 prev = current;
                 current = current.next;
             }
@@ -215,7 +213,7 @@ namespace PcapProcessor
         }
 
         // cleans the linked list
-        void reset_tcp_reassembly()
+        void reset_udp_reassembly()
         {
             Udpfrag current, next;
             int i;
@@ -224,7 +222,6 @@ namespace PcapProcessor
             incomplete_udp_stream = false;
             for (i = 0; i < 2; i++)
             {
-                seq[i] = 0;
                 src_addr[i] = 0;
                 src_port[i] = 0;
                 udp_port[i] = 0;

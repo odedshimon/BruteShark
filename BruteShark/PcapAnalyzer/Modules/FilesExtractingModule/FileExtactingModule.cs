@@ -92,6 +92,9 @@ namespace PcapAnalyzer
             }
         }
 
-
+        public void Analyze(UdpStream udpStream)
+        {
+            
+        }
     }
 }
