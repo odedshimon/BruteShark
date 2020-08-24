@@ -25,12 +25,12 @@ Please ⭐️ this repository if this project helped you!
 * File Carving
 
 ## Download
+Make sure you have installed WinPcap / Npcap / libpcap (Wireshark installs one of this by default)
 * Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).
-* Linux - download [BruteSharkCli.zip](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.zip) and run BruteSharkCli.exe using MONO:
+* Linux - download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:
 ```bash
-wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.zip
-unzip BruteSharkCli.zip 
-mono BruteSharkCli/BruteSharkCli.exe
+wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
+./BruteSharkCli
 ```
 
 # Examples
@@ -51,6 +51,7 @@ mono BruteSharkCli/BruteSharkCli.exe
 ![](readme_media/BruteSharkCli.PNG)
 
 # Architecture
+All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
 The separation between layers is created by the fact that each project refers only its own objects.
 ##### PcapProcessor (DAL)
@@ -128,4 +129,5 @@ Available commands:
 (4). show-passwords  
 (5). show-hashes  
 (6). export-hashes  
-(7). exit 
+(7). show-modules
+(8). exit 
