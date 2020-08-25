@@ -43,11 +43,11 @@ namespace PcapProcessorTest
         public void PcapProcessor_reconstructUdpStreams_success()
         {
             // Arrange.
-            var recievedStreams = new List<UdpStream>();
+            var recievedStreams = new List<UdpSession>();
             var processor = new Processor();
-            processor.BuildUdpStreams = true;
-            processor.UdpStreamArrived +=
-                (object sender, UdpStreamArrivedEventArgs e) => recievedStreams.Add(e.UdpStream);
+            processor.BuildUdpSessions = true;
+            processor.UdpSessionArrived +=
+                (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
 
             // Act.
             processor.ProcessPcap(this.UdpFilePath);
@@ -61,11 +61,11 @@ namespace PcapProcessorTest
         public void PcapProcessor_reconstructUdpStreams_zero_streams()
         {
             // Arrange.
-            var recievedStreams = new List<UdpStream>();
+            var recievedStreams = new List<UdpSession>();
             var processor = new Processor();
-            processor.BuildUdpStreams = true;
-            processor.UdpStreamArrived +=
-                (object sender, UdpStreamArrivedEventArgs e) => recievedStreams.Add(e.UdpStream);
+            processor.BuildUdpSessions = true;
+            processor.UdpSessionArrived +=
+                (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
 
             // Act.
             processor.ProcessPcap(this.TcpFivePacketsFilePath);
@@ -99,7 +99,7 @@ namespace PcapProcessorTest
             var recievedSessions = new List<TcpSession>();
             var processor = new Processor();
             processor.BuildTcpSessions = true;
-            processor.TcpSessionArived +=
+            processor.TcpSessionArrived +=
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessions.Add(e.TcpSession);
 
             // Act.

@@ -7,13 +7,13 @@ namespace PcapProcessor.Objects
 {
     class UdpStreamBuilder
     {
-        private Dictionary<UdpStream, UdpRecon> _sessions;
+        private Dictionary<UdpSession, UdpRecon> _sessions;
 
-        public IEnumerable<UdpStream> Sessions
+        public IEnumerable<UdpSession> Sessions
         {
             get
             {
-                return this._sessions.Select(kvp => new UdpStream()
+                return this._sessions.Select(kvp => new UdpSession()
                 {
                     SourceIp = kvp.Key.SourceIp,
                     DestinationIp = kvp.Key.DestinationIp,
@@ -35,12 +35,12 @@ namespace PcapProcessor.Objects
 
         public UdpStreamBuilder()
         {
-            this._sessions = new Dictionary<UdpStream, UdpRecon>();
+            this._sessions = new Dictionary<UdpSession, UdpRecon>();
         }
 
         public void HandlePacket(PacketDotNet.UdpPacket udpPacket)
         {
-            var session = new UdpStream()
+            var session = new UdpSession()
             {
                 SourceIp = ((PacketDotNet.IPPacket)udpPacket.ParentPacket).SourceAddress.ToString(),
                 SourcePort = udpPacket.SourcePort,

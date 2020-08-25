@@ -7,6 +7,8 @@ namespace BruteSharkDesktop
 {
     public class TransportLayerObject
     {
+        public string Protocol { get; set; }
+
         [DisplayName("Source Ip")]
         public string SourceIp { get; set; }
 

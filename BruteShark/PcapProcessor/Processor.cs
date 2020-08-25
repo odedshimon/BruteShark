@@ -17,9 +17,9 @@ namespace PcapProcessor
         public delegate void TcpPacketArivedEventHandler(object sender, TcpPacketArivedEventArgs e);
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
-        public event TcpSessionArivedEventHandler TcpSessionArived;
-        public delegate void UdpStreamArrivedEventHandler(object sender, UdpStreamArrivedEventArgs e);
-        public event UdpStreamArrivedEventHandler UdpStreamArrived;
+        public event TcpSessionArivedEventHandler TcpSessionArrived;
+        public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
+        public event UdpSessionArrivedEventHandler UdpSessionArrived;
         public delegate void FileProcessingStartedEventHandler(object sender, FileProcessingStartedEventArgs e);
         public event FileProcessingStartedEventHandler FileProcessingStarted;
         public delegate void FileProcessingEndedEventHandler(object sender, FileProcessingEndedEventArgs e);
@@ -29,7 +29,7 @@ namespace PcapProcessor
         public event EventHandler ProcessingFinished;
 
         public bool BuildTcpSessions { get; set; }
-        public bool BuildUdpStreams { get; set; }
+        public bool BuildUdpSessions { get; set; }
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
@@ -38,7 +38,7 @@ namespace PcapProcessor
         public Processor()
         {
             this.BuildTcpSessions = false;
-            this.BuildUdpStreams = false;
+            this.BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
             _udpStreamBuilder = new UdpStreamBuilder();
             _processingPrecentsPredicator = new ProcessingPrecentsPredicator();
@@ -90,16 +90,16 @@ namespace PcapProcessor
                 // events accordingly.
                 foreach (var session in this._tcpSessionsBuilder.Sessions)
                 {
-                    TcpSessionArived?.Invoke(this, new TcpSessionArivedEventArgs()
+                    TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
                     {
                         TcpSession = session
                     });
                 }
                 foreach (var session in this._udpStreamBuilder.Sessions)
                 {
-                    UdpStreamArrived?.Invoke(this, new UdpStreamArrivedEventArgs()
+                    UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
                     {
-                        UdpStream = session
+                        UdpSession = session
                     });
                 }
 
@@ -136,7 +136,7 @@ namespace PcapProcessor
                         }
                     });
                     
-                    if (this.BuildUdpStreams)
+                    if (this.BuildUdpSessions)
                     {
                         this._udpStreamBuilder.HandlePacket(udpPacket);
                     }

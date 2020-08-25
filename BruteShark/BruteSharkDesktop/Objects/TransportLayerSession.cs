@@ -4,5 +4,15 @@ using System.Text;
 
 namespace BruteSharkDesktop
 {
-    public class TransportLayerSession : TransportLayerObject { }
+    public class TransportLayerSession : TransportLayerObject 
+    {
+        
+        public List<TransportLayerPacket> Packets { get; set; }
+
+        public TransportLayerSession()
+        {
+            this.Packets = new List<TransportLayerPacket>();
+        }
+
+    }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PcapProcessor
 {
-    public class UdpStream
+    public class UdpSession
     {
         public string SourceIp { get; set; }
         public string DestinationIp { get; set; }
@@ -15,19 +15,19 @@ namespace PcapProcessor
         public List<UdpPacket> Packets { get; set; }
 
 
-        public UdpStream()
+        public UdpSession()
         {
             this.Packets = new List<UdpPacket>();
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is UdpStream))
+            if (!(obj is UdpSession))
             {
                 return false;
             }
 
-            var session = obj as UdpStream;
+            var session = obj as UdpSession;
 
             // Note: we need to check both directions of the conversation to 
             // determine equality.

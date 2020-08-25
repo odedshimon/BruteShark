@@ -42,7 +42,7 @@ namespace BruteSharkCli
 
             // TODO: create command for this.
             _processor.BuildTcpSessions = true;
-            _processor.BuildUdpStreams = true;
+            _processor.BuildUdpSessions = true;
             LoadAllModules();
 
             // Contract the events.
@@ -50,10 +50,10 @@ namespace BruteSharkCli
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
             _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
-            _processor.TcpSessionArived += (s, e) => this.UpdateTcpSessionsCount();
-            _processor.UdpStreamArrived += (s, e) => this.UpdateUdpStreamsCount();
-            _processor.TcpSessionArived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.UdpStreamArrived += (s, e) => _analyzer.Analyze(CastProcessorUdpStreamToAnalyzerUdpStream(e.UdpStream));
+            _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
+            _processor.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
+            _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _processor.UdpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorUdpStreamToAnalyzerUdpStream(e.UdpSession));
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
 
             // Add commands to the Cli Shell.
@@ -164,7 +164,7 @@ namespace BruteSharkCli
                 Packets = tcpSession.Packets.Select(p => CastProcessorTcpPacketToAnalyzerTcpPacket(p)).ToList()
             };
         }
-        private PcapAnalyzer.UdpStream CastProcessorUdpStreamToAnalyzerUdpStream(PcapProcessor.UdpStream udpStream)
+        private PcapAnalyzer.UdpStream CastProcessorUdpStreamToAnalyzerUdpStream(PcapProcessor.UdpSession udpStream)
         {
             return new PcapAnalyzer.UdpStream()
             {
