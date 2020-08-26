@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapProcessor;
@@ -13,6 +14,35 @@ namespace PcapProcessorTest
         public string UdpFilePath { get; set; }
         public string TcpFivePacketsFilePath { get; set; }
         public string HttpSmallFilePath { get; set; }
+        public  byte[]  firstUdpStreamExpectedData = {
+                                                        0x00, 0x23, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 
+                                                        0x00, 0x00, 0x00, 0x00, 0x07, 0x70, 0x61, 0x67, 
+                                                        0x65, 0x61, 0x64, 0x32, 0x11, 0x67, 0x6f, 0x6f, 
+                                                        0x67, 0x6c, 0x65, 0x73, 0x79, 0x6e, 0x64, 0x69, 
+                                                        0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x03, 0x63, 
+                                                        0x6f, 0x6d, 0x00, 0x00, 0x01, 0x00, 0x01 ,0x00, 
+                                                        0x23, 0x81, 0x80, 0x00, 0x01, 0x00, 0x04, 0x00,
+                                                        0x00, 0x00, 0x00, 0x07, 0x70, 0x61, 0x67, 0x65,
+                                                        0x61, 0x64, 0x32, 0x11, 0x67, 0x6f, 0x6f, 0x67,
+                                                        0x6c, 0x65, 0x73, 0x79, 0x6e, 0x64, 0x69, 0x63, 
+                                                        0x61, 0x74, 0x69, 0x6f, 0x6e, 0x03, 0x63, 0x6f,
+                                                        0x6d, 0x00, 0x00, 0x01, 0x00, 0x01, 0xc0, 0x0c,
+                                                        0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0xbc, 0xc1,
+                                                        0x00, 0x11, 0x07, 0x70, 0x61, 0x67, 0x65, 0x61,
+                                                        0x64, 0x32, 0x06, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+                                                        0x65, 0xc0, 0x26, 0xc0, 0x3b, 0x00, 0x05, 0x00,
+                                                        0x01, 0x00, 0x00, 0x00, 0x7a, 0x00, 0x1a, 0x06,
+                                                        0x70, 0x61, 0x67, 0x65, 0x61, 0x64, 0x06, 0x67,
+                                                        0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x06, 0x61, 0x6b,
+                                                        0x61, 0x64, 0x6e, 0x73, 0x03, 0x6e, 0x65, 0x74, 
+                                                        0x00, 0xc0, 0x58, 0x00, 0x01, 0x00, 0x01, 0x00,
+                                                        0x00, 0x00, 0x7b, 0x00, 0x04, 0xd8, 0xef, 0x3b,
+                                                        0x68, 0xc0, 0x58, 0x00, 0x01, 0x00, 0x01, 0x00,
+                                                        0x00, 0x00, 0x7b, 0x00, 0x04, 0xd8, 0xef, 0x3b,
+                                                        0x63 
+        };
+
+
 
 
         public PcapProcessorTest()
@@ -50,11 +80,17 @@ namespace PcapProcessorTest
                 (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
 
             // Act.
-            processor.ProcessPcap(this.UdpFilePath);
+            processor.ProcessPcap(this.HttpSmallFilePath);
 
 
-            // Assert 
-            Assert.AreEqual(16, recievedStreams.Count);
+            // Assert - check if we succeeded reconstructing the expected amount of sessions
+            Assert.AreEqual(1, recievedStreams.Count);
+
+            // Assert - check if we succeeded reconstructing the data of the udp sessions by checking if we recieved the exact amount of bytes
+            byte[] firstSessionBytes = recievedStreams[0].Data;
+            Assert.AreEqual(193, firstSessionBytes.Length);
+            Assert.AreEqual(Encoding.UTF8.GetString(firstUdpStreamExpectedData), Encoding.UTF8.GetString(firstSessionBytes));
+
         }
         
         [TestMethod]
@@ -90,6 +126,7 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(5, recievedPackets.Count);
+
         }
 
         [TestMethod]

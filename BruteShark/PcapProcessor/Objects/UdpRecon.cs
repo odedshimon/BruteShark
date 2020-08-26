@@ -174,7 +174,9 @@ namespace PcapProcessor
             {
                 incomplete_udp_stream = true;
             }
-            
+
+            /* write out the packet data */
+            write_packet_data(src_index, data, udpPacket);
         }
 
         /* here we search through all the frag we have collected to see if
