@@ -273,6 +273,33 @@ namespace BruteSharkDesktop
             }
         }
 
+        private void buildTcpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (buildTcpSessionsCheckBox.CheckState == CheckState.Checked)
+            {
+                buildTcpSessionsCheckBox.Text = "Build TCP Sessions: ON";
+                this._processor.BuildTcpSessions = true;
+            }
+            else if (buildTcpSessionsCheckBox.CheckState == CheckState.Unchecked)
+            {
+                buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
+                this._processor.BuildTcpSessions = false;
+            }
+        }
+
+        private void buildUdpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (buildUdpSessionsCheckBox.CheckState == CheckState.Checked)
+            {
+                buildUdpSessionsCheckBox.Text = "Build UDP Sessions: ON";
+                this._processor.BuildUdpSessions = true;
+            }
+            else if (buildUdpSessionsCheckBox.CheckState == CheckState.Unchecked)
+            {
+                buildUdpSessionsCheckBox.Text = "Build UDP Sessions: OFF";
+                this._processor.BuildUdpSessions = false;
+            }
+        }
     }
 }
     

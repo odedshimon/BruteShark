@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Passwords");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Hashes");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Network Map");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tcp Sessions");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
-            treeNode4,
-            treeNode5});
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Files");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
-            treeNode7});
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Passwords");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Hashes");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
+            treeNode9,
+            treeNode10});
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Network Map");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Tcp Sessions");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
+            treeNode12,
+            treeNode13});
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode15});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.secondaryUpperSplitContainer = new System.Windows.Forms.SplitContainer();
             this.runButton = new System.Windows.Forms.Button();
@@ -50,6 +50,9 @@
             this.fileNameColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.statusColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.buildUdpSessionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.buildTcpSessionsCheckBox = new System.Windows.Forms.CheckBox();
             this.modulesGroupBox = new System.Windows.Forms.GroupBox();
             this.modulesCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.secondaryLowerSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -64,6 +67,7 @@
             this.secondaryUpperSplitContainer.Panel1.SuspendLayout();
             this.secondaryUpperSplitContainer.Panel2.SuspendLayout();
             this.secondaryUpperSplitContainer.SuspendLayout();
+            this.optionsGroupBox.SuspendLayout();
             this.modulesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.secondaryLowerSplitContainer)).BeginInit();
             this.secondaryLowerSplitContainer.Panel1.SuspendLayout();
@@ -113,6 +117,7 @@
             // 
             // secondaryUpperSplitContainer.Panel2
             // 
+            this.secondaryUpperSplitContainer.Panel2.Controls.Add(this.optionsGroupBox);
             this.secondaryUpperSplitContainer.Panel2.Controls.Add(this.modulesGroupBox);
             this.secondaryUpperSplitContainer.Size = new System.Drawing.Size(929, 168);
             this.secondaryUpperSplitContainer.SplitterDistance = 416;
@@ -190,15 +195,53 @@
             this.statusColumnHeader.Text = "Status";
             this.statusColumnHeader.Width = 104;
             // 
+            // optionsGroupBox
+            // 
+            this.optionsGroupBox.Controls.Add(this.buildUdpSessionsCheckBox);
+            this.optionsGroupBox.Controls.Add(this.buildTcpSessionsCheckBox);
+            this.optionsGroupBox.Location = new System.Drawing.Point(307, 8);
+            this.optionsGroupBox.Name = "optionsGroupBox";
+            this.optionsGroupBox.Size = new System.Drawing.Size(200, 152);
+            this.optionsGroupBox.TabIndex = 1;
+            this.optionsGroupBox.TabStop = false;
+            this.optionsGroupBox.Text = "Options";
+            // 
+            // buildUdpSessionsCheckBox
+            // 
+            this.buildUdpSessionsCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.buildUdpSessionsCheckBox.AutoSize = true;
+            this.buildUdpSessionsCheckBox.Checked = true;
+            this.buildUdpSessionsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.buildUdpSessionsCheckBox.Location = new System.Drawing.Point(16, 53);
+            this.buildUdpSessionsCheckBox.Name = "buildUdpSessionsCheckBox";
+            this.buildUdpSessionsCheckBox.Size = new System.Drawing.Size(137, 25);
+            this.buildUdpSessionsCheckBox.TabIndex = 0;
+            this.buildUdpSessionsCheckBox.Text = "Build UdpSessions: ON";
+            this.buildUdpSessionsCheckBox.UseVisualStyleBackColor = true;
+            this.buildUdpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.buildUdpSessionsCheckBox_CheckedChanged);
+            // 
+            // buildTcpSessionsCheckBox
+            // 
+            this.buildTcpSessionsCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.buildTcpSessionsCheckBox.AutoSize = true;
+            this.buildTcpSessionsCheckBox.Checked = true;
+            this.buildTcpSessionsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.buildTcpSessionsCheckBox.Location = new System.Drawing.Point(16, 22);
+            this.buildTcpSessionsCheckBox.Name = "buildTcpSessionsCheckBox";
+            this.buildTcpSessionsCheckBox.Size = new System.Drawing.Size(137, 25);
+            this.buildTcpSessionsCheckBox.TabIndex = 0;
+            this.buildTcpSessionsCheckBox.Text = "Build Tcp Sessions: ON";
+            this.buildTcpSessionsCheckBox.UseVisualStyleBackColor = true;
+            this.buildTcpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.buildTcpSessionsCheckBox_CheckedChanged);
+            // 
             // modulesGroupBox
             // 
             this.modulesGroupBox.Controls.Add(this.modulesCheckedListBox);
-            this.modulesGroupBox.Dock = System.Windows.Forms.DockStyle.Left;
             this.modulesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.modulesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesGroupBox.Name = "modulesGroupBox";
             this.modulesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.modulesGroupBox.Size = new System.Drawing.Size(300, 168);
+            this.modulesGroupBox.Size = new System.Drawing.Size(300, 160);
             this.modulesGroupBox.TabIndex = 0;
             this.modulesGroupBox.TabStop = false;
             this.modulesGroupBox.Text = "Modules";
@@ -212,7 +255,7 @@
             this.modulesCheckedListBox.Location = new System.Drawing.Point(8, 23);
             this.modulesCheckedListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesCheckedListBox.Name = "modulesCheckedListBox";
-            this.modulesCheckedListBox.Size = new System.Drawing.Size(284, 112);
+            this.modulesCheckedListBox.Size = new System.Drawing.Size(284, 130);
             this.modulesCheckedListBox.TabIndex = 0;
             this.modulesCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.modulesCheckedListBox_ItemCheck);
             // 
@@ -233,7 +276,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(929, 504);
-            this.secondaryLowerSplitContainer.SplitterDistance = 472;
+            this.secondaryLowerSplitContainer.SplitterDistance = 463;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -248,7 +291,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(929, 472);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(929, 463);
             this.modulesSplitContainer.SplitterDistance = 229;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -259,27 +302,27 @@
             this.modulesTreeView.Location = new System.Drawing.Point(0, 0);
             this.modulesTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesTreeView.Name = "modulesTreeView";
-            treeNode1.Name = "PasswordsNode";
-            treeNode1.Text = "Passwords";
-            treeNode2.Name = "HashesNode";
-            treeNode2.Text = "Hashes";
-            treeNode3.Name = "CredentialsNode";
-            treeNode3.Text = "Credentials";
-            treeNode4.Name = "NetworkMapNode";
-            treeNode4.Text = "Network Map";
-            treeNode5.Name = "SessionsNode";
-            treeNode5.Text = "Tcp Sessions";
-            treeNode6.Name = "NetworkNode";
-            treeNode6.Text = "Network";
-            treeNode7.Name = "FilesNode";
-            treeNode7.Text = "Files";
-            treeNode8.Name = "DataNode";
-            treeNode8.Text = "Data";
+            treeNode9.Name = "PasswordsNode";
+            treeNode9.Text = "Passwords";
+            treeNode10.Name = "HashesNode";
+            treeNode10.Text = "Hashes";
+            treeNode11.Name = "CredentialsNode";
+            treeNode11.Text = "Credentials";
+            treeNode12.Name = "NetworkMapNode";
+            treeNode12.Text = "Network Map";
+            treeNode13.Name = "SessionsNode";
+            treeNode13.Text = "Tcp Sessions";
+            treeNode14.Name = "NetworkNode";
+            treeNode14.Text = "Network";
+            treeNode15.Name = "FilesNode";
+            treeNode15.Text = "Files";
+            treeNode16.Name = "DataNode";
+            treeNode16.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode6,
-            treeNode8});
-            this.modulesTreeView.Size = new System.Drawing.Size(229, 472);
+            treeNode11,
+            treeNode14,
+            treeNode16});
+            this.modulesTreeView.Size = new System.Drawing.Size(229, 463);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
             // 
@@ -289,7 +332,7 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(929, 27);
+            this.progressBar.Size = new System.Drawing.Size(929, 36);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
@@ -309,6 +352,8 @@
             this.secondaryUpperSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.secondaryUpperSplitContainer)).EndInit();
             this.secondaryUpperSplitContainer.ResumeLayout(false);
+            this.optionsGroupBox.ResumeLayout(false);
+            this.optionsGroupBox.PerformLayout();
             this.modulesGroupBox.ResumeLayout(false);
             this.secondaryLowerSplitContainer.Panel1.ResumeLayout(false);
             this.secondaryLowerSplitContainer.Panel2.ResumeLayout(false);
@@ -338,6 +383,9 @@
         private System.Windows.Forms.Button runButton;
         private System.Windows.Forms.GroupBox modulesGroupBox;
         private System.Windows.Forms.CheckedListBox modulesCheckedListBox;
+        private System.Windows.Forms.GroupBox optionsGroupBox;
+        private System.Windows.Forms.CheckBox buildTcpSessionsCheckBox;
+        private System.Windows.Forms.CheckBox buildUdpSessionsCheckBox;
     }
 }
 
