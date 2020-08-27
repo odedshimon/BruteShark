@@ -28,28 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Passwords");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Hashes");
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
-            treeNode9,
-            treeNode10});
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Network Map");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Tcp Sessions");
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
-            treeNode12,
-            treeNode13});
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Files");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
-            treeNode15});
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Passwords");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Hashes");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2});
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Network Map");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tcp Sessions");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
+            treeNode4,
+            treeNode5});
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode7});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.secondaryUpperSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.runButton = new System.Windows.Forms.Button();
             this.removeFilesButton = new System.Windows.Forms.Button();
             this.addFilesButton = new System.Windows.Forms.Button();
             this.filesListView = new System.Windows.Forms.ListView();
             this.fileNameColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.sizeColumnHeader = new System.Windows.Forms.ColumnHeader();
             this.statusColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.runButton = new System.Windows.Forms.Button();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.buildUdpSessionsCheckBox = new System.Windows.Forms.CheckBox();
             this.buildTcpSessionsCheckBox = new System.Windows.Forms.CheckBox();
@@ -95,55 +95,43 @@
             // mainSplitContainer.Panel2
             // 
             this.mainSplitContainer.Panel2.Controls.Add(this.secondaryLowerSplitContainer);
-            this.mainSplitContainer.Size = new System.Drawing.Size(933, 681);
-            this.mainSplitContainer.SplitterDistance = 172;
+            this.mainSplitContainer.Size = new System.Drawing.Size(1320, 681);
+            this.mainSplitContainer.SplitterDistance = 175;
             this.mainSplitContainer.SplitterWidth = 1;
             this.mainSplitContainer.TabIndex = 0;
             // 
             // secondaryUpperSplitContainer
             // 
-            this.secondaryUpperSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.secondaryUpperSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.secondaryUpperSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.secondaryUpperSplitContainer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.secondaryUpperSplitContainer.Name = "secondaryUpperSplitContainer";
             // 
             // secondaryUpperSplitContainer.Panel1
             // 
-            this.secondaryUpperSplitContainer.Panel1.Controls.Add(this.runButton);
             this.secondaryUpperSplitContainer.Panel1.Controls.Add(this.removeFilesButton);
             this.secondaryUpperSplitContainer.Panel1.Controls.Add(this.addFilesButton);
             this.secondaryUpperSplitContainer.Panel1.Controls.Add(this.filesListView);
+            this.secondaryUpperSplitContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // secondaryUpperSplitContainer.Panel2
             // 
+            this.secondaryUpperSplitContainer.Panel2.Controls.Add(this.runButton);
             this.secondaryUpperSplitContainer.Panel2.Controls.Add(this.optionsGroupBox);
             this.secondaryUpperSplitContainer.Panel2.Controls.Add(this.modulesGroupBox);
-            this.secondaryUpperSplitContainer.Size = new System.Drawing.Size(929, 168);
-            this.secondaryUpperSplitContainer.SplitterDistance = 416;
+            this.secondaryUpperSplitContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.secondaryUpperSplitContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.secondaryUpperSplitContainer.Size = new System.Drawing.Size(1285, 171);
+            this.secondaryUpperSplitContainer.SplitterDistance = 472;
             this.secondaryUpperSplitContainer.SplitterWidth = 1;
             this.secondaryUpperSplitContainer.TabIndex = 0;
-            // 
-            // runButton
-            // 
-            this.runButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.runButton.Location = new System.Drawing.Point(205, 121);
-            this.runButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.runButton.Name = "runButton";
-            this.runButton.Size = new System.Drawing.Size(199, 39);
-            this.runButton.TabIndex = 2;
-            this.runButton.Text = "Run!";
-            this.runButton.UseVisualStyleBackColor = true;
-            this.runButton.Click += new System.EventHandler(this.runButton_Click);
             // 
             // removeFilesButton
             // 
             this.removeFilesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.removeFilesButton.Location = new System.Drawing.Point(105, 121);
+            this.removeFilesButton.Location = new System.Drawing.Point(13, 88);
             this.removeFilesButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.removeFilesButton.Name = "removeFilesButton";
-            this.removeFilesButton.Size = new System.Drawing.Size(93, 39);
+            this.removeFilesButton.Size = new System.Drawing.Size(46, 70);
             this.removeFilesButton.TabIndex = 1;
             this.removeFilesButton.Text = "-";
             this.removeFilesButton.UseVisualStyleBackColor = true;
@@ -152,10 +140,10 @@
             // addFilesButton
             // 
             this.addFilesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.addFilesButton.Location = new System.Drawing.Point(8, 121);
+            this.addFilesButton.Location = new System.Drawing.Point(13, 15);
             this.addFilesButton.Margin = new System.Windows.Forms.Padding(0);
             this.addFilesButton.Name = "addFilesButton";
-            this.addFilesButton.Size = new System.Drawing.Size(93, 39);
+            this.addFilesButton.Size = new System.Drawing.Size(46, 70);
             this.addFilesButton.TabIndex = 0;
             this.addFilesButton.Text = "+";
             this.addFilesButton.UseVisualStyleBackColor = true;
@@ -163,19 +151,18 @@
             // 
             // filesListView
             // 
-            this.filesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.filesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.filesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.fileNameColumnHeader,
             this.sizeColumnHeader,
             this.statusColumnHeader});
             this.filesListView.FullRowSelect = true;
             this.filesListView.HideSelection = false;
-            this.filesListView.Location = new System.Drawing.Point(8, 8);
+            this.filesListView.Location = new System.Drawing.Point(69, 9);
             this.filesListView.Margin = new System.Windows.Forms.Padding(0);
             this.filesListView.Name = "filesListView";
-            this.filesListView.Size = new System.Drawing.Size(396, 105);
+            this.filesListView.Size = new System.Drawing.Size(395, 154);
             this.filesListView.TabIndex = 0;
             this.filesListView.UseCompatibleStateImageBehavior = false;
             this.filesListView.View = System.Windows.Forms.View.Details;
@@ -195,13 +182,26 @@
             this.statusColumnHeader.Text = "Status";
             this.statusColumnHeader.Width = 104;
             // 
+            // runButton
+            // 
+            this.runButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.runButton.Location = new System.Drawing.Point(523, 15);
+            this.runButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.runButton.Name = "runButton";
+            this.runButton.Size = new System.Drawing.Size(143, 143);
+            this.runButton.TabIndex = 2;
+            this.runButton.Text = "Run!";
+            this.runButton.UseVisualStyleBackColor = true;
+            this.runButton.Click += new System.EventHandler(this.runButton_Click);
+            // 
             // optionsGroupBox
             // 
             this.optionsGroupBox.Controls.Add(this.buildUdpSessionsCheckBox);
             this.optionsGroupBox.Controls.Add(this.buildTcpSessionsCheckBox);
-            this.optionsGroupBox.Location = new System.Drawing.Point(307, 8);
+            this.optionsGroupBox.Location = new System.Drawing.Point(311, 9);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(200, 152);
+            this.optionsGroupBox.Size = new System.Drawing.Size(200, 154);
             this.optionsGroupBox.TabIndex = 1;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
@@ -237,7 +237,7 @@
             // modulesGroupBox
             // 
             this.modulesGroupBox.Controls.Add(this.modulesCheckedListBox);
-            this.modulesGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.modulesGroupBox.Location = new System.Drawing.Point(4, 3);
             this.modulesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesGroupBox.Name = "modulesGroupBox";
             this.modulesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -275,8 +275,8 @@
             // secondaryLowerSplitContainer.Panel2
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
-            this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(929, 504);
-            this.secondaryLowerSplitContainer.SplitterDistance = 463;
+            this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1316, 501);
+            this.secondaryLowerSplitContainer.SplitterDistance = 451;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -291,8 +291,8 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(929, 463);
-            this.modulesSplitContainer.SplitterDistance = 229;
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1316, 451);
+            this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
             // 
@@ -302,27 +302,27 @@
             this.modulesTreeView.Location = new System.Drawing.Point(0, 0);
             this.modulesTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesTreeView.Name = "modulesTreeView";
-            treeNode9.Name = "PasswordsNode";
-            treeNode9.Text = "Passwords";
-            treeNode10.Name = "HashesNode";
-            treeNode10.Text = "Hashes";
-            treeNode11.Name = "CredentialsNode";
-            treeNode11.Text = "Credentials";
-            treeNode12.Name = "NetworkMapNode";
-            treeNode12.Text = "Network Map";
-            treeNode13.Name = "SessionsNode";
-            treeNode13.Text = "Tcp Sessions";
-            treeNode14.Name = "NetworkNode";
-            treeNode14.Text = "Network";
-            treeNode15.Name = "FilesNode";
-            treeNode15.Text = "Files";
-            treeNode16.Name = "DataNode";
-            treeNode16.Text = "Data";
+            treeNode1.Name = "PasswordsNode";
+            treeNode1.Text = "Passwords";
+            treeNode2.Name = "HashesNode";
+            treeNode2.Text = "Hashes";
+            treeNode3.Name = "CredentialsNode";
+            treeNode3.Text = "Credentials";
+            treeNode4.Name = "NetworkMapNode";
+            treeNode4.Text = "Network Map";
+            treeNode5.Name = "SessionsNode";
+            treeNode5.Text = "Tcp Sessions";
+            treeNode6.Name = "NetworkNode";
+            treeNode6.Text = "Network";
+            treeNode7.Name = "FilesNode";
+            treeNode7.Text = "Files";
+            treeNode8.Name = "DataNode";
+            treeNode8.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode11,
-            treeNode14,
-            treeNode16});
-            this.modulesTreeView.Size = new System.Drawing.Size(229, 463);
+            treeNode3,
+            treeNode6,
+            treeNode8});
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 451);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
             // 
@@ -332,14 +332,14 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(929, 36);
+            this.progressBar.Size = new System.Drawing.Size(1316, 45);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 681);
+            this.ClientSize = new System.Drawing.Size(1320, 681);
             this.Controls.Add(this.mainSplitContainer);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainForm";

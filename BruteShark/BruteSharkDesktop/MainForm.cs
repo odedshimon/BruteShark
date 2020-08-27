@@ -284,6 +284,7 @@ namespace BruteSharkDesktop
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
                 this._processor.BuildTcpSessions = false;
+                messageOnBuildSessionsConfigurationChanged();
             }
         }
 
@@ -298,8 +299,16 @@ namespace BruteSharkDesktop
             {
                 buildUdpSessionsCheckBox.Text = "Build UDP Sessions: OFF";
                 this._processor.BuildUdpSessions = false;
+                messageOnBuildSessionsConfigurationChanged();
             }
         }
+
+        private void messageOnBuildSessionsConfigurationChanged()
+        {
+            MessageBox.Show(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+This means a faster processing but also that some obects may not be extracted.");
+        }
+
     }
 }
     
