@@ -119,7 +119,7 @@ namespace BruteSharkCli
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"\r[+] Packets Analyzed: {_tcpPacketsCount + _udpPacketsCount}, " + $"TCP: {_tcpPacketsCount} " + $"UDP: {_udpPacketsCount}");
-                Console.WriteLine($"\r[+] TCP Sessions Analyzed: {_tcpSessionsCount}" + $" UDP Streams Analzed: {_udpStreamsCount}");
+                Console.WriteLine($"\r[+] TCP Sessions Analyzed: {_tcpSessionsCount}" + $" UDP Streams Analyzed: {_udpStreamsCount}");
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.SetCursorPosition(0, Console.CursorTop - 4);

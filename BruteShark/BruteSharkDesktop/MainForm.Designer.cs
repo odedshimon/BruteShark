@@ -277,7 +277,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1316, 501);
-            this.secondaryLowerSplitContainer.SplitterDistance = 450;
+            this.secondaryLowerSplitContainer.SplitterDistance = 449;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -292,7 +292,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1316, 450);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1316, 449);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -323,7 +323,7 @@
             treeNode3,
             treeNode6,
             treeNode8});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 450);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 449);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
             // 
@@ -333,7 +333,7 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1316, 46);
+            this.progressBar.Size = new System.Drawing.Size(1316, 47);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
