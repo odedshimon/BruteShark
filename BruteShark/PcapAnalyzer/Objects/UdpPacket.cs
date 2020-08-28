@@ -1,4 +1,5 @@
-﻿namespace PcapAnalyzer
+﻿
+namespace PcapAnalyzer
 {
     public class UdpPacket
     {

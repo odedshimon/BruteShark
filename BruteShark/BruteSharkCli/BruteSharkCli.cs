@@ -13,7 +13,9 @@ namespace BruteSharkCli
     internal class BruteSharkCli
     {
         private ulong _tcpPacketsCount;
+        private ulong _udpPacketsCount;
         private int _tcpSessionsCount;
+        private int _udpStreamsCount;
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
         private List<string> _files;
@@ -26,6 +28,8 @@ namespace BruteSharkCli
         public BruteSharkCli()
         {
             _tcpPacketsCount = 0;
+            _udpPacketsCount = 0;
+            _udpStreamsCount = 0;
             _tcpSessionsCount = 0;
             _printingLock = new object();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
@@ -38,14 +42,18 @@ namespace BruteSharkCli
 
             // TODO: create command for this.
             _processor.BuildTcpSessions = true;
+            _processor.BuildUdpSessions = true;
             LoadAllModules();
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
-            _processor.TcpSessionArived += (s, e) => this.UpdateTcpSessionsCount();
-            _processor.TcpSessionArived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
+            _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
+            _processor.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
+            _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _processor.UdpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorUdpStreamToAnalyzerUdpStream(e.UdpSession));
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
 
             // Add commands to the Cli Shell.
@@ -82,12 +90,15 @@ namespace BruteSharkCli
 
         private void UpdateTcpSessionsCount()
         {
-            if (++_tcpSessionsCount % 10 == 0)
-            {
-                UpdateAnalyzingStatus();
-            }
+            ++_tcpSessionsCount;
+            UpdateAnalyzingStatus();
         }
 
+        private void UpdateUdpStreamsCount()
+        {
+            ++_udpStreamsCount;
+            UpdateAnalyzingStatus();
+        }
         private void UpdateTcpPacketsCount()
         {
             if (++_tcpPacketsCount % 10 == 0)
@@ -95,14 +106,20 @@ namespace BruteSharkCli
                 UpdateAnalyzingStatus();
             }
         }
-
+        private void UpdateUdpPacketsCount()
+        {
+            if (++_udpPacketsCount % 10 == 0)
+            {
+                UpdateAnalyzingStatus();
+            }
+        }
         private void UpdateAnalyzingStatus()
         {
             lock (_printingLock)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"\r[+] Packets Analyzed: {++_tcpPacketsCount}");
-                Console.WriteLine($"\r[+] Sessions Analyzed: {++_tcpSessionsCount}");
+                Console.WriteLine($"\r[+] Packets Analyzed: {_tcpPacketsCount + _udpPacketsCount}, " + $"TCP: {_tcpPacketsCount} " + $"UDP: {_udpPacketsCount}");
+                Console.WriteLine($"\r[+] TCP Sessions Analyzed: {_tcpSessionsCount}" + $" UDP Streams Analyzed: {_udpStreamsCount}");
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.SetCursorPosition(0, Console.CursorTop - 4);
@@ -121,6 +138,7 @@ namespace BruteSharkCli
                 Data = udpPacket.Data
             };
         }
+
 
         private PcapAnalyzer.TcpPacket CastProcessorTcpPacketToAnalyzerTcpPacket(PcapProcessor.TcpPacket tcpPacket)
         {
@@ -144,6 +162,18 @@ namespace BruteSharkCli
                 DestinationPort = tcpSession.DestinationPort,
                 Data = tcpSession.Data,
                 Packets = tcpSession.Packets.Select(p => CastProcessorTcpPacketToAnalyzerTcpPacket(p)).ToList()
+            };
+        }
+        private PcapAnalyzer.UdpStream CastProcessorUdpStreamToAnalyzerUdpStream(PcapProcessor.UdpSession udpStream)
+        {
+            return new PcapAnalyzer.UdpStream()
+            {
+                SourceIp = udpStream.SourceIp,
+                DestinationIp = udpStream.DestinationIp,
+                SourcePort = udpStream.SourcePort,
+                DestinationPort = udpStream.DestinationPort,
+                Data = udpStream.Data,
+                Packets = udpStream.Packets.Select(p => CastProcessorUdpPacketToAnalyzerUdpPacket(p)).ToList()
             };
         }
 

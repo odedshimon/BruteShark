@@ -18,32 +18,32 @@ namespace BruteSharkDesktop
             InitializeComponent();
         }
 
-        public void SetSessionView(TcpSession tcpSession)
+        public void SetSessionView(TransportLayerSession session)
         {
-            SetSessionDetails(tcpSession);
-            AddColoredSessionData(tcpSession);
+            SetSessionDetails(session);
+            AddColoredSessionData(session);
         }
 
-        private void SetSessionDetails(TcpSession tcpSession)
+        private void SetSessionDetails(TransportLayerSession session)
         {
-            this.sourceIpLabel.Text = "Source Ip: " + tcpSession.SourceIp;
-            this.destinationIpLabel.Text = "Destination IP: " + tcpSession.DestinationIp;
-            this.sourcePortLabel.Text = "Source Port: " + tcpSession.SourcePort.ToString();
-            this.destinationPortLabel.Text = "Destination Port: " + tcpSession.DestinationPort.ToString();
-            this.dataLengthLabel.Text = "Data Length (Bytes): " + tcpSession.Data.Length.ToString();
+            this.sourceIpLabel.Text = "Source Ip: " + session.SourceIp;
+            this.destinationIpLabel.Text = "Destination IP: " + session.DestinationIp;
+            this.sourcePortLabel.Text = "Source Port: " + session.SourcePort.ToString();
+            this.destinationPortLabel.Text = "Destination Port: " + session.DestinationPort.ToString();
+            this.dataLengthLabel.Text = "Data Length (Bytes): " + session.Data.Length.ToString();
         }
 
-        private void AddColoredSessionData(TcpSession tcpSession)
+        private void AddColoredSessionData(TransportLayerSession session)
         {
             this.sessionDataRichTextBox.Clear();
 
-            foreach (var packet in tcpSession.Packets)
+            foreach (var packet in session.Packets)
             {
                 // TODO: add encoding type
                 SetSessionData(
                     this.sessionDataRichTextBox, 
                     Encoding.ASCII.GetString(packet.Data),
-                    packet.SourceIp == tcpSession.SourceIp ? Color.Blue : Color.Red);
+                    packet.SourceIp == session.SourceIp ? Color.Blue : Color.Red);
             }
         }
 
