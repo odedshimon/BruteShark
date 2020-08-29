@@ -66,6 +66,10 @@ namespace PcapAnalyzer
                 {
                     SafeRun(() => module.Analyze(item as UdpPacket));
                 }
+                else if (item is UdpStream)
+                {
+                    SafeRun(() => module.Analyze(item as UdpStream));
+                }
                 else if (item is TcpPacket)
                 {
                     SafeRun(() => module.Analyze(item as TcpPacket));

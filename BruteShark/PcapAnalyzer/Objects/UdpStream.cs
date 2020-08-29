@@ -1,20 +1,21 @@
-﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BruteSharkDesktop
+namespace PcapAnalyzer
 {
-    public class TcpPacket
+    public class UdpStream
     {
         public string SourceIp { get; set; }
         public string DestinationIp { get; set; }
         public int SourcePort { get; set; }
         public int DestinationPort { get; set; }
-
-        [Browsable(false)]
         public byte[] Data { get; set; }
+        public List<UdpPacket> Packets { get; set; }
+        
+
+        public UdpStream()
+        {
+            this.Packets = new List<UdpPacket>();
+        }
+
     }
 }

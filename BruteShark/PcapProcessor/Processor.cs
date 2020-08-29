@@ -1,4 +1,5 @@
-﻿using SharpPcap;
+﻿using PcapProcessor.Objects;
+using SharpPcap;
 using SharpPcap.LibPcap;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,9 @@ namespace PcapProcessor
         public delegate void TcpPacketArivedEventHandler(object sender, TcpPacketArivedEventArgs e);
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
-        public event TcpSessionArivedEventHandler TcpSessionArived;
+        public event TcpSessionArivedEventHandler TcpSessionArrived;
+        public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
+        public event UdpSessionArrivedEventHandler UdpSessionArrived;
         public delegate void FileProcessingStartedEventHandler(object sender, FileProcessingStartedEventArgs e);
         public event FileProcessingStartedEventHandler FileProcessingStarted;
         public delegate void FileProcessingEndedEventHandler(object sender, FileProcessingEndedEventArgs e);
@@ -26,14 +29,18 @@ namespace PcapProcessor
         public event EventHandler ProcessingFinished;
 
         public bool BuildTcpSessions { get; set; }
+        public bool BuildUdpSessions { get; set; }
         private TcpSessionsBuilder _tcpSessionsBuilder;
+        private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
 
 
         public Processor()
         {
             this.BuildTcpSessions = false;
+            this.BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
+            _udpStreamBuilder = new UdpStreamBuilder();
             _processingPrecentsPredicator = new ProcessingPrecentsPredicator();
             _processingPrecentsPredicator.ProcessingPrecentsChanged += OnPredicatorProcessingPrecentsChanged;
         }
@@ -68,6 +75,7 @@ namespace PcapProcessor
             {
                 FileProcessingStarted?.Invoke(this, new FileProcessingStartedEventArgs() { FilePath = filePath });
                 _tcpSessionsBuilder.Clear();
+                _udpStreamBuilder.Clear();
 
                 // Get an offline device, handle packets registering for the Packet 
                 // Arrival event and start capturing from that file.
@@ -82,9 +90,16 @@ namespace PcapProcessor
                 // events accordingly.
                 foreach (var session in this._tcpSessionsBuilder.Sessions)
                 {
-                    TcpSessionArived?.Invoke(this, new TcpSessionArivedEventArgs()
+                    TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
                     {
                         TcpSession = session
+                    });
+                }
+                foreach (var session in this._udpStreamBuilder.Sessions)
+                {
+                    UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                    {
+                        UdpSession = session
                     });
                 }
 
@@ -120,6 +135,12 @@ namespace PcapProcessor
                             Data = udpPacket.PayloadData ?? new byte[] { }
                         }
                     });
+                    
+                    if (this.BuildUdpSessions)
+                    {
+                        this._udpStreamBuilder.HandlePacket(udpPacket);
+                    }
+                    _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
                 else if (tcpPacket != null)
                 {

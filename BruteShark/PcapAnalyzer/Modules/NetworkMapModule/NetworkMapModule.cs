@@ -46,5 +46,9 @@ namespace PcapAnalyzer
 
         public void Analyze(TcpSession tcpSession) { }
 
+        public void Analyze(UdpStream udpStream)
+        {
+            
+        }
     }
 }

@@ -36,6 +36,7 @@ namespace BruteSharkDesktop
             _processor = new PcapProcessor.Processor();
             _analyzer = new PcapAnalyzer.Analyzer();
             _processor.BuildTcpSessions = true;
+            _processor.BuildUdpSessions = true;
 
             // Create the user controls. 
             _networkMapUserControl = new NetworkMapUserControl();
@@ -52,12 +53,13 @@ namespace BruteSharkDesktop
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
-            _processor.TcpSessionArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _processor.FileProcessingStarted += (s, e) => SwitchToMainThreadContext(() => OnFileProcessStart(s, e));
             _processor.FileProcessingEnded += (s, e) => SwitchToMainThreadContext(() => OnFileProcessEnd(s, e));
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
-            _processor.TcpSessionArived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
+            _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
+            _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
 
             InitilizeFilesIconsList();
@@ -78,9 +80,9 @@ namespace BruteSharkDesktop
             this.progressBar.Value = this.progressBar.Maximum;
         }
 
-        private void OnSessionArived(TcpSession tcpSession)
+        private void OnSessionArived(TransportLayerSession session)
         {
-            _sessionsExplorerUserControl.AddSession(tcpSession);
+            _sessionsExplorerUserControl.AddSession(session);
             this.modulesTreeView.Nodes["NetworkNode"].Nodes["SessionsNode"].Text = $"Sessions ({_sessionsExplorerUserControl.SessionsCount})";
         }
 
@@ -269,6 +271,42 @@ namespace BruteSharkDesktop
             {
                 _analyzer.RemoveModule(module_name);
             }
+        }
+
+        private void buildTcpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (buildTcpSessionsCheckBox.CheckState == CheckState.Checked)
+            {
+                buildTcpSessionsCheckBox.Text = "Build TCP Sessions: ON";
+                this._processor.BuildTcpSessions = true;
+            }
+            else if (buildTcpSessionsCheckBox.CheckState == CheckState.Unchecked)
+            {
+                buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
+                this._processor.BuildTcpSessions = false;
+                messageOnBuildSessionsConfigurationChanged();
+            }
+        }
+
+        private void buildUdpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (buildUdpSessionsCheckBox.CheckState == CheckState.Checked)
+            {
+                buildUdpSessionsCheckBox.Text = "Build UDP Sessions: ON";
+                this._processor.BuildUdpSessions = true;
+            }
+            else if (buildUdpSessionsCheckBox.CheckState == CheckState.Unchecked)
+            {
+                buildUdpSessionsCheckBox.Text = "Build UDP Sessions: OFF";
+                this._processor.BuildUdpSessions = false;
+                messageOnBuildSessionsConfigurationChanged();
+            }
+        }
+
+        private void messageOnBuildSessionsConfigurationChanged()
+        {
+            MessageBox.Show(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+This means a faster processing but also that some obects may not be extracted.");
         }
 
     }

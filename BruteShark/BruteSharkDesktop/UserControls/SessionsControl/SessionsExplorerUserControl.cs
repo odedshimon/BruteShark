@@ -50,21 +50,21 @@ namespace BruteSharkDesktop
 
         private void OnSessionsDataGridViewSelectionChanged(object sender, EventArgs e)
         {
-            var tcpSession = (this.sessionsDataGridView.SelectedRows.Count > 0 ? 
+            var session = (this.sessionsDataGridView.SelectedRows.Count > 0 ? 
                               this.sessionsDataGridView.SelectedRows[0].DataBoundItem : null)
-                              as TcpSession;
+                              as TransportLayerSession;
 
-            if (tcpSession != null)
+            if (session != null)
             {
-                _sessionViewerUserControl.SetSessionView(tcpSession);
+                _sessionViewerUserControl.SetSessionView(session);
             }
         }
 
-        public void AddSession(TcpSession tcpSession)
+        public void AddSession(TransportLayerSession session)
         {
             this.SuspendLayout();
 
-            _sessionsBindingSource.Add(tcpSession);
+            _sessionsBindingSource.Add(session);
 
             this.ResumeLayout();
         }

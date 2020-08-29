@@ -12,5 +12,6 @@ namespace PcapAnalyzer
         void Analyze(UdpPacket udpPacket);
         void Analyze(TcpPacket tcpPacket);
         void Analyze(TcpSession tcpSession);
+        void Analyze(UdpStream udpStream);
     }
 }
