@@ -1,6 +1,6 @@
 ![](readme_media/BruteSharkBanner.png)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)  
+![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)  
 # About
 
 BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
@@ -21,7 +21,7 @@ Please ⭐️ this repository if this project helped you!
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
 * Build visual network diagram (Network nodes & users)
-* Reconstruct all TCP Sessions
+* Reconstruct all TCP & UDP Sessions
 * File Carving
 
 ## Download
@@ -128,6 +128,6 @@ Available commands:
 (3). start  
 (4). show-passwords  
 (5). show-hashes  
-(6). export-hashes  
-(7). show-modules
-(8). exit 
+(6). export-hashes   
+(7). show-modules  
+(8). exit  
