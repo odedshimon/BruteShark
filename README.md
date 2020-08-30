@@ -25,13 +25,18 @@ Please ⭐️ this repository if this project helped you!
 * File Carving
 
 ## Download
-Make sure you have installed WinPcap / Npcap / libpcap (Wireshark installs one of this by default)
-* Windows - download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).
-* Linux - download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:
-```bash
-wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
-./BruteSharkCli
-```
+##### Windows 
+* Prerequisites: 
+    * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
+    * [.NET Core SDK](https://dotnet.microsoft.com/download)  
+* Download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+##### Linux
+* Prerequisites: libpcap driver  
+* Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
+    ```bash
+    wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
+    ./BruteSharkCli
+    ```
 
 # Examples
 ##### Videos
