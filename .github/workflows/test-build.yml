@@ -25,7 +25,7 @@ jobs:
     
     - name: Test
       run: dotnet test --verbosity normal
-      working-directory: ./BruteShark
+      working-directory: ./BruteShark/PcapAnalyzerTest
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
