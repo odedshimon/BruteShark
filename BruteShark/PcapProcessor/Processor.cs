@@ -12,18 +12,16 @@ namespace PcapProcessor
     // TODO: use interface
     public class Processor
     {
+        public delegate void FileProcessingStatusChangedEventHandler(object sender, FileProcessingStatusChangedEventArgs e);
+        public event FileProcessingStatusChangedEventHandler FileProcessingStatusChanged;
         public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
         public event UdpPacketArivedEventHandler UdpPacketArived;
+        public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
+        public event UdpSessionArrivedEventHandler UdpSessionArrived;
         public delegate void TcpPacketArivedEventHandler(object sender, TcpPacketArivedEventArgs e);
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
-        public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
-        public event UdpSessionArrivedEventHandler UdpSessionArrived;
-        public delegate void FileProcessingStartedEventHandler(object sender, FileProcessingStartedEventArgs e);
-        public event FileProcessingStartedEventHandler FileProcessingStarted;
-        public delegate void FileProcessingEndedEventHandler(object sender, FileProcessingEndedEventArgs e);
-        public event FileProcessingEndedEventHandler FileProcessingEnded;
         public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
         public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;
         public event EventHandler ProcessingFinished;
@@ -73,7 +71,7 @@ namespace PcapProcessor
         {
             try
             {
-                FileProcessingStarted?.Invoke(this, new FileProcessingStartedEventArgs() { FilePath = filePath });
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, filePath);
                 _tcpSessionsBuilder.Clear();
                 _udpStreamBuilder.Clear();
 
@@ -104,12 +102,21 @@ namespace PcapProcessor
                 }
 
                 _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
-                FileProcessingEnded?.Invoke(this, new FileProcessingEndedEventArgs() { FilePath = filePath });
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, filePath);
             }
             catch (Exception ex)
             {
-                //throw new PcapFileProcessingException(filePath);
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Faild, filePath);
             }
+        }
+
+        private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
+        {
+            FileProcessingStatusChanged?.Invoke(this, new FileProcessingStatusChangedEventArgs()
+            {
+                FilePath = filePath,
+                Status = status
+            });
         }
 
         private void ProcessPacket(object sender, CaptureEventArgs e)

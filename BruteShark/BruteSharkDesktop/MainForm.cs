@@ -1,4 +1,5 @@
 ﻿using BruteSharkDesktop;
+using PcapProcessor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,8 +55,7 @@ namespace BruteSharkDesktop
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.FileProcessingStarted += (s, e) => SwitchToMainThreadContext(() => OnFileProcessStart(s, e));
-            _processor.FileProcessingEnded += (s, e) => SwitchToMainThreadContext(() => OnFileProcessEnd(s, e));
+            _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
             _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
@@ -112,7 +112,7 @@ namespace BruteSharkDesktop
             }
         }
 
-        private void OnFileProcessEnd(object sender, PcapProcessor.FileProcessingEndedEventArgs e)
+        private void OnFileProcessingStatusChanged(object sender, FileProcessingStatusChangedEventArgs e)
         {
             var currentFileListViewItem = this.filesListView.FindItemWithText(
                 Path.GetFileName(e.FilePath),
@@ -120,32 +120,21 @@ namespace BruteSharkDesktop
                 0,
                 false);
 
-            currentFileListViewItem.ForeColor = Color.Blue;
-            currentFileListViewItem.SubItems[2].Text = "Analyzed";
-        }
-
-        private void OnFileProcessStart(object sender, PcapProcessor.FileProcessingStartedEventArgs e)
-        {
-            var currentFileListViewItem = this.filesListView.FindItemWithText(
-                Path.GetFileName(e.FilePath),
-                true,
-                0,
-                false);
-
-            currentFileListViewItem.ForeColor = Color.Red;
-            currentFileListViewItem.SubItems[2].Text = "On Process..";
-        }
-
-        private void OnFileProcessException(string filePath)
-        {
-            var currentFileListViewItem = this.filesListView.FindItemWithText(
-                Path.GetFileName(filePath),
-                true,
-                0,
-                false);
-
-            currentFileListViewItem.ForeColor = Color.Purple;
-            currentFileListViewItem.SubItems[2].Text = "Failed";
+            if (e.Status == FileProcessingStatus.Started)
+            {
+                currentFileListViewItem.ForeColor = Color.Red;
+                currentFileListViewItem.SubItems[2].Text = "On Process..";
+            }
+            else if (e.Status == FileProcessingStatus.Finished)
+            {
+                currentFileListViewItem.ForeColor = Color.Blue;
+                currentFileListViewItem.SubItems[2].Text = "Analyzed";
+            }
+            else if (e.Status == FileProcessingStatus.Faild)
+            {
+                currentFileListViewItem.ForeColor = Color.DarkOrange;
+                currentFileListViewItem.SubItems[2].Text = "Failed";
+            }
         }
 
         private void InitilizeFilesIconsList()
