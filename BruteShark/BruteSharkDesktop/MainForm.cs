@@ -78,6 +78,30 @@ namespace BruteSharkDesktop
         private void OnProcessingFinished(object sender, EventArgs e)
         {
             this.progressBar.Value = this.progressBar.Maximum;
+            handleFailedFiles();
+        }
+
+        private void handleFailedFiles()
+        {
+            // The tag holds the full file path.
+            var failedFilesString = string.Join(
+                Environment.NewLine, 
+                filesListView.Items
+                    .Cast<ListViewItem>()
+                    .Where(x => x.SubItems[2].Text == "Failed")
+                    .Select(x => x.Tag.ToString() + Environment.NewLine)
+                    .ToList());
+
+            if (failedFilesString.Length > 0)
+            {
+                var failedFilesMessage = 
+@$"BruteShark failed to analyze to following files:
+{Environment.NewLine}{failedFilesString}
+ Note: if your files are in PCAPNG format it possible to convert them to a PCAP format using Tshark: 
+tshark -F pcap -r <pcapng file> -w <pcap file>";
+
+                MessageBox.Show(failedFilesMessage);
+            }
         }
 
         private void OnSessionArived(TransportLayerSession session)
