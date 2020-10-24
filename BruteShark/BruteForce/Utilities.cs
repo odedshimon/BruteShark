@@ -59,7 +59,7 @@ namespace BruteForce
 
         public static string ConvertToHashcatFormat(KerberosAsRepHash kerberosHash)
         {
-            // $krb5asrep$23$user@domain.com:3e156ada5912....
+            // $krb5asrep$23$user@domain.com:3e156ada591263b8aab0965f5aebd837$007497cb5....
             return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
                 kerberosHash.Username,
                 kerberosHash.Realm,
