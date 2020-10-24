@@ -57,7 +57,7 @@ namespace PcapAnalyzer
 
                 return new KerberosHash()
                 {
-                    HashType = "Kerberos V5",
+                    HashType = "Kerberos V5 AS-REQ Pre-Auth etype 23",
                     Protocol = "UDP",
                     Source = udpPacket.DestinationIp,
                     Destination = udpPacket.SourceIp,

@@ -206,7 +206,7 @@ Accept: text/html,application/xhtml+xml");
             var hash = kerberosParser.Parse(kerberosAsRequestPacket) as PcapAnalyzer.KerberosHash;
 
             // Assert.
-            Assert.AreEqual("Kerberos V5", hash.HashType);
+            Assert.AreEqual("Kerberos V5 AS-REQ Pre-Auth etype 23", hash.HashType);
             Assert.AreEqual("des", hash.User);
             Assert.AreEqual("DENYDC", hash.Domain);
             Assert.AreEqual(hash.Hash, "32d396a914a4d0a78e979ba75d4ff53c1db7294141760fee05e434c12ecf8d5b9aa5839e09a2244893aff5f384f79c37883f154a");
