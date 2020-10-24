@@ -23,6 +23,7 @@ namespace PcapAnalyzer
                 return null;
             }
 
+            // TODO: refactor this boilerplate code
             if (kerberosPacket is KerberosTgsRepPacket)
             {
                 var kerberosTgsRepPacket = kerberosPacket as KerberosTgsRepPacket;
@@ -49,7 +50,7 @@ namespace PcapAnalyzer
 
                 if (kerberosAsRepPacket.Ticket.EncrytedPart.Etype == 23)
                 {
-                    return new KerberosTgsRepHash()
+                    return new KerberosAsRepHash()
                     {
                         Source = source,
                         Destination = destination,

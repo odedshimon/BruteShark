@@ -28,6 +28,10 @@ namespace BruteForce
             {
                 res = ConvertToHashcatFormat(hash as KerberosTgsRepHash);
             }
+            else if (hash is KerberosAsRepHash)
+            {
+                res = ConvertToHashcatFormat(hash as KerberosAsRepHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
@@ -35,7 +39,6 @@ namespace BruteForce
 
             return res;
         }
-
         
         public static string ConvertToHashcatFormat(KerberosTgsRepHash kerberosHash)
         {
@@ -50,6 +53,16 @@ namespace BruteForce
 
             // But at other places i saw this format, this is worked great with Hashcat 6.0.
             return string.Format("$krb5tgs$23${0}${1}",
+                kerberosHash.HashedData.Substring(0, 32),
+                kerberosHash.HashedData.Substring(32));
+        }
+
+        public static string ConvertToHashcatFormat(KerberosAsRepHash kerberosHash)
+        {
+            // $krb5asrep$23$user@domain.com:3e156ada5912....
+            return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
+                kerberosHash.Username,
+                kerberosHash.Realm,
                 kerberosHash.HashedData.Substring(0, 32),
                 kerberosHash.HashedData.Substring(32));
         }
