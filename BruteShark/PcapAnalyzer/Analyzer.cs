@@ -64,36 +64,24 @@ namespace PcapAnalyzer
             {
                 if (item is UdpPacket)
                 {
-                    SafeRun(() => module.Analyze(item as UdpPacket));
+                    Utilities.SafeRun(() => module.Analyze(item as UdpPacket));
                 }
                 else if (item is UdpStream)
                 {
-                    SafeRun(() => module.Analyze(item as UdpStream));
+                    Utilities.SafeRun(() => module.Analyze(item as UdpStream));
                 }
                 else if (item is TcpPacket)
                 {
-                    SafeRun(() => module.Analyze(item as TcpPacket));
+                    Utilities.SafeRun(() => module.Analyze(item as TcpPacket));
                 }
                 else if (item is TcpSession)
                 {
-                    SafeRun(() => module.Analyze(item as TcpSession));
+                    Utilities.SafeRun(() => module.Analyze(item as TcpSession));
                 }
                 else
                 {
                     throw new Exception("Unsupported type for analyzer");
                 }
-            }
-        }
-
-        private void SafeRun(Action method)
-        {
-            try
-            {
-                method();
-            }
-            catch (Exception ex)
-            {
-                // TODO: log
             }
         }
         

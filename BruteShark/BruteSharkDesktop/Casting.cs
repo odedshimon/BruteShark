@@ -125,6 +125,10 @@ namespace BruteSharkDesktop
             {
                 res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosTgsRepHash);
             }
+            else if (hash is PcapAnalyzer.KerberosAsRepHash)
+            {
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosAsRepHash);
+            }
             else
             {
                 throw new Exception("Hash type not supported");
@@ -133,6 +137,7 @@ namespace BruteSharkDesktop
             return res;
         }
 
+        // TODO: refactor this duplicate code
         private static Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.KerberosTgsRepHash kerberosTgsRepHash)
         {
             return new BruteForce.KerberosTgsRepHash()
@@ -141,6 +146,17 @@ namespace BruteSharkDesktop
                 Realm = kerberosTgsRepHash.Realm,
                 HashedData = kerberosTgsRepHash.Hash,
                 Username = kerberosTgsRepHash.Username
+            };
+        }
+
+        private static Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.KerberosAsRepHash kerberosAsRepHash)
+        {
+            return new BruteForce.KerberosAsRepHash()
+            {
+                ServiceName = kerberosAsRepHash.ServiceName,
+                Realm = kerberosAsRepHash.Realm,
+                HashedData = kerberosAsRepHash.Hash,
+                Username = kerberosAsRepHash.Username
             };
         }
 

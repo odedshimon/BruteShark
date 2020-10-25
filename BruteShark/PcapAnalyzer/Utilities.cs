@@ -67,5 +67,17 @@ namespace PcapAnalyzer
             return null;
         }
 
+        public static void SafeRun(Action method)
+        {
+            try
+            {
+                method();
+            }
+            catch (Exception ex)
+            {
+                // TODO: log
+            }
+        }
+
     }
 }

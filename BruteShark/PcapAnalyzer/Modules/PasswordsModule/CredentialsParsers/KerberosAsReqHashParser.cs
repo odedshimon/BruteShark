@@ -6,7 +6,7 @@ using System.Text;
 namespace PcapAnalyzer
 {
     // Algorithm inspired from https://github.com/lgandx/PCredz/blob/master/Pcredz
-    public class KerberosHashParser : IPasswordParser
+    public class KerberosAsReqHashParser : IPasswordParser
     {
         // Kerberos message type, we look for 'krb-as-req' (decimal value 10) which means
         // pre-authentication request.
@@ -57,7 +57,7 @@ namespace PcapAnalyzer
 
                 return new KerberosHash()
                 {
-                    HashType = "Kerberos V5",
+                    HashType = "Kerberos V5 AS-REQ Pre-Auth etype 23",
                     Protocol = "UDP",
                     Source = udpPacket.DestinationIp,
                     Destination = udpPacket.SourceIp,
