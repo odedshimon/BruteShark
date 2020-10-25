@@ -33,47 +33,37 @@ namespace PcapAnalyzer
                                     .ToList();
         }
 
-        public void Analyze(UdpPacket udpPacket)
+        public void Analyze(UdpPacket udpPacket) => AnalyzeGeneric(udpPacket);
+        public void Analyze(UdpStream udpStream) => AnalyzeGeneric(udpStream);
+        public void Analyze(TcpPacket tcpPacket) => AnalyzeGeneric(tcpPacket);
+        public void Analyze(TcpSession tcpSession) => AnalyzeGeneric(tcpSession);
+
+        public void AnalyzeGeneric(object item)
         {
+            NetworkLayerObject credential = null;
+
             foreach (var parsrer in this._passwordParsers)
             {
-                NetworkLayerObject credential = parsrer.Parse(udpPacket);
-
-                if (credential != null)
+                if (item is TcpPacket)
                 {
-                    // Raise event.
-                    this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                    {
-                        ParsedItem = credential
-                    });
-
+                    credential = SafeRun(x => parsrer.Parse(x as TcpPacket), item as TcpPacket);
                 }
-            }
-        }
-
-        public void Analyze(TcpPacket tcpPacket)
-        {
-            foreach (var parsrer in this._passwordParsers)
-            {
-                NetworkLayerObject credential = parsrer.Parse(tcpPacket);
-
-                if (credential != null)
+                else if (item is TcpSession)
                 {
-                    // Raise event.
-                    this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                    {
-                        ParsedItem = credential
-                    });
-
+                    credential = SafeRun(x => parsrer.Parse(x as TcpSession), item as TcpSession);
                 }
-            }
-        }
-
-        public void Analyze(TcpSession tcpSession)
-        {
-            foreach (var parsrer in this._passwordParsers)
-            {
-                NetworkLayerObject credential = parsrer.Parse(tcpSession);
+                else if (item is UdpPacket)
+                {
+                    credential = SafeRun(x => parsrer.Parse(x as UdpPacket), item as UdpPacket);
+                }
+                else if (item is UdpStream)
+                {
+                    // Nothing to do.
+                }
+                else
+                {
+                    throw new Exception("Unsupported type for password module");
+                }
 
                 if (credential != null)
                 {
@@ -86,9 +76,15 @@ namespace PcapAnalyzer
             }
         }
 
-        public void Analyze(UdpStream udpStream)
+        private NetworkLayerObject SafeRun(Func<object, NetworkLayerObject> func, object param)
         {
-            
+            try
+            {
+                return func(param);
+            }
+            catch (Exception ex) { }
+
+            return null;
         }
     }
 }

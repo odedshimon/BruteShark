@@ -9,8 +9,8 @@ namespace PcapAnalyzer
         public NetworkLayerObject Parse(UdpPacket udpPacket) => 
             this.GetKerberosTicketsHash(udpPacket.SourceIp, udpPacket.DestinationIp, "UDP", udpPacket.Data);
 
-        public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
-            //this.GetKerberosTicketsHash(tcpPacket.SourceIp, tcpPacket.DestinationIp, "TCP", tcpPacket.Data);
+        public NetworkLayerObject Parse(TcpPacket tcpPacket) => 
+            this.GetKerberosTicketsHash(tcpPacket.SourceIp, tcpPacket.DestinationIp, "TCP", tcpPacket.Data);
 
         public NetworkLayerObject Parse(TcpSession tcpSession) => null;
 
