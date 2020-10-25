@@ -172,7 +172,7 @@ Accept: text/html,application/xhtml+xml");
         public void KerberosHashParser_ParseUdpSession_ParseSuccess()
         {
             // Arrange
-            var kerberosParser = new PcapAnalyzer.KerberosHashParser();
+            var kerberosParser = new PcapAnalyzer.KerberosAsReqHashParser();
 
             var kerberosAsRequestPacket = new PcapAnalyzer.UdpPacket
             {

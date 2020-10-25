@@ -7,18 +7,14 @@ namespace PcapAnalyzer
 {
     class PasswordsModule : IModule
     {
-
-        private KerberosHashParser _kerberosParser;
-        private List<IPasswordParser> _passwordParsers;
-
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
+        private List<IPasswordParser> _passwordParsers;
         public string Name => "Credentials Extractor (Passwords, Hashes)";
 
 
         public PasswordsModule()
         {
-            this._kerberosParser = new KerberosHashParser();
             _initilyzePasswordParsersList();
         }
 
