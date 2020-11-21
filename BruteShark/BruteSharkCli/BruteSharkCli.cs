@@ -64,6 +64,7 @@ namespace BruteSharkCli
             _shell.AddCommand(new CliShellCommand("show-passwords", p => PrintPasswords(), "Print passwords."));
             _shell.AddCommand(new CliShellCommand("show-modules", p => PrintModules(), "Print modules."));
             _shell.AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
+            _shell.AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             _shell.AddCommand(new CliShellCommand("export-networkmap", p => ExportNetworkMap(p), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
 
@@ -214,6 +215,11 @@ namespace BruteSharkCli
         private void PrintHashes()
         {
             this._hashes.ToDataTable(itemLengthLimit:15).Print();
+        }
+
+        private void PrintNetworkMap()
+        {
+            Console.WriteLine(Neo4jJsonExporter.GetNetworkMapAsJsonString(this._connections.ToList()));
         }
 
         private void PrintModules()
