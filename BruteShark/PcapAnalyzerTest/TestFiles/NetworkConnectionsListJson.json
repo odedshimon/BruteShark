@@ -1,0 +1,9 @@
+﻿[
+  {
+    "Source": "1.1.1.1",
+    "Destination": "2.2.2.2",
+    "Protocol": "TCP",
+    "SrcPort": 3009,
+    "DestPort": 80
+  }
+]
