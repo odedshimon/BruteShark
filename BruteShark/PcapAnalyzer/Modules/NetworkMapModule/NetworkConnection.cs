@@ -8,6 +8,17 @@
         public int SrcPort { get; set; }
         public int DestPort { get; set; }
 
+        public NetworkConnection() { }
+
+        public NetworkConnection(string source, string destination, string protocol, int srcPort, int dstPort)
+        {
+            this.Source = source;
+            this.Destination = destination;
+            this.Protocol = protocol;
+            this.SrcPort = srcPort;
+            this.DestPort = dstPort;
+        }
+        
 
         public override bool Equals(object obj)
         {

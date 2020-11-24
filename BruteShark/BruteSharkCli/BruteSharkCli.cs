@@ -132,7 +132,7 @@ namespace BruteSharkCli
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.WriteLine($"\r[+] Network Connections Found: {_connections.Count}");
-                Console.SetCursorPosition(0, Console.CursorTop - 4);
+                Console.SetCursorPosition(0, Console.CursorTop - 5);
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }
@@ -219,7 +219,7 @@ namespace BruteSharkCli
 
         private void PrintNetworkMap()
         {
-            Console.WriteLine(Neo4jJsonExporter.GetNetworkMapAsJsonString(this._connections.ToList()));
+            Console.WriteLine(NetwrokMapJsonExporter.GetNetworkMapAsJsonString(this._connections.ToList()));
         }
 
         private void PrintModules()
@@ -233,7 +233,7 @@ namespace BruteSharkCli
         private void StartAnalyzing()
         {
             _processor.ProcessPcaps(this._files);
-            Console.SetCursorPosition(0, Console.CursorTop + 4);
+            Console.SetCursorPosition(0, Console.CursorTop + 5);
         }
 
         public string MakeUnique(string path)
@@ -253,7 +253,7 @@ namespace BruteSharkCli
         private void ExportNetworkMap(string filename)
         {
             List<NetworkConnection> connectionsAslist = this._connections.ToList<PcapAnalyzer.NetworkConnection>();
-            PcapAnalyzer.Neo4jJsonExporter.FileExport(connectionsAslist, filename);
+            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(connectionsAslist, filename);
             Console.WriteLine("Successfully exported network map to json file: " + filename);
 
             

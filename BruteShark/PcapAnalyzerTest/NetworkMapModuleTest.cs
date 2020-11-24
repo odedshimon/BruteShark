@@ -21,21 +21,14 @@ namespace PcapAnalyzerTest
         {
             // Arrange
             var connections = new List<PcapAnalyzer.NetworkConnection>();
-
-
-            var connection = new PcapAnalyzer.NetworkConnection();
-            connection.Protocol = "TCP";
-            connection.Source= "1.1.1.1";
-            connection.Destination = "2.2.2.2";
-            connection.SrcPort = 3009;
-            connection.DestPort = 80;
+            var connection = new PcapAnalyzer.NetworkConnection(source: "1.1.1.1",destination: "2.2.2.2", protocol: "TCP", srcPort: 3009, dstPort: 80);
 
             connections.Add(connection);
             
             var expected = File.ReadAllText(this.NetworkConnectionsListJson);
 
             // Act.
-            string jsonString = PcapAnalyzer.Neo4jJsonExporter.GetNetworkMapAsJsonString(connections);
+            string jsonString = PcapAnalyzer.NetwrokMapJsonExporter.GetNetworkMapAsJsonString(connections);
 
             // Assert.
             Assert.AreEqual(expected, jsonString);
