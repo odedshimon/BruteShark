@@ -14,6 +14,7 @@ namespace PcapProcessorTest
         public string UdpFilePath { get; set; }
         public string TcpFivePacketsFilePath { get; set; }
         public string HttpSmallFilePath { get; set; }
+        public string PcapNGFile { get; set; }
 
 
         public PcapProcessorTest()
@@ -21,6 +22,7 @@ namespace PcapProcessorTest
             this.UdpFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Kerberos - UDP.pcap");
             this.TcpFivePacketsFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Tcp - 5 Packets.pcap");
             this.HttpSmallFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP - Small File.pcap");
+            this.PcapNGFile = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP - Small File.pcapng");
         }
 
         [TestMethod]
@@ -149,6 +151,14 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(46, recievedPackets.Count);
+        }
+
+        [TestMethod]
+        public void PcapProcessor_identifyPcapFileFormat()
+        {
+            var processor = new PcapProcessor.Processor();
+            Assert.AreEqual(true, processor.IsPcapFile(this.HttpSmallFilePath));
+            Assert.AreEqual(false, processor.IsPcapFile(this.PcapNGFile));
         }
     }
 }

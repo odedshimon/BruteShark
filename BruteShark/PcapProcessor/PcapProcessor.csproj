@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpPcap" Version="5.1.0" />
+    <PackageReference Include="Haukcode.PcapngUtils" Version="1.1.0" />
+    <PackageReference Include="SharpPcap" Version="5.3.0" />
   </ItemGroup>
 
 </Project>
