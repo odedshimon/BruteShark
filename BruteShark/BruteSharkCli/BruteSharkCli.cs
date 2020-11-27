@@ -108,6 +108,7 @@ namespace BruteSharkCli
             ++_udpStreamsCount;
             UpdateAnalyzingStatus();
         }
+
         private void UpdateTcpPacketsCount()
         {
             if (++_tcpPacketsCount % 10 == 0)
@@ -115,6 +116,7 @@ namespace BruteSharkCli
                 UpdateAnalyzingStatus();
             }
         }
+
         private void UpdateUdpPacketsCount()
         {
             if (++_udpPacketsCount % 10 == 0)
@@ -122,6 +124,7 @@ namespace BruteSharkCli
                 UpdateAnalyzingStatus();
             }
         }
+
         private void UpdateAnalyzingStatus()
         {
             lock (_printingLock)
@@ -149,7 +152,6 @@ namespace BruteSharkCli
             };
         }
 
-
         private PcapAnalyzer.TcpPacket CastProcessorTcpPacketToAnalyzerTcpPacket(PcapProcessor.TcpPacket tcpPacket)
         {
             return new PcapAnalyzer.TcpPacket()
@@ -174,6 +176,7 @@ namespace BruteSharkCli
                 Packets = tcpSession.Packets.Select(p => CastProcessorTcpPacketToAnalyzerTcpPacket(p)).ToList()
             };
         }
+
         private PcapAnalyzer.UdpStream CastProcessorUdpStreamToAnalyzerUdpStream(PcapProcessor.UdpSession udpStream)
         {
             return new PcapAnalyzer.UdpStream()
@@ -250,15 +253,15 @@ namespace BruteSharkCli
                 path = Path.Combine(dir, fileName + " " + i + fileExt);
             }
         }
-        private void ExportNetworkMap(string filename)
+
+        private void ExportNetworkMap(string filePath)
         {
-            List<NetworkConnection> connectionsAslist = this._connections.ToList<PcapAnalyzer.NetworkConnection>();
-            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(connectionsAslist, filename);
-            Console.WriteLine("Successfully exported network map to json file: " + filename);
+            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(
+                connections: this._connections.ToList<PcapAnalyzer.NetworkConnection>(), 
+                filePath: filePath);
 
-            
+            Console.WriteLine("Successfully exported network map to json file: " + filePath);
         }
-
 
         private void ExportHashes(string filePath)
         {

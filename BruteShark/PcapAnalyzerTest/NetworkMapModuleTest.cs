@@ -11,6 +11,7 @@ namespace PcapAnalyzerTest
     public class NetworkMapModuleTest
     {
         public string NetworkConnectionsListJson { get; set; }
+
         public NetworkMapModuleTest()
         {
             this.NetworkConnectionsListJson = Path.Combine(Directory.GetCurrentDirectory(), @"TestFiles\NetworkConnectionsListJson.json");
@@ -20,18 +21,24 @@ namespace PcapAnalyzerTest
         public void NetworkMapAsJsonString_Test()
         {
             // Arrange
-            var connections = new List<PcapAnalyzer.NetworkConnection>();
-            var connection = new PcapAnalyzer.NetworkConnection(source: "1.1.1.1",destination: "2.2.2.2", protocol: "TCP", srcPort: 3009, dstPort: 80);
-
-            connections.Add(connection);
+            var connections = new List<PcapAnalyzer.NetworkConnection>() {
+                new PcapAnalyzer.NetworkConnection()
+                {
+                    Source = "1.1.1.1",
+                    Destination = "2.2.2.2", 
+                    Protocol = "TCP", 
+                    SrcPort = 3009, 
+                    DestPort = 80
+                }
+            };
             
-            var expected = File.ReadAllText(this.NetworkConnectionsListJson);
+            var expectedJson = File.ReadAllText(this.NetworkConnectionsListJson);
 
             // Act.
             string jsonString = PcapAnalyzer.NetwrokMapJsonExporter.GetNetworkMapAsJsonString(connections);
 
             // Assert.
-            Assert.AreEqual(expected, jsonString);
+            Assert.AreEqual(expectedJson, jsonString);
 
         }
     }

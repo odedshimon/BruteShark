@@ -10,16 +10,6 @@
 
         public NetworkConnection() { }
 
-        public NetworkConnection(string source, string destination, string protocol, int srcPort, int dstPort)
-        {
-            this.Source = source;
-            this.Destination = destination;
-            this.Protocol = protocol;
-            this.SrcPort = srcPort;
-            this.DestPort = dstPort;
-        }
-        
-
         public override bool Equals(object obj)
         {
             if (!(obj is NetworkConnection))
@@ -34,8 +24,6 @@
                    this.Protocol == networkConnection.Protocol &&
                    this.SrcPort == networkConnection.SrcPort &&
                    this.DestPort == networkConnection.DestPort;
-
-
         }
 
         public override int GetHashCode()

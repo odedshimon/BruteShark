@@ -12,10 +12,10 @@ namespace PcapAnalyzer
             string connectionsJsonSerialized = JsonSerializer.Serialize(connections, new JsonSerializerOptions() { WriteIndented = true });
             return connectionsJsonSerialized;
         }
-        public static void FileExport(List<NetworkConnection> connections,  string filename)
+        public static void FileExport(List<NetworkConnection> connections,  string filePath)
         {
             string connectionsJsonSerialized = GetNetworkMapAsJsonString(connections);
-            File.WriteAllText(filename, connectionsJsonSerialized);
+            File.WriteAllText(filePath, connectionsJsonSerialized);
             
         }
     }
