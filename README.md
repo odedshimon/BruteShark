@@ -46,6 +46,9 @@ Please ⭐️ this repository if this project helped you!
 * Prerequisites: libpcap driver  
 * Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
     ```bash
+    # Create a symbolyc link between libpcap.so and the actual libpcap file (e.g. libpcap.so.0.8)
+    # That needed due to a known issue in SharpPcap (https://github.com/chmorgan/sharppcap/issues/167)
+    find /usr/lib/x86_64-linux-gnu -type f | grep libpcap | head -1 | xargs -i sudo ln -s {} /usr/lib/x86_64-linux-gnu/libpcap.so
     wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
     ./BruteSharkCli
     ```
@@ -107,7 +110,7 @@ All BruteShark projects are implemented using `.Net Core` and `.Net Standard` fo
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
 The separation between layers is created by the fact that each project refers only its own objects.
 ##### PcapProcessor (DAL)
-As the Data Access Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
+As the Data Access Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and the amazing wrapper library [SharpPcap](https://github.com/chmorgan/sharppcap) by Chris Morgan.
 Can analyze a list of files at once, and provides additional features like reconstruction of all TCP Sessions (using the awesome project TcpRecon).
 ##### PcapAnalyzer (BLL)
 The Business Logic Layer, responsible for analyzing network information (packet, TCP Session etc.), implements a pluggable mechanism.
