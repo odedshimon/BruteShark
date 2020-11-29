@@ -82,11 +82,6 @@ namespace PcapAnalyzer
         
         private void RaiseParsedItemDetected(string query, string destination)
         {
-            //if (_mappings.Any(m => m.Query == query && m.Destination == destination))
-            //{
-            //    return;
-            //}
-
             var response = new DnsNameMapping()
             {
                 Query = query,

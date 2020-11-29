@@ -67,7 +67,14 @@ namespace BruteSharkDesktop
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
+            InitilizeDnsPlumbing();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeDnsPlumbing()
+        {
+            var dnsModule = _analyzer.AvailableModules.First(m => m.Name == "DNS") as PcapAnalyzer.DnsModule;
+            _networkMapUserControl.SetDns(dnsModule.Mappings);
         }
 
         private void InitilizeModulesCheckedListBox()

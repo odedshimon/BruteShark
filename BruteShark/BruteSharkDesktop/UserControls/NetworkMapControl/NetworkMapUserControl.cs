@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using PcapAnalyzer;
 
 namespace BruteSharkDesktop
 {
@@ -16,8 +16,14 @@ namespace BruteSharkDesktop
         private HashSet<NetworkMapEdge> _edges;
         Microsoft.Msagl.GraphViewerGdi.GViewer _viewer;
         Microsoft.Msagl.Drawing.Graph _graph;
+        HashSet<DnsNameMapping> _mappings;
 
         public int NodesCount => _graph.Nodes.Count();
+
+        internal void SetDns(HashSet<DnsNameMapping> mappings)
+        {
+            _mappings = mappings;
+        }
 
         public NetworkMapUserControl()
         {
@@ -51,11 +57,30 @@ namespace BruteSharkDesktop
                 _edges.Add(newEdge);
             }
 
-            _graph.FindNode(source).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
-            _graph.FindNode(destination).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+            ProcessNode(source);
+            ProcessNode(destination);
 
             _viewer.Graph = _graph;
             this.ResumeLayout();
+        }
+
+        private void ProcessNode(string nodeId)
+        {
+            var node = _graph.FindNode(nodeId);
+            node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+            node.LabelText = GetNameForNode(node);
+        }
+
+        private string GetNameForNode(Microsoft.Msagl.Drawing.Node node)
+        {
+            var mappings = _mappings.Where(m => m.Destination == node.Id).ToArray();
+            if (mappings == null || mappings.Length == 0)
+            {
+                return node.Id;
+            }
+
+            var mappingString = string.Join(Environment.NewLine, mappings.Select(m => m.Query).Distinct());
+            return $"{node.Id}{Environment.NewLine}({mappingString})";
         }
 
         public void HandleHash(PcapAnalyzer.NetworkHash hash)
