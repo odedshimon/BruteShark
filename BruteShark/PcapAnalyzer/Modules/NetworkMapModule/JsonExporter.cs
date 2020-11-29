@@ -7,23 +7,19 @@ using System.IO;
 
 namespace PcapAnalyzer
 {
-    public class Neo4jJsonExporter
+    public static class JsonExporter
     {
-
         public static string GetNetworkMapAsJsonString(List<NetworkConnection> connections)
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-            string connectionsJsonSerialized = JsonSerializer.Serialize(connections, options);
-            return connectionsJsonSerialized;
+            return JsonSerializer.Serialize(
+                connections, 
+                new JsonSerializerOptions { WriteIndented = true });
         }
-        public static void FileExport(List<NetworkConnection> connections,  string filename)
+
+        public static void ExportFile(List<NetworkConnection> connections,  string filename)
         {
             string connectionsJsonSerialized = GetNetworkMapAsJsonString(connections);
             File.WriteAllText(filename, connectionsJsonSerialized);
-            
         }
     }
 
