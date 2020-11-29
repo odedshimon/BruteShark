@@ -6,6 +6,9 @@
       * [What it can do](#what-it-can-do)
       * [Download](#download)
    * [Examples](#examples)
+   * [Usage](#usage)
+     * [BruteSharkDesktop](#brutesharkdesktop)
+     * [BruteSharkCli](#brutesharkcli)
    * [Architecture](#architecture)
 <!--te-->
 # About
@@ -61,6 +64,26 @@ Please ⭐️ this repository if this project helped you!
 ![](readme_media/TcpSessions.PNG)
 ##### Brute Shark CLI 
 ![](readme_media/BruteSharkCli.PNG)
+
+# Usage
+In general, it is recommended to use the example PCAP files [folder](https://github.com/odedshimon/BruteShark/tree/master/Pcap_Examples), load, run and explore the results.  
+
+## BruteSharkDesktop
+The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
+
+## BruteSharkCli
+| Keyword           | Description                                                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| help              | Print help menu                                                                         |
+| exit              | Exit CLI                                                                                |
+| add-file          | Add file to analyze. Usage: add-file FILE-PATH                                          |
+| start             | Start analyzing                                                                         |
+| show-passwords    | Print passwords.                                                                        |
+| show-modules      | Print modules.                                                                          |
+| show-hashes       | Print Hashes                                                                            |
+| show-networkmap   | Prints the network map as a json string. Usage: show-networkmap                         |
+| export-hashes     | Export all Hashes to Hascat format input files. Usage: export-hashes OUTPUT-DIRECTORY   |
+| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-file      |
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
