@@ -15,6 +15,17 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\PcapAnalyzer\PcapAnalyzer.csproj" />
-	</ItemGroup>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="TestFiles\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

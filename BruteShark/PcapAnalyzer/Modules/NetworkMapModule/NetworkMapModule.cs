@@ -19,20 +19,23 @@ namespace PcapAnalyzer
 
         public void Analyze(UdpPacket udpPacket)
         {
-            RaiseParsedItemDetected(udpPacket.SourceIp, udpPacket.DestinationIp);
+            RaiseParsedItemDetected(udpPacket.SourceIp, udpPacket.DestinationIp, udpPacket.SourcePort, udpPacket.DestinationPort, "UDP");
         }
 
         public void Analyze(TcpPacket tcpPacket)
         {
-            RaiseParsedItemDetected(tcpPacket.SourceIp, tcpPacket.DestinationIp);
+            RaiseParsedItemDetected(tcpPacket.SourceIp, tcpPacket.DestinationIp, tcpPacket.SourcePort, tcpPacket.DestinationPort, "TCP");
         }
 
-        private void RaiseParsedItemDetected(string source, string destination)
+        private void RaiseParsedItemDetected(string source, string destination, int srcPort, int destPort, string protocol)
         {
             var connection = new NetworkConnection()
             {
                 Source = source,
-                Destination = destination
+                Destination = destination,
+                SrcPort = srcPort,
+                DestPort = destPort,
+                Protocol = protocol
             };
 
             if (_connections.Add(connection))
