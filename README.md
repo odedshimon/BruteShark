@@ -1,6 +1,17 @@
 ![](readme_media/BruteSharkBanner.png)
 
 ![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)  
+<!--ts-->
+   * [About](#about)
+      * [What it can do](#what-it-can-do)
+      * [Download](#download)
+   * [Examples](#examples)
+   * [Usage](#usage)
+     * [Modules](#modules)
+     * [BruteSharkDesktop](#brutesharkdesktop)
+     * [BruteSharkCli](#brutesharkcli)
+   * [Architecture](#architecture)
+<!--te-->
 # About
 
 BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
@@ -54,6 +65,41 @@ Please ⭐️ this repository if this project helped you!
 ![](readme_media/TcpSessions.PNG)
 ##### Brute Shark CLI 
 ![](readme_media/BruteSharkCli.PNG)
+
+# Usage
+In general, it is recommended to use the example PCAP files [folder](https://github.com/odedshimon/BruteShark/tree/master/Pcap_Examples), load, run and explore the results.  
+## Modules
+BruteShark is a modular tool, designed for expansion.
+##### Credentials Module 
+This module is responsible for extracting and encoding usernames and passwords as well as authentication hashes. In fact this module is responsible for updating two display tables, passwords table and hashes table. While usernames and passwords are straight forward to use, hashes most often used in more complex attacks like pass-the-hash or by brute-forcing them to get the password. BruteShark is integrated with [Hashcat](https://hashcat.net/hashcat/) so all the hashes extracted can be converted to a Hashcat input file.
+| Protocol        | Hash Type        | Hascat Mode (-m) |
+|-----------------|------------------|------------------|
+| HTTP            | HTTP-Digest      |      11400       |
+| SMTP\IMAP       | CRAM-MD5         |      16400       |
+| NTLM (e.g. SMB) | NTLMv1           |      5500        |
+| NTLM (e.g. SMB) | NTLMv2           |      5600        |
+| Kerberos        | AS-REQ etype 23  |      7500        |
+| Kerberos        | TGS-REP etype 23 |      13100       |
+| Kerberos        | AS-REP etype 23  |      18200       |
+##### Network Map Module 
+This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
+##### Files Extracting Module 
+This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
+## BruteSharkDesktop
+The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
+## BruteSharkCli
+| Keyword           | Description                                                                             |
+|-------------------|-----------------------------------------------------------------------------------------|
+| help              | Print help menu                                                                         |
+| exit              | Exit CLI                                                                                |
+| add-file          | Add file to analyze. Usage: add-file FILE-PATH                                          |
+| start             | Start analyzing                                                                         |
+| show-passwords    | Print passwords.                                                                        |
+| show-modules      | Print modules.                                                                          |
+| show-hashes       | Print Hashes                                                                            |
+| show-networkmap   | Prints the network map as a json string. Usage: show-networkmap                         |
+| export-hashes     | Export all Hashes to Hascat format input files. Usage: export-hashes OUTPUT-DIRECTORY   |
+| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-file      |
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
@@ -124,15 +170,16 @@ public MainForm()
     this.modulesTreeView.ExpandAll();
 }
 ```
-##### BruteSharkCLI (PL)
-Command Line Interface version of Brute Shark.
-Cross platform Windows and Linux (with Mono).
-Available commands:  
-(1). help  
-(2). add-file  
-(3). start  
-(4). show-passwords  
-(5). show-hashes  
-(6). export-hashes   
-(7). show-modules  
-(8). exit  
+# Contributing
+First off, thanks for taking the time to contribute! BruteShark welcomes contributions from everyone.
+
+When contributing to this repository, please first discuss the change you wish to make via issue or
+an email before making a change.
+
+## How Can You Contribute?
+- Implemening new features from [BruteShark Issues](https://github.com/odedshimon/BruteShark/issues), look for "good first isuue" and "help wanted" labels.
+- Uploading example PCAP files, especially files, with interesting content.
+- Proposing new features by [Creating an Issue](https://github.com/odedshimon/BruteShark/issues).
+- Reporting a bug by [Creating an Issue](https://github.com/odedshimon/BruteShark/issues).
+- Discussing the current state of the code.
+- Creating videos and example tutorials of using BruteShark.
