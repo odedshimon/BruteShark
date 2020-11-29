@@ -11,6 +11,7 @@
      * [BruteSharkDesktop](#brutesharkdesktop)
      * [BruteSharkCli](#brutesharkcli)
    * [Architecture](#architecture)
+   * [Contributing](#contributing)
 <!--te-->
 # About
 
@@ -99,7 +100,7 @@ The GUI is pretty self-explanatory, just load the wanted files, configure the wa
 | show-hashes       | Print Hashes                                                                            |
 | show-networkmap   | Prints the network map as a json string. Usage: show-networkmap                         |
 | export-hashes     | Export all Hashes to Hascat format input files. Usage: export-hashes OUTPUT-DIRECTORY   |
-| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-file      |
+| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-FILE      |
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
