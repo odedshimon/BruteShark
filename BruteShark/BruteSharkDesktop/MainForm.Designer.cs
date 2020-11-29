@@ -35,12 +35,14 @@
             treeNode2});
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Network Map");
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tcp Sessions");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DNS");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
             treeNode4,
-            treeNode5});
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Files");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
-            treeNode7});
+            treeNode5,
+            treeNode6});
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode8});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.secondaryUpperSplitContainer = new System.Windows.Forms.SplitContainer();
             this.removeFilesButton = new System.Windows.Forms.Button();
@@ -313,16 +315,18 @@
             treeNode4.Text = "Network Map";
             treeNode5.Name = "SessionsNode";
             treeNode5.Text = "Tcp Sessions";
-            treeNode6.Name = "NetworkNode";
-            treeNode6.Text = "Network";
-            treeNode7.Name = "FilesNode";
-            treeNode7.Text = "Files";
-            treeNode8.Name = "DataNode";
-            treeNode8.Text = "Data";
+            treeNode6.Name = "DnsResponsesNode";
+            treeNode6.Text = "DNS";
+            treeNode7.Name = "NetworkNode";
+            treeNode7.Text = "Network";
+            treeNode8.Name = "FilesNode";
+            treeNode8.Text = "Files";
+            treeNode9.Name = "DataNode";
+            treeNode9.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode3,
-            treeNode6,
-            treeNode8});
+            treeNode7,
+            treeNode9});
             this.modulesTreeView.Size = new System.Drawing.Size(228, 449);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);

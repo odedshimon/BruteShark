@@ -3,10 +3,12 @@
   <PropertyGroup>
    <TargetFramework>netstandard2.0</TargetFramework>
    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+   <UserSecretsId>323354f7-3e9f-4606-9a77-73084fa01769</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Asn1DotNet" Version="1.0.3" />
+    <PackageReference Include="DNS" Version="6.1.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
 
