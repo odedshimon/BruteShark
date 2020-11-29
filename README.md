@@ -81,6 +81,10 @@ This module is responsible for extracting and encoding usernames and passwords a
 | Kerberos        | AS-REQ etype 23  |      7500        |
 | Kerberos        | TGS-REP etype 23 |      13100       |
 | Kerberos        | AS-REP etype 23  |      18200       |
+##### Network Map Module 
+This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
+##### Files Extracting Module 
+This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
