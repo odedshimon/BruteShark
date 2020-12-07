@@ -28,6 +28,11 @@ I love to get feedbacks from BruteShark users, your opinion is important to me!
 Feel free to contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
 Please ⭐️ this repository if this project helped you!
+<div>
+	Also, if you're feeling generous, you can buy me a coffe <a href="https://www.buymeacoffee.com/OdedShimon">
+		<img alt="Buy Me A Coffee" src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" style="height: auto !important; width: auto !important;" />
+	</a>
+</div>
 
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
@@ -46,6 +51,9 @@ Please ⭐️ this repository if this project helped you!
 * Prerequisites: libpcap driver  
 * Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
     ```bash
+    # Create a symbolyc link between libpcap.so and the actual libpcap file (e.g. libpcap.so.0.8)
+    # That needed due to a known issue in SharpPcap (https://github.com/chmorgan/sharppcap/issues/167)
+    find /usr/lib/x86_64-linux-gnu -type f | grep libpcap | head -1 | xargs -i sudo ln -s {} /usr/lib/x86_64-linux-gnu/libpcap.so
     wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
     ./BruteSharkCli
     ```
@@ -84,6 +92,7 @@ This module is responsible for extracting and encoding usernames and passwords a
 | Kerberos        | AS-REP etype 23  |      18200       |
 ##### Network Map Module 
 This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
+![](readme_media/Neo4jMap.png)
 ##### Files Extracting Module 
 This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
 ## BruteSharkDesktop
@@ -107,7 +116,7 @@ All BruteShark projects are implemented using `.Net Core` and `.Net Standard` fo
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
 The separation between layers is created by the fact that each project refers only its own objects.
 ##### PcapProcessor (DAL)
-As the Data Access Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and their wrapper library SharpPcap.
+As the Data Access Layer, this project is responsible for reading raw PCAP files using appropriate drivers (WinPcap, libpcap) and the amazing wrapper library [SharpPcap](https://github.com/chmorgan/sharppcap) by Chris Morgan.
 Can analyze a list of files at once, and provides additional features like reconstruction of all TCP Sessions (using the awesome project TcpRecon).
 ##### PcapAnalyzer (BLL)
 The Business Logic Layer, responsible for analyzing network information (packet, TCP Session etc.), implements a pluggable mechanism.
