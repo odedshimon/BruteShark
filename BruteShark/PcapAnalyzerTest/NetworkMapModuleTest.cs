@@ -32,7 +32,16 @@ namespace PcapAnalyzerTest
                 }
             };
             
-            var expectedJson = File.ReadAllText(this.NetworkConnectionsListJson);
+            
+            string expectedJson = @"[
+  {
+    ""Source"": ""1.1.1.1"",
+    ""Destination"": ""2.2.2.2"",
+    ""Protocol"": ""TCP"",
+    ""SrcPort"": 3009,
+    ""DestPort"": 80
+  }
+]";
 
             // Act.
             string jsonString = PcapAnalyzer.NetwrokMapJsonExporter.GetNetworkMapAsJsonString(connections);
