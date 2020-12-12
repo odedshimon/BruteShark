@@ -8,28 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PcapAnalyzer;
+using System.Net;
 
 namespace BruteSharkDesktop
 {
     public partial class NetworkMapUserControl : UserControl
     {
+        private Dictionary<string, HashSet<string>> _dnsMappings;
         private HashSet<NetworkMapEdge> _edges;
         Microsoft.Msagl.GraphViewerGdi.GViewer _viewer;
         Microsoft.Msagl.Drawing.Graph _graph;
-        HashSet<DnsNameMapping> _mappings;
 
         public int NodesCount => _graph.Nodes.Count();
-
-        internal void SetDns(HashSet<DnsNameMapping> mappings)
-        {
-            _mappings = mappings;
-        }
 
         public NetworkMapUserControl()
         {
             InitializeComponent();
 
             // Add MSAGL Graph control.
+            _dnsMappings = new Dictionary<string, HashSet<string>>();
             _edges = new HashSet<NetworkMapEdge>();
             _viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
             _graph = new Microsoft.Msagl.Drawing.Graph("graph");
@@ -57,30 +54,32 @@ namespace BruteSharkDesktop
                 _edges.Add(newEdge);
             }
 
-            ProcessNode(source);
-            ProcessNode(destination);
+            var sourceNode = _graph.FindNode(source);
+            var destinationNode = _graph.FindNode(destination);
+            sourceNode.Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+            sourceNode.LabelText = GetNodeText(source);
+            destinationNode.Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
+            destinationNode.LabelText = GetNodeText(destination);
 
             _viewer.Graph = _graph;
             this.ResumeLayout();
         }
 
-        private void ProcessNode(string nodeId)
+        private string GetNodeText(string ipAddress)
         {
-            var node = _graph.FindNode(nodeId);
-            node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightBlue;
-            node.LabelText = GetNameForNode(node);
-        }
+            var res = ipAddress;
 
-        private string GetNameForNode(Microsoft.Msagl.Drawing.Node node)
-        {
-            var mappings = _mappings.Where(m => m.Destination == node.Id).ToArray();
-            if (mappings == null || mappings.Length == 0)
+            if (_dnsMappings.ContainsKey(ipAddress))
             {
-                return node.Id;
+                res += Environment.NewLine + "DNS: " + _dnsMappings[ipAddress].First();
+
+                if (_dnsMappings[ipAddress].Count > 1)
+                {
+                    res += $" ({_dnsMappings[ipAddress].Count} more)";
+                }
             }
 
-            var mappingString = string.Join(Environment.NewLine, mappings.Select(m => m.Query).Distinct());
-            return $"{node.Id}{Environment.NewLine}({mappingString})";
+            return res;
         }
 
         public void HandleHash(PcapAnalyzer.NetworkHash hash)
@@ -115,6 +114,42 @@ namespace BruteSharkDesktop
             _graph.FindNode(password.Username).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
         }
 
+        // Normally DNS mappings arriving before real data, but we can't count on it therfore we 
+        // are saving the mappings for future hosts.
+        public void HandleDnsNameMapping(DnsNameMapping dnsNameMapping)
+        {
+            if (!IsIpAddress(dnsNameMapping.Query) && IsIpAddress(dnsNameMapping.Destination))
+            {
+                if (_dnsMappings.ContainsKey(dnsNameMapping.Destination))
+                {
+                    if (_dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query))
+                    {
+                        UpdateNodeLabel(dnsNameMapping.Destination);
+                    }
+                }
+                else
+                {
+                    _dnsMappings[dnsNameMapping.Destination] = new HashSet<string>();
+                    _dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query);
+                    UpdateNodeLabel(dnsNameMapping.Destination);
+                }
+            }
+        }
+
+        private void UpdateNodeLabel(string ipAddress)
+        {
+            var node = _graph.FindNode(ipAddress);
+
+            if (node != null)
+            {
+                node.LabelText = GetNodeText(ipAddress);
+            }
+        }
+
+        private bool IsIpAddress(string ip)
+        {
+            return IPAddress.TryParse(ip, out IPAddress ipAddress);
+        }
 
         private static object GetPropValue(object src, string propName)
         {

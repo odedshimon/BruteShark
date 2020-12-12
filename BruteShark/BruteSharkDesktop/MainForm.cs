@@ -67,14 +67,7 @@ namespace BruteSharkDesktop
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
-            InitilizeDnsPlumbing();
             this.modulesTreeView.ExpandAll();
-        }
-
-        private void InitilizeDnsPlumbing()
-        {
-            var dnsModule = _analyzer.AvailableModules.First(m => m.Name == "DNS") as PcapAnalyzer.DnsModule;
-            _networkMapUserControl.SetDns(dnsModule.Mappings);
         }
 
         private void InitilizeModulesCheckedListBox()
@@ -213,6 +206,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                 var dnsResponse = e.ParsedItem as PcapAnalyzer.DnsNameMapping;
                 _dnsResponseUserControl.AddNameMapping(dnsResponse);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["DnsResponsesNode"].Text = $"DNS Responses ({_dnsResponseUserControl.AnswerCount})";
+                _networkMapUserControl.HandleDnsNameMapping(dnsResponse);
             }
         }
 
