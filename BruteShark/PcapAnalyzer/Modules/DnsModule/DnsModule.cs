@@ -36,6 +36,7 @@ namespace PcapAnalyzer
             }
 
             var header = Header.FromArray(udpPacket.Data);
+
             if (header.Response == false)
             {
                 //We don't care about non responses
@@ -56,6 +57,7 @@ namespace PcapAnalyzer
         private IEnumerable<string> GetStringsForAnswers(IList<IResourceRecord> answerRecords)
         {
             var returnList = new List<string>();
+
             foreach (var ar in answerRecords)
             {
                 if (ar is IPAddressResourceRecord)
