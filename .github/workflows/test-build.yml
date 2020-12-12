@@ -7,14 +7,16 @@ on:
     branches: [ master, devops ]
 
 jobs:
-  build:
+  mac-ubuntu-build:
 
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         dotnet-version: [3.1.301]
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [ubuntu-latest, macOS-latest]
+        tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
+        projects-paths: [./BruteShark/PcapAnalyzer, ./BruteShark/PcapProcessor, ./BruteShark/BruteSharkCli, ./BruteShark/BruteForce]
 
     steps:
     - uses: actions/checkout@v2
@@ -26,11 +28,40 @@ jobs:
     
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./BruteShark
-    
+      working-directory: ${{ matrix.projects-paths }}
+        
     - name: Test
       run: dotnet test --verbosity normal
-      working-directory: ./BruteShark/PcapAnalyzerTest
+      working-directory: ${{ matrix.tests-paths }}
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      working-directory: ${{ matrix.projects-paths }}
+  
+  windows-build:
+
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dotnet-version: [3.1.301]
+        tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version:  ${{ matrix.dotnet-version }}
+    
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ./BruteShark   
+        
+    - name: Test
+      run: dotnet test --verbosity normal
+      working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
