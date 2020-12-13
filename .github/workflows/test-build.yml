@@ -36,7 +36,7 @@ jobs:
 
     - name: Build
       run: dotnet build --configuration Release
-      working-directory: ./BruteShark
+      working-directory: ${{ matrix.projects-paths }}   
   
   windows-build:
 
