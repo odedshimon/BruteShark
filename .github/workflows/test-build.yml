@@ -78,6 +78,8 @@ jobs:
       fail-fast: false
       matrix:
         dotnet-version: [3.1.301]
+        tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
+        projects-paths: [./BruteShark/BruteSharkCli, ./BruteShark/BruteSharkDesktop]
 
     steps:
     - uses: actions/checkout@v2
@@ -93,8 +95,8 @@ jobs:
         
     - name: Test
       run: dotnet test --verbosity normal
-      working-directory: ./BruteShark
+      working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./BruteShark
+      working-directory: ${{ matrix.projects-paths }}
