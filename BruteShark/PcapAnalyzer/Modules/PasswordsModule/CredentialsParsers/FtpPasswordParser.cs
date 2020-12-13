@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 namespace PcapAnalyzer
 {
     public class FtpPasswordParser : IPasswordParser
-    {
-        private Regex _ftpSuccessfullLoginRegex = new Regex(@"220(.*)\r\nUSER\s(?<Username>.*)\r\n331(.*)\r\nPASS\s(?<Password>.*)\r\n");
+    {   
+        private Regex ftpSuccessfullLoginRegex = new Regex(@"220(.*)"+Environment.NewLine+ @"USER\s(?<Username>.*)"+Environment.NewLine+@"331(.*)" + Environment.NewLine + @"PASS\s(?<Password>.*)" + Environment.NewLine);
 
         public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
 
@@ -18,7 +18,7 @@ namespace PcapAnalyzer
             NetworkPassword credential = null;
             var sessionData = Encoding.UTF8.GetString(tcpSession.Data);
 
-            Match match = this._ftpSuccessfullLoginRegex.Match(sessionData);
+            Match match = this.ftpSuccessfullLoginRegex.Match(sessionData);
             
             if (match.Success)
             {
