@@ -19,11 +19,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Test Files\*" />
+		<EmbeddedResource Include="Test Files\*.pcap" />
 	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Test Files\*.pcapng" />
+  </ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Test Files\HTTP-Small-File.pcap">
+	  <EmbeddedResource Update="Test Files\HTTP - Small File.pcap">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </EmbeddedResource>
     <EmbeddedResource Update="Test Files\HTTP - Small File.pcapng">
