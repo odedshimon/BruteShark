@@ -35,7 +35,7 @@ jobs:
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release
       working-directory: ./BruteShark
   
   windows-build:
