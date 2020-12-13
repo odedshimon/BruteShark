@@ -28,7 +28,11 @@ jobs:
     
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ${{ matrix.projects-paths }}   
+      working-directory: ${{ matrix.projects-paths }}
+    
+    - name: Clean before tests
+      run: dotnet clean --verbosity normal
+      working-directory: ${{ matrix.tests-paths }}    
         
     - name: Test
       run: dotnet test --verbosity normal
@@ -63,7 +67,11 @@ jobs:
     
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ${{ matrix.projects-paths }}   
+      working-directory: ${{ matrix.projects-paths }}
+      
+    - name: Clean before tests
+      run: dotnet clean --verbosity normal
+      working-directory: ${{ matrix.tests-paths }}
         
     - name: Test
       run: dotnet test --verbosity normal
@@ -98,6 +106,10 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
       working-directory: ./BruteShark   
+      
+    - name: Clean before tests
+      run: dotnet clean --verbosity normal
+      working-directory: ${{ matrix.tests-paths }}
         
     - name: Test
       run: dotnet test --verbosity normal
