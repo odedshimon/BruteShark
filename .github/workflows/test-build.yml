@@ -16,7 +16,7 @@ jobs:
         dotnet-version: [3.1.301]
         os:  [macOS-latest]
         tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
-        projects-paths: [./BruteShark/PcapAnalyzer, ./BruteShark/PcapProcessor, ./BruteShark/BruteSharkCli, ./BruteShark/BruteForce]
+        projects-paths: [./BruteShark/BruteSharkCli, ./BruteShark/BruteForce]
 
     steps:
     - uses: actions/checkout@v2
@@ -47,7 +47,7 @@ jobs:
         dotnet-version: [3.1.301]
         os:  [ubuntu-latest]
         tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
-        projects-paths: [./BruteShark/PcapAnalyzer, ./BruteShark/PcapProcessor, ./BruteShark/BruteSharkCli, ./BruteShark/BruteForce]
+        projects-paths: [./BruteShark/BruteSharkCli, ./BruteShark/BruteForce]
 
     steps:
     - uses: actions/checkout@v2
