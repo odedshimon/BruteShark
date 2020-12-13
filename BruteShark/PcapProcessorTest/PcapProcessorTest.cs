@@ -20,7 +20,7 @@ namespace PcapProcessorTest
         {
             this.UdpFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Kerberos - UDP.pcap");
             this.TcpFivePacketsFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Tcp - 5 Packets.pcap");
-            this.HttpSmallFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP - Small File.pcap");
+            this.HttpSmallFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP-Small-File.pcap");
         }
 
         [TestMethod]

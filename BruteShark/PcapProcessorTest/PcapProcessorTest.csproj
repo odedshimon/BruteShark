@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Test Files\HTTP - Small File.pcap">
+	  <EmbeddedResource Update="Test Files\HTTP-Small-File.pcap">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Test Files\Kerberos - UDP.pcap">
