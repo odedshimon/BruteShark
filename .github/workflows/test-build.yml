@@ -91,18 +91,10 @@ jobs:
       run: dotnet restore
       working-directory: ./BruteShark
         
-    - name: Test PcapAnalyzer
+    - name: Test
       run: dotnet test --verbosity normal
       working-directory: ./BruteShark/PcapAnalyzerTest
     
-    - name: Test PcapProcessor
-      run: dotnet test --verbosity normal
-      working-directory: ./BruteShark/PcapProcessorTest
-
-    - name: Build CLI
+    - name: Build 
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./BruteShark/BruteSharkCli
-    
-    - name: Build Desktop
-      run: dotnet build --configuration Release --no-restore
-      working-directory: ./BruteShark/BruteSharkDesktop
+      working-directory: ./BruteShark
