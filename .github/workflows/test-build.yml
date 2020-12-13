@@ -29,18 +29,11 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
       working-directory: ${{ matrix.projects-paths }}
-    
-    - name: Clean before tests
-      run: dotnet clean --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}    
         
     - name: Test
       run: dotnet test --verbosity normal
       working-directory: ${{ matrix.tests-paths }}
 
-    - name: Clean before build 
-      run: dotnet clean --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}
       
     - name: Build
       run: dotnet build --configuration Release
@@ -68,17 +61,9 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
       working-directory: ${{ matrix.projects-paths }}
-      
-    - name: Clean before tests
-      run: dotnet clean --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}
         
     - name: Test
       run: dotnet test --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}
-      
-    - name: Clean before build 
-      run: dotnet clean --verbosity normal
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
@@ -105,18 +90,10 @@ jobs:
     
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./BruteShark   
-      
-    - name: Clean before tests
-      run: dotnet clean --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}
+      working-directory: ./BruteShark
         
     - name: Test
       run: dotnet test --verbosity normal
-      working-directory: ${{ matrix.tests-paths }}
-    
-    - name: Clean before build 
-      run: dotnet clean --verbosity normal
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
