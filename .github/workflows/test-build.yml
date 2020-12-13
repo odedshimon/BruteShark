@@ -93,7 +93,7 @@ jobs:
       working-directory: ./BruteShark
         
     - name: Test
-      run: dotnet test --verbosity normal --no-build
+      run: dotnet test --verbosity normal
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
