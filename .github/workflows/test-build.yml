@@ -31,7 +31,7 @@ jobs:
       working-directory: ${{ matrix.projects-paths }}
         
     - name: Test
-      run: dotnet test --verbosity normal
+      run: dotnet test --verbosity normal --no-build
       working-directory: ${{ matrix.tests-paths }}
 
       
@@ -63,7 +63,7 @@ jobs:
       working-directory: ${{ matrix.projects-paths }}
         
     - name: Test
-      run: dotnet test --verbosity normal
+      run: dotnet test --verbosity normal --no-build
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
@@ -93,7 +93,7 @@ jobs:
       working-directory: ./BruteShark
         
     - name: Test
-      run: dotnet test --verbosity normal
+      run: dotnet test --verbosity normal --no-build
       working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
