@@ -21,9 +21,6 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Test Files\*" />
 	</ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Test Files\*.pcapng" />
-  </ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Update="Test Files\HTTP-Small-File.pcap">
