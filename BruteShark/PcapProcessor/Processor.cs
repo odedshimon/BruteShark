@@ -60,12 +60,15 @@ namespace PcapProcessor
         public void ProcessPcaps(IEnumerable<string> filesPaths)
         {
             _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
-
+            /*
             foreach (var filePath in filesPaths)
             {
+                // TODO - multi thread processing, each file in thread
+                
+                
                 this.ProcessPcap(filePath);
-            }
-
+            }*/
+            filesPaths.AsParallel().ForAll(f => this.ProcessPcap(f));
             ProcessingFinished?.Invoke(this, new EventArgs());
         }
 
@@ -92,14 +95,14 @@ namespace PcapProcessor
                 // Raise event for each Tcp session that was built.
                 // TODO: think about detecting complete sesions on the fly and raising 
                 // events accordingly.
-                foreach (var session in this._tcpSessionsBuilder.Sessions)
+                foreach (var session in this._tcpSessionsBuilder.Sessions.ToList())
                 {
                     TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
                     {
                         TcpSession = session
                     });
                 }
-                foreach (var session in this._udpStreamBuilder.Sessions)
+                foreach (var session in this._udpStreamBuilder.Sessions.ToList())
                 {
                     UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
                     {
