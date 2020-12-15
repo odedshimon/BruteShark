@@ -69,7 +69,22 @@ namespace PcapProcessor
                 this.ProcessPcap(filePath);
             }*/
             filesPaths.AsParallel().ForAll(f => this.ProcessPcap(f));
+
+            // Raise event for each Tcp session that was built.
+            // TODO: think about detecting complete sesions on the fly and raising 
+            // events accordingly.
+            this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+            {
+                TcpSession = session
+            }));
+
+            this._udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+            {
+                    UdpSession = session
+            }));
+
             ProcessingFinished?.Invoke(this, new EventArgs());
+
         }
 
         public void ProcessPcap(string filePath)
@@ -92,23 +107,6 @@ namespace PcapProcessor
                     // ReadPcapNGFile(filePath);
                 }
 
-                // Raise event for each Tcp session that was built.
-                // TODO: think about detecting complete sesions on the fly and raising 
-                // events accordingly.
-                foreach (var session in this._tcpSessionsBuilder.Sessions.ToList())
-                {
-                    TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                    {
-                        TcpSession = session
-                    });
-                }
-                foreach (var session in this._udpStreamBuilder.Sessions.ToList())
-                {
-                    UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-                    {
-                        UdpSession = session
-                    });
-                }
 
                 _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
                 RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, filePath);
