@@ -55,6 +55,7 @@
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.buildUdpSessionsCheckBox = new System.Windows.Forms.CheckBox();
             this.buildTcpSessionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.ProcessFilesParallelCheckBox = new System.Windows.Forms.CheckBox();
             this.modulesGroupBox = new System.Windows.Forms.GroupBox();
             this.modulesCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.secondaryLowerSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -202,6 +203,7 @@
             // 
             this.optionsGroupBox.Controls.Add(this.buildUdpSessionsCheckBox);
             this.optionsGroupBox.Controls.Add(this.buildTcpSessionsCheckBox);
+            this.optionsGroupBox.Controls.Add(this.ProcessFilesParallelCheckBox);
             this.optionsGroupBox.Location = new System.Drawing.Point(311, 9);
             this.optionsGroupBox.Name = "optionsGroupBox";
             this.optionsGroupBox.Size = new System.Drawing.Size(200, 154);
@@ -236,6 +238,18 @@
             this.buildTcpSessionsCheckBox.Text = "Build Tcp Sessions: ON";
             this.buildTcpSessionsCheckBox.UseVisualStyleBackColor = true;
             this.buildTcpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.buildTcpSessionsCheckBox_CheckedChanged);
+            // 
+            // ProcessFilesParallelCheckBox
+            // 
+            this.ProcessFilesParallelCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.ProcessFilesParallelCheckBox.AutoSize = true;
+            this.ProcessFilesParallelCheckBox.Location = new System.Drawing.Point(16, 84);
+            this.ProcessFilesParallelCheckBox.Name = "ProcessFilesParallelCheckBox";
+            this.ProcessFilesParallelCheckBox.Size = new System.Drawing.Size(151, 25);
+            this.ProcessFilesParallelCheckBox.TabIndex = 0;
+            this.ProcessFilesParallelCheckBox.Text = "Process Files Parallel: OFF";
+            this.ProcessFilesParallelCheckBox.UseVisualStyleBackColor = true;
+            this.ProcessFilesParallelCheckBox.CheckedChanged += new System.EventHandler(this.ProcessFilesParallel_CheckedChanged);
             // 
             // modulesGroupBox
             // 
@@ -279,7 +293,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1316, 501);
-            this.secondaryLowerSplitContainer.SplitterDistance = 449;
+            this.secondaryLowerSplitContainer.SplitterDistance = 448;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -294,7 +308,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1316, 449);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1316, 448);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -327,7 +341,7 @@
             treeNode3,
             treeNode7,
             treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 449);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 448);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
             // 
@@ -337,7 +351,7 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1316, 47);
+            this.progressBar.Size = new System.Drawing.Size(1316, 48);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
@@ -391,6 +405,7 @@
         private System.Windows.Forms.GroupBox optionsGroupBox;
         private System.Windows.Forms.CheckBox buildTcpSessionsCheckBox;
         private System.Windows.Forms.CheckBox buildUdpSessionsCheckBox;
+        private System.Windows.Forms.CheckBox ProcessFilesParallelCheckBox;
     }
 }
 

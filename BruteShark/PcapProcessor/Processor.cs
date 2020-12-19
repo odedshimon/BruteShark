@@ -28,6 +28,7 @@ namespace PcapProcessor
         public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;
         public event EventHandler ProcessingFinished;
 
+        public bool ProcessFilesParallel { get; set; }
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
         private TcpSessionsBuilder _tcpSessionsBuilder;
@@ -37,6 +38,7 @@ namespace PcapProcessor
 
         public Processor()
         {
+            this.ProcessFilesParallel = false;
             this.BuildTcpSessions = false;
             this.BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
@@ -60,14 +62,26 @@ namespace PcapProcessor
         public void ProcessPcaps(IEnumerable<string> filesPaths)
         {
             _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
-            /*
-            foreach (var filePath in filesPaths)
+            if (this.ProcessFilesParallel)
             {
-                // TODO - multi thread processing, each file in thread
-                
-                
-                this.ProcessPcap(filePath);
-            }*/
+                this.processParallel(filesPaths);
+            }
+            else
+            {
+                            
+                foreach (var filePath in filesPaths)
+                {
+                    this.ProcessPcap(filePath);
+                }
+            }
+
+
+            ProcessingFinished?.Invoke(this, new EventArgs());
+
+        }
+
+        private void processParallel(IEnumerable<string> filesPaths)
+        {
             filesPaths.AsParallel().ForAll(f => this.ProcessPcap(f));
 
             // Raise event for each Tcp session that was built.
@@ -80,11 +94,8 @@ namespace PcapProcessor
 
             this._udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
             {
-                    UdpSession = session
+                UdpSession = session
             }));
-
-            ProcessingFinished?.Invoke(this, new EventArgs());
-
         }
 
         public void ProcessPcap(string filePath)
@@ -105,6 +116,25 @@ namespace PcapProcessor
                 {
                     // TODO: Enable this after testing PCAPNG 
                     // ReadPcapNGFile(filePath);
+                }
+
+                if (!this.ProcessFilesParallel)
+                {
+                    foreach (var session in this._udpStreamBuilder.Sessions)
+                    {
+                        UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                        {
+                            UdpSession = session
+                        });
+                    }
+
+                    foreach(var session in this._tcpSessionsBuilder.Sessions)
+                    {
+                        TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                        {
+                            TcpSession = session
+                        });
+                    }
                 }
 
 

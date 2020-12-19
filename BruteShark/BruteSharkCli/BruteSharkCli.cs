@@ -67,6 +67,7 @@ namespace BruteSharkCli
             _shell.AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             _shell.AddCommand(new CliShellCommand("export-networkmap", p => ExportNetworkMap(p), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
+            _shell.AddCommand(new CliShellCommand("process-files-parallel", p => this._processor.ProcessFilesParallel = true, "Processes the pcap files in paralell"));
 
         }
 
