@@ -6,9 +6,8 @@ using System.Text.RegularExpressions;
 namespace PcapAnalyzer
 {
     public class FtpPasswordParser : IPasswordParser
-    {   
-        private Regex ftpSuccessfullLoginRegex = new Regex(@"220(.*)"+Environment.NewLine+ @"USER\s(?<Username>.*)"+Environment.NewLine+@"331(.*)" + Environment.NewLine + @"PASS\s(?<Password>.*)" + Environment.NewLine);
-
+    {
+        private Regex ftpSuccessfullLoginRegex = new Regex(@"220(.*)[\r\n]+USER\s(?<Username>.*)[\r\n]+331(.*)[\r\n]+PASS\s(?<Password>.*)[\r\n]+");
         public NetworkLayerObject Parse(UdpPacket udpPacket) => null;
 
         public NetworkLayerObject Parse(TcpPacket tcpPacket) => null;
@@ -30,6 +29,16 @@ namespace PcapAnalyzer
                     Source = tcpSession.SourceIp,
                     Destination = tcpSession.DestinationIp
                 };
+                
+                if(credential.Password.EndsWith("\r"))
+                {
+                    credential.Password = credential.Password.Replace("\r", "");
+                }
+
+                if (credential.Username.EndsWith("\r"))
+                {
+                    credential.Username = credential.Username.Replace("\r", "");
+                }
             }
 
             return credential;
