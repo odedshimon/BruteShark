@@ -148,8 +148,24 @@ namespace PcapProcessor
         }
         private void ConvertPacket(object sender, IPacket packet)
         {
-            var _packet = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
-            ProccessPcapNgPacket(_packet);
+            var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
+            var _packet_raw = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Raw, packet.Data);
+            if (_packet_ether.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_ether.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_ether);
+                }
+                
+            }
+            else if (_packet_raw.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_raw.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_raw);
+                }
+
+            }
         }
 
 
