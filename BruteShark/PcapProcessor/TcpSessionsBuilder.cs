@@ -12,6 +12,8 @@ namespace PcapProcessor
     {
         private Dictionary<TcpSession, TcpRecon> _sessions;
 
+        public List<string> filenames {get; set;}
+
         public IEnumerable<TcpSession> Sessions
         {
             get
@@ -38,6 +40,7 @@ namespace PcapProcessor
 
         public TcpSessionsBuilder()
         {
+            this.filenames = new List<string>();
             this._sessions = new Dictionary<TcpSession, TcpRecon>();
         }
 
@@ -64,5 +67,11 @@ namespace PcapProcessor
         {
             this._sessions.Clear();
         }
+
+        public void ClearSession(TcpSession session)
+        {
+            this._sessions.Remove(session);
+        }
     }
 }
+

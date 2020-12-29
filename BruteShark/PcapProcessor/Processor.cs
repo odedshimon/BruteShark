@@ -62,19 +62,19 @@ namespace PcapProcessor
         public void ProcessPcaps(IEnumerable<string> filesPaths)
         {
             _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
-            if (this.ProcessFilesParallel)
+
+
+                if (this.ProcessFilesParallel)
             {
                 this.processParallel(filesPaths);
             }
             else
             {
-                            
                 foreach (var filePath in filesPaths)
                 {
                     this.ProcessPcap(filePath);
                 }
             }
-
 
             ProcessingFinished?.Invoke(this, new EventArgs());
 
@@ -87,24 +87,44 @@ namespace PcapProcessor
             // Raise event for each Tcp session that was built.
             // TODO: think about detecting complete sesions on the fly and raising 
             // events accordingly.
-            this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-            {
-                TcpSession = session
-            }));
+            this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
 
-            this._udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-            {
-                UdpSession = session
-            }));
+            this._udpStreamBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
         }
+
+        private void invokeAndClear(object session)
+        {
+            if(session is TcpSession)
+            {
+                this._tcpSessionsBuilder.ClearSession((TcpSession)session);
+                TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                {
+                    TcpSession = (TcpSession)session
+                });
+            }
+            
+            if (session is UdpSession)
+            {
+                this._udpStreamBuilder.ClearSession((UdpSession)session);
+                UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                {
+                    UdpSession = (UdpSession)session
+                });
+                
+            }
+        }
+        
 
         public void ProcessPcap(string filePath)
         {
             try
             {
                 RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, filePath);
-                _tcpSessionsBuilder.Clear();
-                _udpStreamBuilder.Clear();
+                if (!this.ProcessFilesParallel)
+                {
+                    _tcpSessionsBuilder.Clear();
+                    _udpStreamBuilder.Clear();
+                }
 
                 // check if the file is a PcapNg format file or Pcap format
 
@@ -115,7 +135,7 @@ namespace PcapProcessor
                 else
                 {
                     // TODO: Enable this after testing PCAPNG 
-                    // ReadPcapNGFile(filePath);
+                    //ReadPcapNGFile(filePath);
                 }
 
                 if (!this.ProcessFilesParallel)
@@ -136,7 +156,6 @@ namespace PcapProcessor
                         });
                     }
                 }
-
 
                 _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
                 RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, filePath);
@@ -179,10 +198,10 @@ namespace PcapProcessor
         }
         private void ConvertPacket(object sender, IPacket packet)
         {
+            
             var _packet = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
             ProccessPcapNgPacket(_packet);
         }
-
 
         private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
         {
@@ -192,7 +211,6 @@ namespace PcapProcessor
                 Status = status
             });
         }
-
 
         private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
         {
