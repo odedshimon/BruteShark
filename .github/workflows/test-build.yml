@@ -15,6 +15,11 @@ jobs:
       matrix:
         dotnet-version: [3.1.301]
         tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
+        os: [macOS-latest, ubuntu-latest, windows-latest]
+        exclude:
+          - os: windows-latest
+            tests-paths: ./BruteShark/PcapProcessorTest
+
         include:
           - os: macOS-latest
             projects-paths: ./BruteShark/BruteSharkCli
