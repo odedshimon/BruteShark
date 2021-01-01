@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace PcapProcessor
 {
-    class ProcessingPrecentsPredicator
+    public class ProcessingPrecentsPredicator
     {
         public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
         public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;

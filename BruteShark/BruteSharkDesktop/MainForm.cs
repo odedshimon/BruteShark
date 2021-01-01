@@ -17,7 +17,7 @@ namespace BruteSharkDesktop
     public partial class MainForm : Form
     {
         private HashSet<string> _files;
-        private PcapProcessor.Processor _processor;
+        private PcapProcessor.ProcessorEngine _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
         private GenericTableUserControl _passwordsUserControl;
@@ -35,7 +35,7 @@ namespace BruteSharkDesktop
             _files = new HashSet<string>();
 
             // Create the DAL and BLL objects.
-            _processor = new PcapProcessor.Processor();
+            _processor = new PcapProcessor.ProcessorEngine(false) ;
             _analyzer = new PcapAnalyzer.Analyzer();
             _processor.ProcessFilesParallel = false;
             _processor.BuildTcpSessions = true;

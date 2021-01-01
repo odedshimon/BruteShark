@@ -16,6 +16,8 @@ namespace PcapProcessor
     {
         public delegate void FileProcessingStatusChangedEventHandler(object sender, FileProcessingStatusChangedEventArgs e);
         public event FileProcessingStatusChangedEventHandler FileProcessingStatusChanged;
+        public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
+        private ProcessingPrecentsPredicator _processingPrecentsPredicator;
         public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
         public event UdpPacketArivedEventHandler UdpPacketArived;
         public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
@@ -24,81 +26,35 @@ namespace PcapProcessor
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
-        public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
-        public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;
-        public event EventHandler ProcessingFinished;
-
         public bool ProcessFilesParallel { get; set; }
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
 
-        private Dictionary<string, TcpSessionsBuilder> _filesToTCPBuilders;
-        private Dictionary<string, UdpStreamBuilder> _filesToUDPBuilders;
-        private ProcessingPrecentsPredicator _processingPrecentsPredicator;
+        private TcpSessionsBuilder _tcpSessionsBuilder;
+        private UdpStreamBuilder _udpStreamsBuilder;
+        private string _filepath;
+        
 
 
-        public Processor()
-        {   
-
+        public Processor(ProcessingPrecentsPredicator processingPrecentsPredicator, string filepath)
+        {
+            
+            this._filepath = filepath;
+            _processingPrecentsPredicator = processingPrecentsPredicator;
             this.ProcessFilesParallel = false;
             this.BuildTcpSessions = false;
             this.BuildUdpSessions = false;
-            this._filesToTCPBuilders = new Dictionary<string, TcpSessionsBuilder>();
-            this._filesToUDPBuilders = new Dictionary<string, UdpStreamBuilder>();
+            this._tcpSessionsBuilder = new TcpSessionsBuilder();
+            this._udpStreamsBuilder = new UdpStreamBuilder();
 
-            _processingPrecentsPredicator = new ProcessingPrecentsPredicator();
-            _processingPrecentsPredicator.ProcessingPrecentsChanged += OnPredicatorProcessingPrecentsChanged;
+            
         }
 
-        private void OnPredicatorProcessingPrecentsChanged(object sender, ProcessingPrecentsChangedEventArgs e)
-        {
-            // TODO: think of make this check in a dedicated extention method for events (e.g SafeInvoke())
-            if (ProcessingPrecentsChanged is null)
-                return;
-
-            ProcessingPrecentsChanged.Invoke(this, new ProcessingPrecentsChangedEventArgs()
-            {
-                Precents = e.Precents
-            });
-        }
-        
-        public void ProcessPcaps(IEnumerable<string> filesPaths)
-        {
-            _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
-
-            foreach (var filePath in filesPaths)
-            {
-                string filename = filePath.Substring(filePath.LastIndexOf(@"\") + 1 );
-                this._filesToUDPBuilders.Add(filename, new UdpStreamBuilder());
-                this._filesToTCPBuilders.Add(filename, new TcpSessionsBuilder());
-            }
-
-            if (this.ProcessFilesParallel)
-            {
-                this.processParallel(filesPaths);
-            }
-            else
-            {
-                foreach (var filePath in filesPaths)
-                {
-                    this.ProcessPcap(filePath);
-                }
-            }
-
-            ProcessingFinished?.Invoke(this, new EventArgs());
-
-        }
-
-        private void processParallel(IEnumerable<string> filesPaths)
-        {
-            filesPaths.AsParallel().ForAll(f => this.ProcessPcap(f));          
-        }
-
-        private void invokeAndClear(string filename, object session)
+        private void invokeAndClear(object session)
         {
             if(session is TcpSession)
             {
-                this._filesToTCPBuilders[filename].ClearSession((TcpSession)session);
+                this._tcpSessionsBuilder.ClearSession((TcpSession)session);
                 TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
                 {
                     TcpSession = (TcpSession)session
@@ -107,7 +63,7 @@ namespace PcapProcessor
             
             if (session is UdpSession)
             {
-                this._filesToUDPBuilders[filename].ClearSession((UdpSession)session);
+                this._udpStreamsBuilder.ClearSession((UdpSession)session);
                 UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
                 {
                     UdpSession = (UdpSession)session
@@ -117,39 +73,36 @@ namespace PcapProcessor
         }
         
 
-        public void ProcessPcap(string filePath)
+        public void ProcessPcap()
         {
             try
             {
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, filePath);
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, this._filepath);
 
                 // check if the file is a PcapNg format file or Pcap format
 
-                if (IsPcapFile(filePath))
+                if (IsPcapFile(_filepath))
                 {
-                    ReadPcapFile(filePath);
+                    ReadPcapFile(_filepath);
                 }
                 else
                 {
                     // TODO: Enable this after testing PCAPNG 
-                    //ReadPcapNGFile(filePath);
+                    //ReadPcapNGFile(_filepath);
                 }
-                string filename = filePath.Substring(filePath.LastIndexOf(@"\") + 1);
-                
-                this._filesToUDPBuilders[filename].Sessions.AsParallel().ForAll(session => invokeAndClear(filename ,session));
-                this._filesToTCPBuilders[filename].Sessions.AsParallel().ForAll(session => invokeAndClear(filename, session));
-                
-                
-                _filesToUDPBuilders.Remove(filename);
-                _filesToTCPBuilders.Remove(filename);
+
+                this._udpStreamsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
+                this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
 
 
-                _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, filePath);
+
+                _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(this._filepath));
+
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, _filepath);
             }
             catch (Exception ex)
             {
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Faild, filePath);
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Faild, _filepath);
             }
         }
 
@@ -201,17 +154,15 @@ namespace PcapProcessor
 
         private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
         {
-            ProcessPacket(packet, "");
+            ProcessPacket(packet);
         }
 
         private void ProcessPcapPacket(object sender, CaptureEventArgs e)
         {
-            CaptureFileReaderDevice device = (CaptureFileReaderDevice)sender;
-            string filename = device.FileName;
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-            ProcessPacket(packet, filename);
+            ProcessPacket(packet);
         }
-        void ProcessPacket(PacketDotNet.Packet packet, string filename)
+        void ProcessPacket(PacketDotNet.Packet packet)
         {
             try
             {
@@ -236,8 +187,8 @@ namespace PcapProcessor
 
                     if (this.BuildUdpSessions)
                     {
-                        UdpStreamBuilder udpBuilder = _filesToUDPBuilders[filename];
-                        udpBuilder.HandlePacket(udpPacket);
+                        
+                        _udpStreamsBuilder.HandlePacket(udpPacket);
                     }
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
@@ -260,8 +211,7 @@ namespace PcapProcessor
 
                     if (this.BuildTcpSessions)
                     {
-                        TcpSessionsBuilder tcpBuilder = _filesToTCPBuilders[filename];
-                        tcpBuilder.HandlePacket(tcpPacket);
+                        _tcpSessionsBuilder.HandlePacket(tcpPacket);
                     }
 
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);

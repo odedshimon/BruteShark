@@ -16,7 +16,7 @@ namespace BruteSharkCli
         private ulong _udpPacketsCount;
         private int _tcpSessionsCount;
         private int _udpStreamsCount;
-        private PcapProcessor.Processor _processor;
+        private PcapProcessor.ProcessorEngine _processor;
         private PcapAnalyzer.Analyzer _analyzer;
         private List<string> _files;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
@@ -38,7 +38,7 @@ namespace BruteSharkCli
             _files = new List<string>();
             _connections = new HashSet<NetworkConnection>();
 
-            _processor = new PcapProcessor.Processor();
+            _processor = new PcapProcessor.ProcessorEngine(false);
             _analyzer = new PcapAnalyzer.Analyzer();
             _shell = new CliShell(seperator:"Brute-Shark > ");
 
