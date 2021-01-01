@@ -50,9 +50,9 @@ namespace PcapProcessorTest
             var recievedStreamsFromPcapNG = new List<UdpSession>();
             var processor = new Processor();
             var pcapNGprocessor = new Processor();
+
             processor.BuildUdpSessions = true;
             processor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
-
             pcapNGprocessor.BuildUdpSessions = true;
             pcapNGprocessor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreamsFromPcapNG.Add(e.UdpSession);
 
@@ -103,7 +103,6 @@ namespace PcapProcessorTest
             // Act.
             processor.ProcessPcap(this.TcpFivePacketsFilePath);
 
-
             // Assert 
             Assert.AreEqual(0, recievedStreams.Count);
         }
@@ -123,7 +122,6 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(5, recievedPackets.Count);
-
         }
 
         [TestMethod]
@@ -132,7 +130,6 @@ namespace PcapProcessorTest
             // Arrange.
             var recievedSessions = new List<TcpSession>();
             var recievedSessionsFromPcapNG = new List<TcpSession>();
-
             var processor = new Processor();
             var processorPcapNG = new Processor();
 
