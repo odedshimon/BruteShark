@@ -50,9 +50,9 @@ namespace PcapProcessorTest
             var recievedStreamsFromPcapNG = new List<UdpSession>();
             var processor = new Processor();
             var pcapNGprocessor = new Processor();
+
             processor.BuildUdpSessions = true;
             processor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
-
             pcapNGprocessor.BuildUdpSessions = true;
             pcapNGprocessor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreamsFromPcapNG.Add(e.UdpSession);
 
@@ -74,6 +74,7 @@ namespace PcapProcessorTest
             // Act.
             processor.ProcessPcap(this.HttpSmallFilePath);
             pcapNGprocessor.ProcessPcap(this.PcapNGFile);
+
             // Assert - check if we succeeded reconstructing the expected amount of sessions
             Assert.AreEqual(1, recievedStreams.Count);
             Assert.AreEqual(1, recievedStreamsFromPcapNG.Count);
@@ -85,13 +86,8 @@ namespace PcapProcessorTest
             Assert.AreEqual(193, firstSessionBytes.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytes);
 
-
             Assert.AreEqual(193, firstSessionBytesFromPcapNG.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytesFromPcapNG);
-
-
-
-
         }
         
         [TestMethod]
@@ -106,7 +102,6 @@ namespace PcapProcessorTest
 
             // Act.
             processor.ProcessPcap(this.TcpFivePacketsFilePath);
-
 
             // Assert 
             Assert.AreEqual(0, recievedStreams.Count);
@@ -127,7 +122,6 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(5, recievedPackets.Count);
-
         }
 
         [TestMethod]
@@ -136,7 +130,6 @@ namespace PcapProcessorTest
             // Arrange.
             var recievedSessions = new List<TcpSession>();
             var recievedSessionsFromPcapNG = new List<TcpSession>();
-
             var processor = new Processor();
             var processorPcapNG = new Processor();
 
@@ -149,8 +142,9 @@ namespace PcapProcessorTest
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessions.Add(e.TcpSession);
 
             // Act.
-            processorPcapNG.ProcessPcap(this.PcapNGFile);
             processor.ProcessPcap(this.HttpSmallFilePath);
+            processorPcapNG.ProcessPcap(this.PcapNGFile);
+
             string firstSessionText = Encoding.UTF8.GetString(recievedSessions[0].Data);
             string firstSessionFromPcapNGText = Encoding.UTF8.GetString(recievedSessionsFromPcapNG[0].Data);
 
