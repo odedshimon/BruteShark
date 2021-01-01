@@ -14,9 +14,14 @@ jobs:
       fail-fast: false
       matrix:
         dotnet-version: [3.1.301]
+        os: [macOS-latest, ubuntu-latest, windows-latest]
         tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
         include:
-          - os: [macOS-latest, ubuntu-latest]
+          - os: macOS-latest
+            projects-paths: [./BruteShark/BruteSharkCli]
+            test-flag: [--no-build]
+            build-flag: []
+          - os: ubuntu-latest
             projects-paths: [./BruteShark/BruteSharkCli]
             test-flag: [--no-build]
             build-flag: []
