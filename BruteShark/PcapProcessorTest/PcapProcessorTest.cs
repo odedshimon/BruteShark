@@ -14,6 +14,7 @@ namespace PcapProcessorTest
         public string UdpFilePath { get; set; }
         public string TcpFivePacketsFilePath { get; set; }
         public string HttpSmallFilePath { get; set; }
+        public string PcapNGFile { get; set; }
 
 
         public PcapProcessorTest()
@@ -21,6 +22,7 @@ namespace PcapProcessorTest
             this.UdpFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Kerberos - UDP.pcap");
             this.TcpFivePacketsFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\Tcp - 5 Packets.pcap");
             this.HttpSmallFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP - Small File.pcap");
+            this.PcapNGFile = Path.Combine(Directory.GetCurrentDirectory(), @"Test Files\HTTP - Small File.pcapng");
         }
 
         [TestMethod]
@@ -45,9 +47,14 @@ namespace PcapProcessorTest
         {
             // Arrange.
             var recievedStreams = new List<UdpSession>();
+            var recievedStreamsFromPcapNG = new List<UdpSession>();
             var processor = new Processor();
+            var pcapNGprocessor = new Processor();
+
             processor.BuildUdpSessions = true;
             processor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
+            pcapNGprocessor.BuildUdpSessions = true;
+            pcapNGprocessor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreamsFromPcapNG.Add(e.UdpSession);
 
             byte[] firstUdpStreamExpectedData = new byte[] {
                 0x00, 0x23, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0x70, 0x61, 0x67,
@@ -66,15 +73,21 @@ namespace PcapProcessorTest
 
             // Act.
             processor.ProcessPcap(this.HttpSmallFilePath);
+            pcapNGprocessor.ProcessPcap(this.PcapNGFile);
 
             // Assert - check if we succeeded reconstructing the expected amount of sessions
             Assert.AreEqual(1, recievedStreams.Count);
+            Assert.AreEqual(1, recievedStreamsFromPcapNG.Count);
 
             // Assert - check if we succeeded reconstructing the data of the udp sessions by checking if we recieved the exact amount of bytes
             byte[] firstSessionBytes = recievedStreams[0].Data;
+            byte[] firstSessionBytesFromPcapNG = recievedStreamsFromPcapNG[0].Data;
+
             Assert.AreEqual(193, firstSessionBytes.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytes);
 
+            Assert.AreEqual(193, firstSessionBytesFromPcapNG.Length);
+            CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytesFromPcapNG);
         }
         
         [TestMethod]
@@ -89,7 +102,6 @@ namespace PcapProcessorTest
 
             // Act.
             processor.ProcessPcap(this.TcpFivePacketsFilePath);
-
 
             // Assert 
             Assert.AreEqual(0, recievedStreams.Count);
@@ -110,7 +122,6 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(5, recievedPackets.Count);
-
         }
 
         [TestMethod]
@@ -118,18 +129,30 @@ namespace PcapProcessorTest
         {
             // Arrange.
             var recievedSessions = new List<TcpSession>();
+            var recievedSessionsFromPcapNG = new List<TcpSession>();
             var processor = new Processor();
+            var processorPcapNG = new Processor();
+
+            processorPcapNG.BuildTcpSessions = true;
             processor.BuildTcpSessions = true;
+
+            processorPcapNG.TcpSessionArrived += 
+                (object sender, TcpSessionArivedEventArgs e) => recievedSessionsFromPcapNG.Add(e.TcpSession);
             processor.TcpSessionArrived +=
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessions.Add(e.TcpSession);
 
             // Act.
             processor.ProcessPcap(this.HttpSmallFilePath);
+            processorPcapNG.ProcessPcap(this.PcapNGFile);
+
             string firstSessionText = Encoding.UTF8.GetString(recievedSessions[0].Data);
+            string firstSessionFromPcapNGText = Encoding.UTF8.GetString(recievedSessionsFromPcapNG[0].Data);
 
             // Assert (Check specific session that i know it has real data).
             Assert.AreEqual(18843, recievedSessions[0].Data.Length);
+            Assert.AreEqual(18843, recievedSessionsFromPcapNG[0].Data.Length);
             StringAssert.StartsWith(firstSessionText, @"GET /download.html HTTP/1.1");
+            StringAssert.StartsWith(firstSessionFromPcapNGText, @"GET /download.html HTTP/1.1");
         }
 
         [TestMethod]
@@ -149,6 +172,14 @@ namespace PcapProcessorTest
 
             // Assert.
             Assert.AreEqual(46, recievedPackets.Count);
+        }
+
+        [TestMethod]
+        public void PcapProcessor_identifyPcapFileFormat()
+        {
+            var processor = new PcapProcessor.Processor();
+            Assert.AreEqual(true, processor.IsPcapFile(this.HttpSmallFilePath));
+            Assert.AreEqual(false, processor.IsPcapFile(this.PcapNGFile));
         }
     }
 }

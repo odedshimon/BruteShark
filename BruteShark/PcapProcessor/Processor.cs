@@ -5,10 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
+using Haukcode.PcapngUtils;
+using Haukcode.PcapngUtils.Common;
+
 
 namespace PcapProcessor
 {
+    public enum FileType
+    {
+        Pcap,
+        PcapNG
+    }
+
     // TODO: use interface
     public class Processor
     {
@@ -75,13 +84,15 @@ namespace PcapProcessor
                 _tcpSessionsBuilder.Clear();
                 _udpStreamBuilder.Clear();
 
-                // Get an offline device, handle packets registering for the Packet 
-                // Arrival event and start capturing from that file.
-                // NOTE: the capture function is blocking.
-                ICaptureDevice device = new CaptureFileReaderDevice(filePath);
-                device.OnPacketArrival += new PacketArrivalEventHandler(ProcessPacket);
-                device.Open();
-                device.Capture();
+                switch (GetFileType(filePath))
+                {
+                    case FileType.Pcap:
+                        ReadPcapFile(filePath);
+                        break;
+                    case FileType.PcapNG:
+                        ReadPcapNGFile(filePath);
+                        break;
+                }
 
                 // Raise event for each Tcp session that was built.
                 // TODO: think about detecting complete sesions on the fly and raising 
@@ -110,6 +121,67 @@ namespace PcapProcessor
             }
         }
 
+        private FileType GetFileType(string filePath)
+        {
+            if (IsPcapFile(filePath))
+            {
+                return FileType.Pcap;
+            }
+            else
+            {
+                return FileType.PcapNG;
+            }
+        }
+
+        public bool IsPcapFile(string filename)
+        {
+            using (var reader = IReaderFactory.GetReader(filename))
+            {
+                return reader.GetType() != typeof(Haukcode.PcapngUtils.PcapNG.PcapNGReader);
+            }
+        }
+
+        private void ReadPcapNGFile(string filepath)
+        {
+            using (var reader = IReaderFactory.GetReader(filepath))
+            {
+                reader.OnReadPacketEvent += ConvertPacket;
+                reader.ReadPackets(new CancellationToken());
+            }
+        }
+
+        private void ReadPcapFile(string filepath)
+        {
+            // Get an offline device, handle packets registering for the Packet 
+            // Arrival event and start capturing from that file.
+            // NOTE: the capture function is blocking.
+            ICaptureDevice device = new CaptureFileReaderDevice(filepath);
+            device.OnPacketArrival += new PacketArrivalEventHandler(ProcessPcapPacket);
+            device.Open();
+            device.Capture();
+        }
+        private void ConvertPacket(object sender, IPacket packet)
+        {
+            var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
+            var _packet_raw = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Raw, packet.Data);
+
+            if (_packet_ether.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_ether.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_ether);
+                }
+            }
+            else if (_packet_raw.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_raw.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_raw);
+                }
+
+            }
+        }
+
         private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
         {
             FileProcessingStatusChanged?.Invoke(this, new FileProcessingStatusChangedEventArgs()
@@ -119,11 +191,20 @@ namespace PcapProcessor
             });
         }
 
-        private void ProcessPacket(object sender, CaptureEventArgs e)
+        private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
+        {
+            ProcessPacket(packet);
+        }
+
+        private void ProcessPcapPacket(object sender, CaptureEventArgs e)
+        {
+            var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
+            ProcessPacket(packet);
+        }
+        void ProcessPacket(PacketDotNet.Packet packet)
         {
             try
             {
-                var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
                 var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
                 var udpPacket = packet.Extract<PacketDotNet.UdpPacket>();
 
@@ -142,7 +223,7 @@ namespace PcapProcessor
                             Data = udpPacket.PayloadData ?? new byte[] { }
                         }
                     });
-                    
+
                     if (this.BuildUdpSessions)
                     {
                         this._udpStreamBuilder.HandlePacket(udpPacket);
@@ -179,7 +260,6 @@ namespace PcapProcessor
                 // TODO: handle or throw this
                 //Console.WriteLine(ex);
             }
-
         }
 
     }

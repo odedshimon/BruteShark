@@ -13,6 +13,7 @@ namespace PcapAnalyzer
 
         public List<string> AvailableModulesNames => _availbleModules.Select(m => m.Name).ToList();
         public List<string> LoadedModulesNames => _loadedModules.Select(m => m.Name).ToList();
+        public IEnumerable<IModule> AvailableModules => _availbleModules.ToList();
 
 
         public Analyzer()

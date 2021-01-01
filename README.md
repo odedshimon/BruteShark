@@ -28,11 +28,17 @@ I love to get feedbacks from BruteShark users, your opinion is important to me!
 Feel free to contact me on <contact.oded.shimon@gmail.com> or [create new issue](https://github.com/odedshimon/BruteShark/issues).
 
 Please ⭐️ this repository if this project helped you!
+<div>
+	Also, if you're feeling generous, you can buy me a coffe <a href="https://www.buymeacoffee.com/OdedShimon">
+		<img alt="Buy Me A Coffee" src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" style="height: auto !important; width: auto !important;" />
+	</a>
+</div>
 
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
 * Build visual network diagram (Network nodes & users)
+* Extract DNS queries
 * Reconstruct all TCP & UDP Sessions
 * File Carving
 
