@@ -14,21 +14,22 @@ jobs:
       fail-fast: false
       matrix:
         dotnet-version: [3.1.301]
-        os: [macOS-latest, ubuntu-latest, windows-latest]
         tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
         include:
           - os: macOS-latest
-            projects-paths: [./BruteShark/BruteSharkCli]
-            test-flag: [--no-build]
-            build-flag: []
+            projects-paths: ./BruteShark/BruteSharkCli
+            test-flag: --no-build
+            build-flag: ""
+
           - os: ubuntu-latest
-            projects-paths: [./BruteShark/BruteSharkCli]
-            test-flag: [--no-build]
-            build-flag: []
+            projects-paths: ./BruteShark/BruteSharkCli
+            test-flag: --no-build
+            build-flag: ""
+
           - os: windows-latest
-            projects-paths: [./BruteShark]
-            test-flag: []
-            build-flag: [--no-restore]
+            projects-paths: ./BruteShark
+            test-flag: ""
+            build-flag: --no-restore
 
     steps:
     - uses: actions/checkout@v2
