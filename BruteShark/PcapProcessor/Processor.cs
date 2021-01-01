@@ -85,7 +85,8 @@ namespace PcapProcessor
                 }
                 else
                 {
-                    ReadPcapNGFile(filePath);
+                    // TODO: Enable this after testing PCAPNG 
+                    // ReadPcapNGFile(filePath);
                 }
 
                 // Raise event for each Tcp session that was built.
@@ -132,7 +133,6 @@ namespace PcapProcessor
             {
                 reader.OnReadPacketEvent += ConvertPacket;
                 reader.ReadPackets(new CancellationToken());
-
             }
         }
 
@@ -193,7 +193,6 @@ namespace PcapProcessor
         {
             try
             {
-                
                 var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
                 var udpPacket = packet.Extract<PacketDotNet.UdpPacket>();
 
