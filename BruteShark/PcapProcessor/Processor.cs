@@ -9,8 +9,15 @@ using System.Threading;
 using Haukcode.PcapngUtils;
 using Haukcode.PcapngUtils.Common;
 
+
 namespace PcapProcessor
 {
+    public enum FileType
+    {
+        Pcap,
+        PcapNG
+    }
+
     // TODO: use interface
     public class Processor
     {
@@ -77,16 +84,14 @@ namespace PcapProcessor
                 _tcpSessionsBuilder.Clear();
                 _udpStreamBuilder.Clear();
 
-                // check if the file is a PcapNg format file or Pcap format
-
-                if (IsPcapFile(filePath))
+                switch (GetFileType(filePath))
                 {
-                    ReadPcapFile(filePath);
-                }
-                else
-                {
-                    // TODO: Enable this after testing PCAPNG 
-                    // ReadPcapNGFile(filePath);
+                    case FileType.Pcap:
+                        ReadPcapFile(filePath);
+                        break;
+                    case FileType.PcapNG:
+                        ReadPcapNGFile(filePath);
+                        break;
                 }
 
                 // Raise event for each Tcp session that was built.
@@ -116,15 +121,24 @@ namespace PcapProcessor
             }
         }
 
+        private FileType GetFileType(string filePath)
+        {
+            if (IsPcapFile(filePath))
+            {
+                return FileType.Pcap;
+            }
+            else
+            {
+                return FileType.PcapNG;
+            }
+        }
+
         public bool IsPcapFile(string filename)
         {
-            
             using (var reader = IReaderFactory.GetReader(filename))
-            if (reader.GetType() == typeof(Haukcode.PcapngUtils.PcapNG.PcapNGReader))
-            {   
-                return false;
+            {
+                return reader.GetType() != typeof(Haukcode.PcapngUtils.PcapNG.PcapNGReader);
             }
-                return true;
         }
 
         private void ReadPcapNGFile(string filepath)
@@ -150,13 +164,13 @@ namespace PcapProcessor
         {
             var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
             var _packet_raw = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Raw, packet.Data);
+
             if (_packet_ether.HasPayloadPacket)
             {
                 if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_ether.PayloadPacket))
                 {
                     ProccessPcapNgPacket(_packet_ether);
                 }
-                
             }
             else if (_packet_raw.HasPayloadPacket)
             {
@@ -168,7 +182,6 @@ namespace PcapProcessor
             }
         }
 
-
         private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
         {
             FileProcessingStatusChanged?.Invoke(this, new FileProcessingStatusChangedEventArgs()
@@ -177,7 +190,6 @@ namespace PcapProcessor
                 Status = status
             });
         }
-
 
         private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
         {

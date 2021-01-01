@@ -74,6 +74,7 @@ namespace PcapProcessorTest
             // Act.
             processor.ProcessPcap(this.HttpSmallFilePath);
             pcapNGprocessor.ProcessPcap(this.PcapNGFile);
+
             // Assert - check if we succeeded reconstructing the expected amount of sessions
             Assert.AreEqual(1, recievedStreams.Count);
             Assert.AreEqual(1, recievedStreamsFromPcapNG.Count);
@@ -85,13 +86,8 @@ namespace PcapProcessorTest
             Assert.AreEqual(193, firstSessionBytes.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytes);
 
-
             Assert.AreEqual(193, firstSessionBytesFromPcapNG.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytesFromPcapNG);
-
-
-
-
         }
         
         [TestMethod]
@@ -149,8 +145,9 @@ namespace PcapProcessorTest
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessions.Add(e.TcpSession);
 
             // Act.
-            processorPcapNG.ProcessPcap(this.PcapNGFile);
             processor.ProcessPcap(this.HttpSmallFilePath);
+            processorPcapNG.ProcessPcap(this.PcapNGFile);
+
             string firstSessionText = Encoding.UTF8.GetString(recievedSessions[0].Data);
             string firstSessionFromPcapNGText = Encoding.UTF8.GetString(recievedSessionsFromPcapNG[0].Data);
 
