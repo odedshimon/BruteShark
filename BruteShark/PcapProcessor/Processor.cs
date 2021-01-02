@@ -9,8 +9,15 @@ using System.Threading;
 using Haukcode.PcapngUtils;
 using Haukcode.PcapngUtils.Common;   
 
+
 namespace PcapProcessor
 {
+    public enum FileType
+    {
+        Pcap,
+        PcapNG
+    }
+
     // TODO: use interface
     public class Processor
     {
@@ -79,16 +86,14 @@ namespace PcapProcessor
             {
                 RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, this._filepath);
 
-                // check if the file is a PcapNg format file or Pcap format
-
-                if (IsPcapFile(_filepath))
+                switch (GetFileType(_filepath))
                 {
-                    ReadPcapFile(_filepath);
-                }
-                else
-                {
-                    // TODO: Enable this after testing PCAPNG 
-                    //ReadPcapNGFile(_filepath);
+                    case FileType.Pcap:
+                        ReadPcapFile(_filepath);
+                        break;
+                    case FileType.PcapNG:
+                        ReadPcapNGFile(_filepath);
+                        break;
                 }
 
                 this._udpStreamsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
@@ -106,15 +111,24 @@ namespace PcapProcessor
             }
         }
 
+        private FileType GetFileType(string filePath)
+        {
+            if (IsPcapFile(filePath))
+            {
+                return FileType.Pcap;
+            }
+            else
+            {
+                return FileType.PcapNG;
+            }
+        }
+
         public bool IsPcapFile(string filename)
         {
-            
             using (var reader = IReaderFactory.GetReader(filename))
-            if (reader.GetType() == typeof(Haukcode.PcapngUtils.PcapNG.PcapNGReader))
-            {   
-                return false;
+            {
+                return reader.GetType() != typeof(Haukcode.PcapngUtils.PcapNG.PcapNGReader);
             }
-                return true;
         }
 
         private void ReadPcapNGFile(string filepath)
@@ -138,9 +152,25 @@ namespace PcapProcessor
         }
         private void ConvertPacket(object sender, IPacket packet)
         {
-            
-            var _packet = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
-            ProccessPcapNgPacket(_packet);
+
+            var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
+            var _packet_raw = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Raw, packet.Data);
+
+            if (_packet_ether.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_ether.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_ether);
+                }
+            }
+            else if (_packet_raw.HasPayloadPacket)
+            {
+                if (typeof(PacketDotNet.IPPacket).IsInstanceOfType(_packet_raw.PayloadPacket))
+                {
+                    ProccessPcapNgPacket(_packet_raw);
+                }
+
+            }
         }
 
         private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
