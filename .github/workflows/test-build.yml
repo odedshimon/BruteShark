@@ -9,24 +9,49 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        dotnet-version: [3.1.301]
+        tests-paths: [./BruteShark/PcapAnalyzerTest, ./BruteShark/PcapProcessorTest]
+        os: [macOS-latest, ubuntu-latest, windows-latest]
+        exclude:
+          - os: windows-latest
+            tests-paths: ./BruteShark/PcapProcessorTest
+
+        include:
+          - os: macOS-latest
+            projects-paths: ./BruteShark/BruteSharkCli
+            test-flag: --no-build
+            build-flag: ""
+
+          - os: ubuntu-latest
+            projects-paths: ./BruteShark/BruteSharkCli
+            test-flag: --no-build
+            build-flag: ""
+
+          - os: windows-latest
+            projects-paths: ./BruteShark
+            test-flag: ""
+            build-flag: --no-restore
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.301
-    
+        dotnet-version:  ${{ matrix.dotnet-version }}
+
     - name: Install dependencies
       run: dotnet restore
-      working-directory: ./BruteShark
-    
+      working-directory: ${{ matrix.projects-paths }}
+
     - name: Test
-      run: dotnet test --verbosity normal
-      working-directory: ./BruteShark/PcapAnalyzerTest
+      run: dotnet test --verbosity normal ${{ matrix.test-flag }}
+      working-directory: ${{ matrix.tests-paths }}
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-      working-directory: ./BruteShark
+      run: dotnet build --configuration Release ${{ matrix.build-flag }}
+      working-directory: ${{ matrix.projects-paths }}  
