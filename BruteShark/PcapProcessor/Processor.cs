@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Haukcode.PcapngUtils;
-using Haukcode.PcapngUtils.Common;
+using Haukcode.PcapngUtils.Common;   
 
 
 namespace PcapProcessor
@@ -23,6 +23,8 @@ namespace PcapProcessor
     {
         public delegate void FileProcessingStatusChangedEventHandler(object sender, FileProcessingStatusChangedEventArgs e);
         public event FileProcessingStatusChangedEventHandler FileProcessingStatusChanged;
+        public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
+        private ProcessingPrecentsPredicator _processingPrecentsPredicator;
         public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
         public event UdpPacketArivedEventHandler UdpPacketArived;
         public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
@@ -31,93 +33,81 @@ namespace PcapProcessor
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
-        public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
-        public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;
-        public event EventHandler ProcessingFinished;
-
+        public bool ProcessFilesParallel { get; set; }
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
+
         private TcpSessionsBuilder _tcpSessionsBuilder;
-        private UdpStreamBuilder _udpStreamBuilder;
-        private ProcessingPrecentsPredicator _processingPrecentsPredicator;
+        private UdpStreamBuilder _udpStreamsBuilder;
+        private string _filepath;
+        
 
 
-        public Processor()
+        public Processor(ProcessingPrecentsPredicator processingPrecentsPredicator, string filepath)
         {
+            
+            this._filepath = filepath;
+            _processingPrecentsPredicator = processingPrecentsPredicator;
+            this.ProcessFilesParallel = false;
             this.BuildTcpSessions = false;
             this.BuildUdpSessions = false;
-            _tcpSessionsBuilder = new TcpSessionsBuilder();
-            _udpStreamBuilder = new UdpStreamBuilder();
-            _processingPrecentsPredicator = new ProcessingPrecentsPredicator();
-            _processingPrecentsPredicator.ProcessingPrecentsChanged += OnPredicatorProcessingPrecentsChanged;
+            this._tcpSessionsBuilder = new TcpSessionsBuilder();
+            this._udpStreamsBuilder = new UdpStreamBuilder();
+
+            
         }
 
-        private void OnPredicatorProcessingPrecentsChanged(object sender, ProcessingPrecentsChangedEventArgs e)
+        private void invokeAndClear(object session)
         {
-            // TODO: think of make this check in a dedicated extention method for events (e.g SafeInvoke())
-            if (ProcessingPrecentsChanged is null)
-                return;
-
-            ProcessingPrecentsChanged.Invoke(this, new ProcessingPrecentsChangedEventArgs()
+            if(session is TcpSession)
             {
-                Precents = e.Precents
-            });
+                this._tcpSessionsBuilder.ClearSession((TcpSession)session);
+                TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                {
+                    TcpSession = (TcpSession)session
+                });
+            }
+            
+            if (session is UdpSession)
+            {
+                this._udpStreamsBuilder.ClearSession((UdpSession)session);
+                UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                {
+                    UdpSession = (UdpSession)session
+                });
+                
+            }
         }
         
-        public void ProcessPcaps(IEnumerable<string> filesPaths)
-        {
-            _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
 
-            foreach (var filePath in filesPaths)
-            {
-                this.ProcessPcap(filePath);
-            }
-
-            ProcessingFinished?.Invoke(this, new EventArgs());
-        }
-
-        public void ProcessPcap(string filePath)
+        public void ProcessPcap()
         {
             try
             {
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, filePath);
-                _tcpSessionsBuilder.Clear();
-                _udpStreamBuilder.Clear();
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Started, this._filepath);
 
-                switch (GetFileType(filePath))
+                switch (GetFileType(_filepath))
                 {
                     case FileType.Pcap:
-                        ReadPcapFile(filePath);
+                        ReadPcapFile(_filepath);
                         break;
                     case FileType.PcapNG:
-                        ReadPcapNGFile(filePath);
+                        ReadPcapNGFile(_filepath);
                         break;
                 }
 
-                // Raise event for each Tcp session that was built.
-                // TODO: think about detecting complete sesions on the fly and raising 
-                // events accordingly.
-                foreach (var session in this._tcpSessionsBuilder.Sessions)
-                {
-                    TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                    {
-                        TcpSession = session
-                    });
-                }
-                foreach (var session in this._udpStreamBuilder.Sessions)
-                {
-                    UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-                    {
-                        UdpSession = session
-                    });
-                }
+                this._udpStreamsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
+                this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => invokeAndClear(session));
 
-                _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(filePath));
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, filePath);
+
+
+                _processingPrecentsPredicator.NotifyAboutProcessedFile(new FileInfo(this._filepath));
+
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Finished, _filepath);
             }
             catch (Exception ex)
             {
-                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Faild, filePath);
+                RaiseFileProcessingStatusChangedEvent(FileProcessingStatus.Faild, _filepath);
             }
         }
 
@@ -162,6 +152,7 @@ namespace PcapProcessor
         }
         private void ConvertPacket(object sender, IPacket packet)
         {
+
             var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
             var _packet_raw = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Raw, packet.Data);
 
@@ -226,7 +217,8 @@ namespace PcapProcessor
 
                     if (this.BuildUdpSessions)
                     {
-                        this._udpStreamBuilder.HandlePacket(udpPacket);
+                        
+                        _udpStreamsBuilder.HandlePacket(udpPacket);
                     }
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
@@ -249,7 +241,7 @@ namespace PcapProcessor
 
                     if (this.BuildTcpSessions)
                     {
-                        this._tcpSessionsBuilder.HandlePacket(tcpPacket);
+                        _tcpSessionsBuilder.HandlePacket(tcpPacket);
                     }
 
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);

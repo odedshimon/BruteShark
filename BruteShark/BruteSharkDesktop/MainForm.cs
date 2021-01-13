@@ -17,7 +17,7 @@ namespace BruteSharkDesktop
     public partial class MainForm : Form
     {
         private HashSet<string> _files;
-        private PcapProcessor.Processor _processor;
+        private PcapProcessor.ProcessorEngine _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
         private GenericTableUserControl _passwordsUserControl;
@@ -35,8 +35,9 @@ namespace BruteSharkDesktop
             _files = new HashSet<string>();
 
             // Create the DAL and BLL objects.
-            _processor = new PcapProcessor.Processor();
+            _processor = new PcapProcessor.ProcessorEngine(false) ;
             _analyzer = new PcapAnalyzer.Analyzer();
+            _processor.ProcessFilesParallel = false;
             _processor.BuildTcpSessions = true;
             _processor.BuildUdpSessions = true;
 
@@ -311,6 +312,20 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
                 this._processor.BuildTcpSessions = false;
                 messageOnBuildSessionsConfigurationChanged();
+            }
+        }
+        
+        private void ProcessFilesParallel_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ProcessFilesParallelCheckBox.CheckState == CheckState.Checked)
+            {
+                ProcessFilesParallelCheckBox.Text = "Process Files Parallel : ON";
+                this._processor.ProcessFilesParallel = true;
+            }
+            else if (ProcessFilesParallelCheckBox.CheckState == CheckState.Unchecked)
+            {
+                ProcessFilesParallelCheckBox.Text = "Process Files Parallel : OFF";
+                this._processor.ProcessFilesParallel = false;
             }
         }
 

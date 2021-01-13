@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace PcapProcessor
 {
-    class ProcessingPrecentsPredicator
+    public class ProcessingPrecentsPredicator
     {
         public delegate void ProcessingPrecentsChangedEventHandler(object sender, ProcessingPrecentsChangedEventArgs e);
         public event ProcessingPrecentsChangedEventHandler ProcessingPrecentsChanged;
@@ -60,7 +61,8 @@ namespace PcapProcessor
         public void NotifyAboutProcessedFile(FileInfo fileProcessed)
         {
             this.FilesProcessed.Add(fileProcessed);
-            this.DataProcessed = this.FilesProcessed.Sum(fi => fi.Length);
+            //this.DataProcessed = this.FilesProcessed.Sum(fi => fi.Length);
+            this.DataProcessed += fileProcessed.Length;
         }
 
         private void CheckIfProcessingPrecentsChanged(long additionalData)

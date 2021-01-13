@@ -61,5 +61,10 @@ namespace PcapProcessor.Objects
         {
             this._sessions.Clear();
         }
+
+        public void ClearSession(UdpSession session)
+        {
+            this._sessions.Remove(session);
+        }
     }
 }

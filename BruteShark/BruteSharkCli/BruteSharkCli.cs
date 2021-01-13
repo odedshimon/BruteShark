@@ -16,7 +16,7 @@ namespace BruteSharkCli
         private ulong _udpPacketsCount;
         private int _tcpSessionsCount;
         private int _udpStreamsCount;
-        private PcapProcessor.Processor _processor;
+        private PcapProcessor.ProcessorEngine _processor;
         private PcapAnalyzer.Analyzer _analyzer;
         private List<string> _files;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
@@ -38,7 +38,7 @@ namespace BruteSharkCli
             _files = new List<string>();
             _connections = new HashSet<NetworkConnection>();
 
-            _processor = new PcapProcessor.Processor();
+            _processor = new PcapProcessor.ProcessorEngine(false);
             _analyzer = new PcapAnalyzer.Analyzer();
             _shell = new CliShell(seperator:"Brute-Shark > ");
 
@@ -67,6 +67,7 @@ namespace BruteSharkCli
             _shell.AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             _shell.AddCommand(new CliShellCommand("export-hashes", p => ExportHashes(p), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             _shell.AddCommand(new CliShellCommand("export-networkmap", p => ExportNetworkMap(p), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
+            _shell.AddCommand(new CliShellCommand("process-files-parallel", p => this._processor.ProcessFilesParallel = true, "Processes the pcap files in paralell"));
 
         }
 

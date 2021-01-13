@@ -30,26 +30,26 @@ namespace PcapProcessorTest
         {
             // Arrange.
             var recievedPackets = new List<PcapProcessor.UdpPacket>();
-            var processor = new PcapProcessor.Processor();
+            var processor = new PcapProcessor.Processor(new ProcessingPrecentsPredicator(), this.UdpFilePath);
 
             processor.UdpPacketArived +=
                 (object sender, UdpPacketArivedEventArgs e) => recievedPackets.Add(e.Packet);
 
             // Act.
-            processor.ProcessPcap(this.UdpFilePath);
+            processor.ProcessPcap();
 
             // Assert (the file has 32 packets).
             Assert.AreEqual(32, recievedPackets.Count);
         }
-        
+
         [TestMethod]
         public void PcapProcessor_ReconstructUdpStreams_ReconstructSuccess()
         {
             // Arrange.
             var recievedStreams = new List<UdpSession>();
             var recievedStreamsFromPcapNG = new List<UdpSession>();
-            var processor = new Processor();
-            var pcapNGprocessor = new Processor();
+            var processor = new Processor(new ProcessingPrecentsPredicator(), this.HttpSmallFilePath);
+            var pcapNGprocessor = new Processor(new ProcessingPrecentsPredicator(), this.PcapNGFile);
 
             processor.BuildUdpSessions = true;
             processor.UdpSessionArrived += (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
@@ -72,8 +72,8 @@ namespace PcapProcessorTest
                 0x63 };
 
             // Act.
-            processor.ProcessPcap(this.HttpSmallFilePath);
-            pcapNGprocessor.ProcessPcap(this.PcapNGFile);
+            processor.ProcessPcap();
+            pcapNGprocessor.ProcessPcap();
 
             // Assert - check if we succeeded reconstructing the expected amount of sessions
             Assert.AreEqual(1, recievedStreams.Count);
@@ -89,19 +89,19 @@ namespace PcapProcessorTest
             Assert.AreEqual(193, firstSessionBytesFromPcapNG.Length);
             CollectionAssert.AreEqual(firstUdpStreamExpectedData, firstSessionBytesFromPcapNG);
         }
-        
+
         [TestMethod]
         public void PcapProcessor_ReconstructUdpStreams_ZeroStreams()
         {
             // Arrange.
             var recievedStreams = new List<UdpSession>();
-            var processor = new Processor();
+            var processor = new Processor(new ProcessingPrecentsPredicator(), this.TcpFivePacketsFilePath);
             processor.BuildUdpSessions = true;
             processor.UdpSessionArrived +=
                 (object sender, UdpSessionArrivedEventArgs e) => recievedStreams.Add(e.UdpSession);
 
             // Act.
-            processor.ProcessPcap(this.TcpFivePacketsFilePath);
+            processor.ProcessPcap();
 
             // Assert 
             Assert.AreEqual(0, recievedStreams.Count);
@@ -112,13 +112,13 @@ namespace PcapProcessorTest
         {
             // Arrange.
             var recievedPackets = new List<PcapProcessor.TcpPacket>();
-            var processor = new PcapProcessor.Processor();
+            var processor = new PcapProcessor.Processor(new ProcessingPrecentsPredicator(), this.TcpFivePacketsFilePath);
 
             processor.TcpPacketArived +=
                 (object sender, TcpPacketArivedEventArgs e) => recievedPackets.Add(e.Packet);
 
             // Act.
-            processor.ProcessPcap(this.TcpFivePacketsFilePath);
+            processor.ProcessPcap();
 
             // Assert.
             Assert.AreEqual(5, recievedPackets.Count);
@@ -130,20 +130,22 @@ namespace PcapProcessorTest
             // Arrange.
             var recievedSessions = new List<TcpSession>();
             var recievedSessionsFromPcapNG = new List<TcpSession>();
-            var processor = new Processor();
-            var processorPcapNG = new Processor();
+
+            var processor = new Processor(new ProcessingPrecentsPredicator(), this.HttpSmallFilePath);
+            var processorPcapNG = new Processor(new ProcessingPrecentsPredicator(), this.PcapNGFile);
+
 
             processorPcapNG.BuildTcpSessions = true;
             processor.BuildTcpSessions = true;
 
-            processorPcapNG.TcpSessionArrived += 
+            processorPcapNG.TcpSessionArrived +=
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessionsFromPcapNG.Add(e.TcpSession);
             processor.TcpSessionArrived +=
                 (object sender, TcpSessionArivedEventArgs e) => recievedSessions.Add(e.TcpSession);
 
             // Act.
-            processor.ProcessPcap(this.HttpSmallFilePath);
-            processorPcapNG.ProcessPcap(this.PcapNGFile);
+            processorPcapNG.ProcessPcap();
+            processor.ProcessPcap();
 
             string firstSessionText = Encoding.UTF8.GetString(recievedSessions[0].Data);
             string firstSessionFromPcapNGText = Encoding.UTF8.GetString(recievedSessionsFromPcapNG[0].Data);
@@ -155,31 +157,5 @@ namespace PcapProcessorTest
             StringAssert.StartsWith(firstSessionFromPcapNGText, @"GET /download.html HTTP/1.1");
         }
 
-        [TestMethod]
-        public void PcapProcessor_ReadTcpPacketsMultipleFiles_ReadSuccess()
-        {
-            // Arrange.
-            var recievedPackets = new List<PcapProcessor.TcpPacket>();
-            var processor = new PcapProcessor.Processor();
-
-            processor.TcpPacketArived +=
-                (object sender, TcpPacketArivedEventArgs e) => recievedPackets.Add(e.Packet);
-
-            // Act.
-            processor.ProcessPcaps( new List<string>() {
-                this.HttpSmallFilePath,
-                this.TcpFivePacketsFilePath });
-
-            // Assert.
-            Assert.AreEqual(46, recievedPackets.Count);
-        }
-
-        [TestMethod]
-        public void PcapProcessor_identifyPcapFileFormat()
-        {
-            var processor = new PcapProcessor.Processor();
-            Assert.AreEqual(true, processor.IsPcapFile(this.HttpSmallFilePath));
-            Assert.AreEqual(false, processor.IsPcapFile(this.PcapNGFile));
-        }
     }
 }
