@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using PcapAnalyzer;
 using PcapProcessor;
 using BruteSharkCli.Cli;
@@ -71,21 +68,32 @@ namespace BruteSharkCli
             if (cliFlags.SingleCommandMode)
             {
                 // run in single command mode
-
-                // load modules
-                LoadModules(cliFlags.Modules.ToList());
-                verifyPath(cliFlags);
-                _processor.ProcessingFinished += (s, e) => this.printAndExportResults(cliFlags);
-                _processor.FileProcessingStatusChanged += (s, e) => this.printFileStatusUpdate(s, e);
-                Console.WriteLine("[+] Started analyzing pcap files");
-                _processor.ProcessPcaps(_files);
-
+                try 
+                { 
+                    // load modules
+                    LoadModules(cliFlags.Modules.ToList());
+                    verifyPath(cliFlags);
+                    _processor.ProcessingFinished += (s, e) => this.printAndExportResults(cliFlags);
+                    _processor.FileProcessingStatusChanged += (s, e) => this.printFileStatusUpdate(s, e);
+                    Console.WriteLine("[+] Started analyzing pcap files");
+                    _processor.ProcessPcaps(_files);
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
+
             else
             {
                 interactiveMode();
             }
         }
+        
 
         private void interactiveMode()
         {
@@ -137,16 +145,16 @@ namespace BruteSharkCli
                 {
                     PrintHashes();
                     PrintPasswords();
-                    ExportHashes(cliFlags.OutputDir + "credentials.txt");
+                    ExportHashes(cliFlags.OutputDir);
 
                 }
                 else if (moduleName.Contains("NetworkMap"))
                 {
-                    ExportNetworkMap(cliFlags.OutputDir + "networkmap.json");
+                    ExportNetworkMap(cliFlags.OutputDir);
                 }
                 else if (moduleName.Contains("FileExtracting"))
                 {
-                    // Todo - extract files to out put
+                    // Todo - extract files to output
                 }
                 // Todo - add exporting of dns module results
             }
@@ -367,9 +375,9 @@ namespace BruteSharkCli
 
         private void ExportNetworkMap(string filePath)
         {
-            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(
-                connections: this._connections.ToList<PcapAnalyzer.NetworkConnection>(), 
-                filePath: filePath);
+            string netowrkMapPath = Path.Combine(filePath, "NetworkMap");
+            Directory.CreateDirectory(netowrkMapPath);
+            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(this._connections.ToList<PcapAnalyzer.NetworkConnection>(), Path.Combine(netowrkMapPath, "networkmap.json"));
 
             Console.WriteLine("Successfully exported network map to json file: " + filePath);
         }
@@ -377,6 +385,9 @@ namespace BruteSharkCli
         private void ExportHashes(string filePath)
         {
             // Run on each Hash Type we found.
+            string hashesPath = Path.Combine(filePath, "Hasehs");
+            Directory.CreateDirectory(hashesPath);
+
             foreach (string hashType in _hashes.Select(h => h.HashType).Distinct())
             {
                 // Convert all hashes from that type to Hashcat format.
@@ -384,7 +395,7 @@ namespace BruteSharkCli
                                             .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
                                                          Casting.CastAnalyzerHashToBruteForceHash(h)));
 
-                var outputFilePath = MakeUnique(Path.Combine(filePath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+                var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
 
                 using (var streamWriter = new StreamWriter(outputFilePath, true))
                 {

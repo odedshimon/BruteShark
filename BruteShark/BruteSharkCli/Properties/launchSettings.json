@@ -2,7 +2,7 @@
   "profiles": {
     "BruteSharkCli": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"C:\\Users\\aviad\\Source\\Repos\\BruteShark\\Pcap_Examples\\HTTP - Basic Authentication.pcap,\" -c -m \"FileExtracting,Credentials,NetworkMap\""
+      "commandLineArgs": "-d \"C:\\Users\\aviad\\Source\\Repos\\BruteShark\\Pcap_Examples\" -c -m \"FileExtracting,Credentials,NetworkMap\""
     }
   }
 }
