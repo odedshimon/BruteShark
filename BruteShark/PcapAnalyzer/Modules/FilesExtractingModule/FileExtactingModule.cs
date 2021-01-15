@@ -11,6 +11,7 @@ namespace PcapAnalyzer
     public class FileExtactingModule : IModule
     {
         public string Name => "File Extracintg";
+        public string CliName => "FileExtracting";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
         // File signitures examples:

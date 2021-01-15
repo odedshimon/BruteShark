@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,8 @@ namespace BruteSharkCli
             }
             while (!_exit);
         }
+
+     
 
         private void HandleUserInput()
         {

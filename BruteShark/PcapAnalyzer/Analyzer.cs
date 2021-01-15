@@ -11,7 +11,7 @@ namespace PcapAnalyzer
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
-        public List<string> AvailableModulesNames => _availbleModules.Select(m => m.Name).ToList();
+        public List<string> AvailableModulesNames => _availbleModules.Select(m => m.Name).ToList().Concat(_availbleModules.Select(m => m.CliName).ToList()).ToList();
         public List<string> LoadedModulesNames => _loadedModules.Select(m => m.Name).ToList();
         public IEnumerable<IModule> AvailableModules => _availbleModules.ToList();
 
@@ -35,7 +35,7 @@ namespace PcapAnalyzer
                 throw new Exception($"No module named {module_name}");
             }
 
-            var module = _availbleModules.Where(m => m.Name == module_name).First();
+            var module = _availbleModules.Where(m => m.Name == module_name || m.CliName == module_name).First();
             _loadedModules.Add(module);
         }
 

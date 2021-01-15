@@ -12,6 +12,7 @@ namespace PcapAnalyzer
     public class DnsModule : IModule
     {
         public string Name => "DNS";
+        public string CliName => "DNS";
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 

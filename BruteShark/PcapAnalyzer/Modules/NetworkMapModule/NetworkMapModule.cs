@@ -7,6 +7,7 @@ namespace PcapAnalyzer
     class NetworkMapModule : IModule
     {
         public string Name => "Network Map";
+        public string CliName => "NetworkMap";
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
