@@ -4,7 +4,7 @@
     {
         public string Username { get; set; }
         public string Password { get; set; }
-        
+
         public override bool Equals(object obj)
         {
             if (!(obj is NetworkPassword))
@@ -24,6 +24,11 @@
             return base.GetHashCode() ^
                    this.Username.GetHashCode() ^
                    this.Password.GetHashCode();
+        }
+
+        public  override string ToString()
+        {
+            return $"Network Credential: {Source}=>{Destination}({Protocol}) => {this.Username}:{this.Password}";
         }
     }
 }

@@ -12,6 +12,7 @@ namespace BruteSharkCli
 {
     internal class BruteSharkCli
     {
+        private bool isInteractiveMode;
         private ulong _tcpPacketsCount;
         private ulong _udpPacketsCount;
         private int _tcpSessionsCount;
@@ -29,8 +30,7 @@ namespace BruteSharkCli
         public BruteSharkCli(string[] args)
         {
             _args = args;
-
-            
+            isInteractiveMode = true;
             _tcpPacketsCount = 0;
             _udpPacketsCount = 0;
             _udpStreamsCount = 0;
@@ -68,6 +68,7 @@ namespace BruteSharkCli
             if (cliFlags.SingleCommandMode)
             {
                 // run in single command mode
+                isInteractiveMode = false;
                 try 
                 { 
                     // load modules
@@ -132,25 +133,24 @@ namespace BruteSharkCli
             }
             
             Console.WriteLine($"File : {Path.GetFileName(e.FilePath)} Processing {e.Status}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
         private void printAndExportResults(CliFlags cliFlags)
-        {
-            UpdateAnalyzingStatus();
-            Console.WriteLine("\n\n\n\n");
-            foreach (string moduleName in cliFlags.Modules)
             {
-                if (moduleName.Contains("Credentials"))
-                {
-                    PrintHashes();
-                    PrintPasswords();
-                    ExportHashes(cliFlags.OutputDir);
-
-                }
-                else if (moduleName.Contains("NetworkMap"))
+            foreach (string moduleName in cliFlags.Modules)
+            { 
+                
+                if (moduleName.Contains("NetworkMap"))
                 {
                     ExportNetworkMap(cliFlags.OutputDir);
+                }
+                else if (moduleName.Contains("Credentials"))
+                {
+                    PrintPasswords();
+                    PrintHashes();
+                    ExportHashes(cliFlags.OutputDir);
                 }
                 else if (moduleName.Contains("FileExtracting"))
                 {
@@ -203,10 +203,13 @@ namespace BruteSharkCli
             if (e.ParsedItem is PcapAnalyzer.NetworkPassword)
             {
                 _passwords.Add(e.ParsedItem as PcapAnalyzer.NetworkPassword);
+
+                printDetectedItem(e.ParsedItem);
             }
             if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
                 _hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash);
+                printDetectedItem(e.ParsedItem);
             }
             if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
@@ -215,6 +218,10 @@ namespace BruteSharkCli
             }
 
             UpdateAnalyzingStatus();
+        }
+        private void printDetectedItem(object item)
+        {
+            Console.WriteLine($"Found: {item}");
         }
 
         private void UpdateTcpSessionsCount()
@@ -247,17 +254,20 @@ namespace BruteSharkCli
 
         private void UpdateAnalyzingStatus()
         {
-            lock (_printingLock)
-            lock (_printingLock)
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"\r[+] Packets Analyzed: {_tcpPacketsCount + _udpPacketsCount}, " + $"TCP: {_tcpPacketsCount} " + $"UDP: {_udpPacketsCount}");
-                Console.WriteLine($"\r[+] TCP Sessions Analyzed: {_tcpSessionsCount}" + $" UDP Streams Analyzed: {_udpStreamsCount}");
-                Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
-                Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
-                Console.WriteLine($"\r[+] Network Connections Found: {_connections.Count}");
-                Console.SetCursorPosition(0, Console.CursorTop - 5);
-                Console.ForegroundColor = ConsoleColor.White;
+            if (isInteractiveMode)
+            { 
+                lock (_printingLock)
+                lock (_printingLock)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"\r[+] Packets Analyzed: {_tcpPacketsCount + _udpPacketsCount}, " + $"TCP: {_tcpPacketsCount} " + $"UDP: {_udpPacketsCount}");
+                    Console.WriteLine($"\r[+] TCP Sessions Analyzed: {_tcpSessionsCount}" + $" UDP Streams Analyzed: {_udpStreamsCount}");
+                    Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
+                    Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
+                    Console.WriteLine($"\r[+] Network Connections Found: {_connections.Count}");
+                    Console.SetCursorPosition(0, Console.CursorTop - 5);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
             }
         }
         private void AddFile(string filePath)
@@ -375,11 +385,12 @@ namespace BruteSharkCli
 
         private void ExportNetworkMap(string filePath)
         {
-            string netowrkMapPath = Path.Combine(filePath, "NetworkMap");
+            string netowrkMapPath = Path.Combine(Path.Combine(filePath, "NetworkMap"), "networkmap.json");
             Directory.CreateDirectory(netowrkMapPath);
-            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(this._connections.ToList<PcapAnalyzer.NetworkConnection>(), Path.Combine(netowrkMapPath, "networkmap.json"));
 
-            Console.WriteLine("Successfully exported network map to json file: " + filePath);
+            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(this._connections.ToList<PcapAnalyzer.NetworkConnection>(), netowrkMapPath);
+
+            Console.WriteLine($"Successfully exported network map to json file:  {netowrkMapPath}");
         }
 
         private void ExportHashes(string filePath)
@@ -390,23 +401,31 @@ namespace BruteSharkCli
 
             foreach (string hashType in _hashes.Select(h => h.HashType).Distinct())
             {
-                // Convert all hashes from that type to Hashcat format.
-                var hashesToExport = _hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
-                                            .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
-                                                         Casting.CastAnalyzerHashToBruteForceHash(h)));
+                try {
+                    // Convert all hashes from that type to Hashcat format.
 
-                var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+                    var hashesToExport = _hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
+                                                .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
+                                                             Casting.CastAnalyzerHashToBruteForceHash(h)));
 
-                using (var streamWriter = new StreamWriter(outputFilePath, true))
-                {
-                    foreach (var hash in hashesToExport)
+                    var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+
+                    using (var streamWriter = new StreamWriter(outputFilePath, true))
                     {
-                        streamWriter.WriteLine(hash);
+                        foreach (var hash in hashesToExport)
+                        {
+                            streamWriter.WriteLine(hash);
+                        }
                     }
-                }
 
-                Console.WriteLine("Hashes file created: " + outputFilePath);
-            }
+                    Console.WriteLine("Hashes file created: " + outputFilePath);
+                }
+                catch(Exception ex)
+                {
+                    // in case Casting.CastAnalyzerHashToBruteForceHash(h))) fails and throws exception for not supported hash type
+                    continue;
+                }
+               }
         }
     
     }
