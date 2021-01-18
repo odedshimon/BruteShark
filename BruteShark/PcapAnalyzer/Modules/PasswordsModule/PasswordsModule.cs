@@ -11,8 +11,6 @@ namespace PcapAnalyzer
 
         private List<IPasswordParser> _passwordParsers;
         public string Name => "Credentials Extractor (Passwords, Hashes)";
-        public string CliName => "Credentials";
-
 
         public PasswordsModule()
         {

@@ -18,7 +18,7 @@ namespace PcapAnalyzerTest
             var modulesList = analyzer.AvailableModulesNames;
 
             // Assert.
-            Assert.AreEqual(8, modulesList.Count);
+            Assert.AreEqual(4, modulesList.Count);
         }
 
         [TestMethod]

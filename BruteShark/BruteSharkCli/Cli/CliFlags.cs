@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BruteSharkCli.Cli
+namespace BruteSharkCli
 {
     public class CliFlags
     {
@@ -17,13 +17,10 @@ namespace BruteSharkCli.Cli
         public IEnumerable<string> Modules { get; set; }
 
         // TODO - merge parallel processing feature branch to make this flag really work
-        [Option('p', "parallel", Required = false, Default = false, HelpText = "Whether to process the files in parallel, default value is false.")]
+        [Option('p', "parallel", Required = false, HelpText = "Whether to process the files in parallel, default value is false.")]
         public bool ParallelProcessing { get; set; }
 
-        [Option('c', "single-command", Required = false, Default = false, HelpText = "Run BruteShark cli in single command mode using the given command line arguments as input and configuration for the run.")]
-        public bool SingleCommandMode { get; set; }
-        
-        [Option('o', "output", Required = false,Default = "", HelpText = "The output direcorty for the results files.")]
+        [Option('o', "output", Required = false, HelpText = "The output direcorty for the results files.")]
         public string OutputDir{ get; set; }
     }
 }

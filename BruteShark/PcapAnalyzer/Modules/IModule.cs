@@ -7,7 +7,6 @@ namespace PcapAnalyzer
     public interface IModule
     {
         string Name { get; }
-        string CliName { get; }
         event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
 
         void Analyze(UdpPacket udpPacket);

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "BruteSharkCli": {
-      "commandName": "Project",
-      "commandLineArgs": "-d \"C:\\Users\\aviad\\Source\\Repos\\BruteShark\\Pcap_Examples\" -c -m \"FileExtracting,Credentials,NetworkMap\""
-    }
-  }
-}
