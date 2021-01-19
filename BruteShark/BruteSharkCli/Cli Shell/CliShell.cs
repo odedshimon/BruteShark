@@ -40,8 +40,8 @@ namespace BruteSharkCli
             _printingLock = new object();
             _files = new List<string>();
 
-            PcapProcessor.Processor _processor = processor;
-            PcapAnalyzer.Analyzer _analyzer = analyzer;
+            _processor = processor;
+            _analyzer = analyzer;
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
@@ -49,9 +49,9 @@ namespace BruteSharkCli
             _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
             _processor.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
 
-            HashSet<PcapAnalyzer.NetworkHash> _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
-            HashSet<PcapAnalyzer.NetworkPassword> _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
-            HashSet<PcapAnalyzer.NetworkConnection> _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
+            _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
+            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             
             this._commands = new List<CliShellCommand>();
             AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
