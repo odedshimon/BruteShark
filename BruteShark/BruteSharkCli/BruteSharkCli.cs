@@ -35,16 +35,20 @@ namespace BruteSharkCli
 
         private void RunShellMode()
         {
-            LoadModules(_analyzer.AvailableModulesNames);
             var shell = new CliShell(_analyzer, _processor, seperator: "Brute-Shark > ");
             shell.Start();
         }
 
-        private void LoadModules(List<string> modules)
+        private void RunSingleCommand()
         {
-            foreach (string m in modules)
+            try
             {
-                _analyzer.AddModule(m);
+                var cli = new SingleCommandRunner(_analyzer, _processor, _args);
+                cli.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fatal Error: {ex.Message}");
             }
         }
 
@@ -106,16 +110,7 @@ namespace BruteSharkCli
             }
             else
             {
-                // Run in single command.
-                try
-                {
-                    var cli = new SingleCommandCli(_analyzer, _processor, _args);
-                    cli.Run();
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
+                RunSingleCommand();
             }
         }
 
