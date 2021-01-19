@@ -12,14 +12,14 @@ namespace BruteSharkCli
 
     internal class BruteSharkCli
     {
-        private Dictionary<string, string> CliModulesNamesToAnalyzerNames = new Dictionary<string, string> {
+        private readonly Dictionary<string, string> CliModulesNamesToAnalyzerNames = new Dictionary<string, string> {
             { "FileExtracting" , "File Extracting"},
             { "NetworkMap", "Network Map" },
             { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"}
         };
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
-        private string[] _args;
+        private readonly string[] _args;
 
         public BruteSharkCli(string[] args)
         {
@@ -30,49 +30,44 @@ namespace BruteSharkCli
             // TODO: create command for this.
             _processor.BuildTcpSessions = true;
             _processor.BuildUdpSessions = true;
-            
 
             // Contract the events.
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _processor.UdpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorUdpStreamToAnalyzerUdpStream(e.UdpSession));
-            
         }
 
-        private void parseArgs(CliFlags cliFlags)
+        private void ParseArgs(CliFlags cliFlags)
         {
             if (ArgsDoesNotExist(cliFlags))
             {
-                interactiveMode();
+                RunShellMode();
             }
             else
             {
-                // run in single command 
+                // Run in single command.
                 try
                 {
-                    // load modules
+                    // Load modules.
                     if (cliFlags.Modules != null)
                     {
-                        LoadModules(parseCliModuleNames(cliFlags.Modules));
+                        LoadModules(ParseCliModuleNames(cliFlags.Modules));
                     }
 
-                    SingleCommandCli cli = new SingleCommandCli(_analyzer, _processor, cliFlags);
+                    var cli = new SingleCommandCli(_analyzer, _processor, cliFlags);
                     cli.Run();
                 }
                 catch (IOException ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
             }
         }
-        private List<string> parseCliModuleNames(IEnumerable<string> modules)
+
+        private List<string> ParseCliModuleNames(IEnumerable<string> modules)
         {
-            List<string> analyzerModulesToLoad = new List<string>();
+            var analyzerModulesToLoad = new List<string>();
 
             foreach(var cliModuleName in modules)
             {
@@ -86,6 +81,7 @@ namespace BruteSharkCli
 
             return analyzerModulesToLoad;
         }
+
         private bool ArgsDoesNotExist(CliFlags cliFlags)
         {
             if (cliFlags.InputDir == null && cliFlags.InputFiles.Count() == 0 && cliFlags.Modules.Count() == 0 && cliFlags.OutputDir == null && cliFlags.ParallelProcessing == false)
@@ -95,14 +91,14 @@ namespace BruteSharkCli
             return false;
 
         }
-        
 
-        private void interactiveMode()
+        private void RunShellMode()
         {
             LoadModules(_analyzer.AvailableModulesNames);
-            CliShell shell = new CliShell(_analyzer, _processor, seperator: "Brute-Shark > ");
+            var shell = new CliShell(_analyzer, _processor, seperator: "Brute-Shark > ");
             shell.Start();
         }
+
         private void LoadModules(List<string> modules)
         {
             foreach (string m in modules)
@@ -163,7 +159,7 @@ namespace BruteSharkCli
 
         internal void Start()
         {
-            Parser.Default.ParseArguments<CliFlags>(_args).WithParsed(parseArgs);
+            CommandLine.Parser.Default.ParseArguments<CliFlags>(_args).WithParsed(ParseArgs);
         }
     }
 }

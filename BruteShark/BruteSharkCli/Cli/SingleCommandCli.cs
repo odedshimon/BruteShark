@@ -10,38 +10,37 @@ namespace BruteSharkCli
 {
     class SingleCommandCli
     {
-        private PcapProcessor.Processor _processor;
-        private PcapAnalyzer.Analyzer _analyzer;
         private CliFlags _cliFlags;
         private List<string> _files;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private PcapProcessor.Processor _processor;
+        private PcapAnalyzer.Analyzer _analyzer;
+
         public SingleCommandCli(Analyzer analyzer, Processor processor, CliFlags cliFlags)
         { 
             _analyzer = analyzer;
             _processor = processor;
             _cliFlags = cliFlags;
+
             _hashes = new HashSet<NetworkHash>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _files = new List<string>();
+
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
+            _processor.ProcessingFinished += (s, e) => this.ExportResults(_cliFlags);
+            _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
         }
 
         public void Run()
         {
             try
             {      
-                verifyPath(_cliFlags);
-                _processor.ProcessingFinished += (s, e) => this.ExportResults(_cliFlags);
-                _processor.FileProcessingStatusChanged += (s, e) => this.printFileStatusUpdate(s, e);
-                Console.WriteLine("[+] Started analyzing pcap files");
+                SetupRun(_cliFlags);
+                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
                 _processor.ProcessPcaps(_files);
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -49,7 +48,7 @@ namespace BruteSharkCli
             }
         }
 
-        private void printFileStatusUpdate(object sender, FileProcessingStatusChangedEventArgs e)
+        private void PrintFileStatusUpdate(object sender, FileProcessingStatusChangedEventArgs e)
         {
             if (e.Status == FileProcessingStatus.Started || e.Status == FileProcessingStatus.Finished)
             {
@@ -63,7 +62,8 @@ namespace BruteSharkCli
             Console.WriteLine($"File : {Path.GetFileName(e.FilePath)} Processing {e.Status}");
             Console.ForegroundColor = ConsoleColor.White;
         }
-        private void verifyPath(CliFlags cliFlags)
+
+        private void SetupRun(CliFlags cliFlags)
         {
             if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
@@ -78,10 +78,11 @@ namespace BruteSharkCli
             }
             else
             {
-                verifyDir(cliFlags.InputDir);
+                VerifyDir(cliFlags.InputDir);
             }
         }
-        private void verifyDir(string dirPath)
+
+        private void VerifyDir(string dirPath)
         {
             FileAttributes attrs = File.GetAttributes(dirPath);
             if ((attrs & FileAttributes.Directory) == FileAttributes.Directory)
@@ -122,6 +123,7 @@ namespace BruteSharkCli
 
             Console.WriteLine("[X] Bruteshark finished processing");
         }
+
         private void AddFile(string filePath)
         {
             if (File.Exists(filePath))
@@ -130,20 +132,25 @@ namespace BruteSharkCli
             }
             else
             {
-                Console.WriteLine("File does not exist.");
+                Console.WriteLine($"ERROR: File does not exist - {filePath}");
             }
         }
+
         private void OnParsedItemDetected(object sender, ParsedItemDetectedEventArgs e)
         {
             if (e.ParsedItem is PcapAnalyzer.NetworkPassword)
             {
-                _passwords.Add(e.ParsedItem as PcapAnalyzer.NetworkPassword);
-                printDetectedItem(e.ParsedItem);
+                if (_passwords.Add(e.ParsedItem as PcapAnalyzer.NetworkPassword))
+                {
+                    PrintDetectedItem(e.ParsedItem);
+                }
             }
             if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
-                _hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash);
-                printDetectedItem(e.ParsedItem);
+                if (_hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash))
+                {
+                    PrintDetectedItem(e.ParsedItem);
+                }
             }
             if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
@@ -151,7 +158,8 @@ namespace BruteSharkCli
                 _connections.Add(networkConnection);
             }
         }
-        private void printDetectedItem(object item)
+
+        private void PrintDetectedItem(object item)
         {
             Console.WriteLine($"Found: {item}");
         }
