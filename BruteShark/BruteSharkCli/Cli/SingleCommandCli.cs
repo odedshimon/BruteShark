@@ -5,6 +5,7 @@ using PcapProcessor;
 using PcapAnalyzer;
 using System.IO;
 using System.Linq;
+using CommandLine;
 
 namespace BruteSharkCli
 {
@@ -18,27 +19,35 @@ namespace BruteSharkCli
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
-        public SingleCommandCli(Analyzer analyzer, Processor processor, CliFlags cliFlags)
+        private readonly Dictionary<string, string> CliModulesNamesToAnalyzerNames = new Dictionary<string, string> {
+            { "FileExtracting" , "File Extracting"},
+            { "NetworkMap", "Network Map" },
+            { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"}
+        };
+
+        public SingleCommandCli(Analyzer analyzer, Processor processor, string[] args)
         { 
             _analyzer = analyzer;
             _processor = processor;
-            _cliFlags = cliFlags;
-
+            
             _hashes = new HashSet<NetworkHash>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _files = new List<string>();
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
-            _processor.ProcessingFinished += (s, e) => this.ExportResults(_cliFlags);
+            _processor.ProcessingFinished += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
+
+            // Parse user arguments.
+            CommandLine.Parser.Default.ParseArguments<CliFlags>(args).WithParsed<CliFlags>((cliFlags) => _cliFlags = cliFlags);
         }
 
         public void Run()
         {
             try
-            {      
-                SetupRun(_cliFlags);
+            {
+                SetupRun();
                 Console.WriteLine($"[+] Started analyzing {_files.Count} files");
                 _processor.ProcessPcaps(_files);
             }
@@ -63,23 +72,54 @@ namespace BruteSharkCli
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private void SetupRun(CliFlags cliFlags)
+        private void SetupRun()
         {
+            // Load modules.
+            if (_cliFlags.Modules != null)
+            {
+                LoadModules(ParseCliModuleNames(_cliFlags.Modules));
+            }
+
             if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
                 throw new Exception("Only one of the arguments -i and -d can be presented in a single command mode run");
             }
             else if (_cliFlags.InputFiles.Count() != 0)
             {
-                foreach (string filePath in cliFlags.InputFiles)
+                foreach (string filePath in _cliFlags.InputFiles)
                 {
                     AddFile(filePath);
                 }
             }
             else
             {
-                VerifyDir(cliFlags.InputDir);
+                VerifyDir(_cliFlags.InputDir);
             }
+        }
+
+        private void LoadModules(List<string> modules)
+        {
+            foreach (string m in modules)
+            {
+                _analyzer.AddModule(m);
+            }
+        }
+
+        private List<string> ParseCliModuleNames(IEnumerable<string> modules)
+        {
+            var analyzerModulesToLoad = new List<string>();
+
+            foreach (var cliModuleName in modules)
+            {
+                string analyzerModuleName = CliModulesNamesToAnalyzerNames.GetValueOrDefault(cliModuleName, defaultValue: null);
+
+                if (analyzerModuleName != null)
+                {
+                    analyzerModulesToLoad.Add(analyzerModuleName);
+                }
+            }
+
+            return analyzerModulesToLoad;
         }
 
         private void VerifyDir(string dirPath)
@@ -99,19 +139,19 @@ namespace BruteSharkCli
             }
         }
 
-        private void ExportResults(CliFlags cliFlags)
+        private void ExportResults()
         {
-            if (cliFlags.OutputDir != null)
+            if (_cliFlags.OutputDir != null)
             { 
-                foreach (string moduleName in cliFlags.Modules)
+                foreach (string moduleName in _cliFlags.Modules)
                 {
                     if (moduleName.Contains("NetworkMap"))
                     {
-                        Utilities.ExportNetworkMap(cliFlags.OutputDir, _connections);
+                        Utilities.ExportNetworkMap(_cliFlags.OutputDir, _connections);
                     }
                     else if (moduleName.Contains("Credentials"))
                     {
-                        Utilities.ExportHashes(cliFlags.OutputDir, _hashes);
+                        Utilities.ExportHashes(_cliFlags.OutputDir, _hashes);
                     }
                     else if (moduleName.Contains("FileExtracting"))
                     {

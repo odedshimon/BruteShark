@@ -12,11 +12,6 @@ namespace BruteSharkCli
 
     internal class BruteSharkCli
     {
-        private readonly Dictionary<string, string> CliModulesNamesToAnalyzerNames = new Dictionary<string, string> {
-            { "FileExtracting" , "File Extracting"},
-            { "NetworkMap", "Network Map" },
-            { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"}
-        };
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
         private readonly string[] _args;
@@ -36,60 +31,6 @@ namespace BruteSharkCli
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _processor.UdpSessionArrived += (s, e) => _analyzer.Analyze(CastProcessorUdpStreamToAnalyzerUdpStream(e.UdpSession));
-        }
-
-        private void ParseArgs(CliFlags cliFlags)
-        {
-            if (ArgsDoesNotExist(cliFlags))
-            {
-                RunShellMode();
-            }
-            else
-            {
-                // Run in single command.
-                try
-                {
-                    // Load modules.
-                    if (cliFlags.Modules != null)
-                    {
-                        LoadModules(ParseCliModuleNames(cliFlags.Modules));
-                    }
-
-                    var cli = new SingleCommandCli(_analyzer, _processor, cliFlags);
-                    cli.Run();
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-            }
-        }
-
-        private List<string> ParseCliModuleNames(IEnumerable<string> modules)
-        {
-            var analyzerModulesToLoad = new List<string>();
-
-            foreach(var cliModuleName in modules)
-            {
-                string analyzerModuleName = CliModulesNamesToAnalyzerNames.GetValueOrDefault(cliModuleName, defaultValue: null);
-                
-                if (analyzerModuleName != null)
-                {
-                    analyzerModulesToLoad.Add(analyzerModuleName);
-                }
-            }
-
-            return analyzerModulesToLoad;
-        }
-
-        private bool ArgsDoesNotExist(CliFlags cliFlags)
-        {
-            if (cliFlags.InputDir == null && cliFlags.InputFiles.Count() == 0 && cliFlags.Modules.Count() == 0 && cliFlags.OutputDir == null && cliFlags.ParallelProcessing == false)
-            {
-                return true;
-            }
-            return false;
-
         }
 
         private void RunShellMode()
@@ -159,7 +100,24 @@ namespace BruteSharkCli
 
         internal void Start()
         {
-            CommandLine.Parser.Default.ParseArguments<CliFlags>(_args).WithParsed(ParseArgs);
+            if (_args.Length == 0)
+            {
+                RunShellMode();
+            }
+            else
+            {
+                // Run in single command.
+                try
+                {
+                    var cli = new SingleCommandCli(_analyzer, _processor, _args);
+                    cli.Run();
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
         }
+
     }
 }
