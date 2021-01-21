@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "BruteSharkCli": {
-      "commandName": "Project",
-      "commandLineArgs": " -d C:\\Users\\King\\github\\BS_SEP\\BruteShark\\Pcap_Examples -m Credentials,NetworkMap,FileExtracting -o C:\\Users\\King\\Desktop\\Test Export"
-    }
-  }
-}
