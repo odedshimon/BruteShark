@@ -10,7 +10,7 @@ namespace BruteSharkCli
     {
         static void Main(string[] args)
         {
-            BruteSharkCli cli = new BruteSharkCli();
+            BruteSharkCli cli = new BruteSharkCli(args);
             cli.Start();
         }
     }

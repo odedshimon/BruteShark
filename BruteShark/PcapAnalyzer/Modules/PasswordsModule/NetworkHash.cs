@@ -29,5 +29,10 @@ namespace PcapAnalyzer
                    this.Hash.GetHashCode() ^
                    this.HashType.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"Hash: {Source}=>{Destination}:{Destination}({Protocol}) {this.HashType} => {this.Hash}";
+        }
     }
 }

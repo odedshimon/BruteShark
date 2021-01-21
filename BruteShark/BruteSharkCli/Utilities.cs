@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -66,6 +67,63 @@ namespace BruteSharkCli
 
             Console.WriteLine(bruteSharkAscii);
         }
+        internal static void ExportHashes(string dirPath, HashSet<PcapAnalyzer.NetworkHash> hashes)
+        {
+            // Run on each Hash Type we found.
+            string hashesPath = Path.Combine(dirPath, "Hasehs");
+            Directory.CreateDirectory(hashesPath);
 
+            foreach (string hashType in hashes.Select(h => h.HashType).Distinct())
+            {
+                try
+                {
+                    // Convert all hashes from that type to Hashcat format.
+
+                    var hashesToExport = hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
+                                                .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
+                                                             Casting.CastAnalyzerHashToBruteForceHash(h)));
+
+                    var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+
+                    using (var streamWriter = new StreamWriter(outputFilePath, true))
+                    {
+                        foreach (var hash in hashesToExport)
+                        {
+                            streamWriter.WriteLine(hash);
+                        }
+                    }
+
+                    Console.WriteLine("Hashes file created: " + outputFilePath);
+                }
+                catch (Exception ex)
+                {
+                    // in case Casting.CastAnalyzerHashToBruteForceHash(h))) fails and throws exception for not supported hash type
+                    continue;
+                }
+            }
+        }
+        public static string MakeUnique(string path)
+        {
+            string dir = Path.GetDirectoryName(path);
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string fileExt = Path.GetExtension(path);
+
+            for (int i = 1; ; ++i)
+            {
+                if (!File.Exists(path))
+                    return new FileInfo(path).FullName;
+
+                path = Path.Combine(dir, fileName + " " + i + fileExt);
+            }
+        }
+        internal static void ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
+        {
+            string netowrkMapPath = Path.Combine(Path.Combine(dirPath, "NetworkMap"), "networkmap.json");
+            Directory.CreateDirectory(netowrkMapPath);
+
+            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(connections.ToList<PcapAnalyzer.NetworkConnection>(), netowrkMapPath);
+
+            Console.WriteLine($"Successfully exported network map to json file:  {netowrkMapPath}");
+        }
     }
 }
