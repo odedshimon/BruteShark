@@ -22,5 +22,8 @@ namespace BruteSharkCli
 
         [Option('o', "output", Required = false, HelpText = "Output direcorty for the results files.")]
         public string OutputDir { get; set; }
+
+        [Option('l', "live-capture", Required = false, Default = null, HelpText = "Caputre and process packets live from a network interface.")]
+        public string CaptureDevice { get; set; }
     }
 }

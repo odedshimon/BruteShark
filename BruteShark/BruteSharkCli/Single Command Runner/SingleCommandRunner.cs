@@ -48,7 +48,7 @@ namespace BruteSharkCli
             try
             {
                 SetupRun();
-                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
+                
                 _processor.ProcessPcaps(_files);
             }
             catch (Exception ex)
@@ -80,7 +80,12 @@ namespace BruteSharkCli
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
             }
 
-            if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
+            if (_cliFlags.CaptureDevice != null)
+            {
+                Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} files");
+                _processor.liveCapture(_cliFlags.CaptureDevice);
+            }
+            else if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
                 throw new Exception("Only one of the arguments -i and -d can be presented in a single command mode run");
             }
@@ -90,10 +95,13 @@ namespace BruteSharkCli
                 {
                     AddFile(filePath);
                 }
+
+                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
             else
             {
                 VerifyDir(_cliFlags.InputDir);
+                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
         }
 
