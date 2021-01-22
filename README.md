@@ -103,31 +103,60 @@ BruteSharkCli has two modes: single command and shell mode.
 The single command mode works by geting all the relevant parameters for the processing and then printing the results to stdout or files.
 The shell mode allows to perform each step individually.
 ##### Single Command Mode
-Print the help menu.  
-    ```
-    BruteSharkCli.exe --help
-    ```
+Print the help menu:  
 
-Get credentials from all files in a directory (passwords and hashes will be printed to stdout).  
-    ```console
-    foo@bar:~$BruteSharkCli -m Credentials -d C:\Users\King\Desktop\Pcap_Examples
-    ```
+    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe --help
+    BruteSharkCli 1.0.0.0
+    Copyright c  2018
+    
+      -d, --input-dir    The input directory containing the files to be processed.
+    
+      -i, --input        The files to be processed seperated by comma
+    
+      -m, --modules      The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
+    
+      -o, --output       Output direcorty for the results files.
+    
+      --help             Display this help screen.
+    
+      --version          Display version information.
+
+Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
+  
+     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
+     [+] Started analyzing 5 files
+     File : Ftp.pcap Processing Started
+     Found: Network Credential: 192.168.0.114=>192.168.0.193(FTP) => csanders:echo
+     File : Ftp.pcap Processing Finished
+     File : HTTP - Basic Authentication.pcap Processing Started
+     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail
+     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail2
+     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail3
+     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:test
+     File : HTTP - Basic Authentication.pcap Processing Finished
+     File : IMAP - Authenticate CRAM-MD5.cap Processing Started
+     Found: Hash: 10.0.2.101=>10.0.1.102:10.0.1.102(IMAP) CRAM-MD5 => aGVtbWluZ3dheSAyOWYyMGI2NjkzNDdhYTA4MTc0OTA2NWQ5MDNhNDllNA==
+     File : IMAP - Authenticate CRAM-MD5.cap Processing Finished
+     File : SMB - NTLMSSP (smb3 aes 128 ccm).pcap Processing Started
+     Found: Hash: 10.160.64.139=>10.160.65.202:10.160.65.202(NTLMSSP) NTLMv2 => 39dbdbeb1bdd29b07a5d20c8f82f2cb701010000000000008a8ce7a9f4ced201e7969a04872c16890000000002000800530055005300450001000c0057005300320030003100360004000e0073007500730065002e006400650003001c005700530032003000310036002e0073007500730065002e006400650005000e0073007500730065002e0064006500070008008a8ce7a9f4ced20100000000
+     File : SMB - NTLMSSP (smb3 aes 128 ccm).pcap Processing Finished
+     File : SMTP - Auth Login.pcap Processing Started
+     Found: Network Credential: 10.10.1.4=>74.53.140.153(SMTP (Auth Login)) => gurpartap@patriots.in:punjab@123
+     File : SMTP - Auth Login.pcap Processing Finished
+     [X] Bruteshark finished processing
 
 Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
-    ```
-    BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
-    ```
-
+    
+     BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+    
 Run multiple modules on all files in a directory and also export all the results.  
-    ```
-    BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
-    ```
+    
+     BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
 
 ##### Shell Mode
 Just type  
-    ```
-    BruteSharkCli.exe
-    ```
+    
+     BruteSharkCli.exe
 
 And then navigate using the following commands.
 | Keyword           | Description                                                                             |
