@@ -99,6 +99,32 @@ This module tries to extract files from UDP / TCP sessions (Therefore, note that
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
+BruteSharkCli has two modes: single command and shell mode.
+The single command mode works by geting all the relevant parameters for the processing and then printing the results to stdout or files.
+The shell mode allows to perform each step individually.
+##### Single Command Mode
+Print the help menu.  
+    ```bash
+    BruteSharkCli.exe --help
+    ```
+Get credentials from all files in a directory (passwords and hashes will be printed to stdout).  
+    ```bash
+    BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples
+    ```
+Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
+    ```bash
+    BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+    ```
+Run multiple modules on all files in a directory and also export all the results.  
+    ```bash
+    BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+    ```
+##### Shell Mode
+Just type
+    ```bash
+    BruteSharkCli.exe
+    ```
+And then navigate using the following commands.
 | Keyword           | Description                                                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
 | help              | Print help menu                                                                         |
