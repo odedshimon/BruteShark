@@ -107,23 +107,28 @@ Print the help menu.
     ```bash
     BruteSharkCli.exe --help
     ```
+
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout).  
     ```bash
     BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples
     ```
+
 Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
     ```bash
     BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
     ```
+
 Run multiple modules on all files in a directory and also export all the results.  
     ```bash
     BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
     ```
+
 ##### Shell Mode
-Just type
+Just type  
     ```bash
     BruteSharkCli.exe
     ```
+    
 And then navigate using the following commands.
 | Keyword           | Description                                                                             |
 |-------------------|-----------------------------------------------------------------------------------------|
