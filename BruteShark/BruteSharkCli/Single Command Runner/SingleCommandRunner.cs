@@ -81,9 +81,13 @@ namespace BruteSharkCli
             }
 
             // Load modules.
-            if (_cliFlags?.Modules != null)
+            if (_cliFlags?.Modules?.Any() == true)
             {
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
+            }
+            else
+            {
+                throw new Exception("No mudules selected");
             }
 
             if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
