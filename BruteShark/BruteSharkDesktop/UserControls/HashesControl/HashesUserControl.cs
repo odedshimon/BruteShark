@@ -81,7 +81,10 @@ namespace BruteSharkDesktop
                                                 BruteForce.Utilities.ConvertToHashcatFormat(
                                                     CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
 
-                var outputFilePath = MakeUnique(Path.Combine(this.selectedFolderTextBox.Text, $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
+                var outputFilePath = CommonUi.Exporting.GetUniqueFilePath(
+                    Path.Combine(
+                        this.selectedFolderTextBox.Text, 
+                        $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
 
                 using (var streamWriter = new StreamWriter(outputFilePath, true))
                 {
@@ -108,20 +111,6 @@ namespace BruteSharkDesktop
                 this.selectedFolderTextBox.Text = selecetDirectoryDialog.SelectedPath;
             }
         }
-
-        public string MakeUnique(string path)
-        {
-            string dir = Path.GetDirectoryName(path);
-            string fileName = Path.GetFileNameWithoutExtension(path);
-            string fileExt = Path.GetExtension(path);
-
-            for (int i = 1; ; ++i)
-            {
-                if (!File.Exists(path))
-                    return new FileInfo(path).FullName;
-
-                path = Path.Combine(dir, fileName + " " + i + fileExt);
-            }
-        }
+        
     }
 }

@@ -78,12 +78,11 @@ namespace BruteSharkCli
                 try
                 {
                     // Convert all hashes from that type to Hashcat format.
-
                     var hashesToExport = hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
                                                 .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
                                                              CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h)));
 
-                    var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
+                    var outputFilePath = CommonUi.Exporting.GetUniqueFilePath(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
 
                     using (var streamWriter = new StreamWriter(outputFilePath, true))
                     {
@@ -97,24 +96,9 @@ namespace BruteSharkCli
                 }
                 catch (Exception ex)
                 {
-                    // in case Casting.CastAnalyzerHashToBruteForceHash(h))) fails and throws exception for not supported hash type
+                    // In case Casting.CastAnalyzerHashToBruteForceHash(h) fails and throws exception for not supported hash type
                     continue;
                 }
-            }
-        }
-
-        public static string MakeUnique(string path)
-        {
-            string dir = Path.GetDirectoryName(path);
-            string fileName = Path.GetFileNameWithoutExtension(path);
-            string fileExt = Path.GetExtension(path);
-
-            for (int i = 1; ; ++i)
-            {
-                if (!File.Exists(path))
-                    return new FileInfo(path).FullName;
-
-                path = Path.Combine(dir, fileName + " " + i + fileExt);
             }
         }
 
