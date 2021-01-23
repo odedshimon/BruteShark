@@ -1,13 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BruteSharkCli
+namespace CommonUi
 {
     public static class Casting
     {
+        public static PcapAnalyzer.UdpPacket CastProcessorUdpPacketToAnalyzerUdpPacket(PcapProcessor.UdpPacket udpPacket)
+        {
+            return new PcapAnalyzer.UdpPacket()
+            {
+                SourceIp = udpPacket.SourceIp,
+                DestinationIp = udpPacket.DestinationIp,
+                SourcePort = udpPacket.SourcePort,
+                DestinationPort = udpPacket.DestinationPort,
+                Data = udpPacket.Data
+            };
+        }
+
+        public static PcapAnalyzer.TcpPacket CastProcessorTcpPacketToAnalyzerTcpPacket(PcapProcessor.TcpPacket tcpPacket)
+        {
+            return new PcapAnalyzer.TcpPacket()
+            {
+                SourceIp = tcpPacket.SourceIp,
+                DestinationIp = tcpPacket.DestinationIp,
+                SourcePort = tcpPacket.SourcePort,
+                DestinationPort = tcpPacket.DestinationPort,
+                Data = tcpPacket.Data
+            };
+        }
+
+        public static PcapAnalyzer.TcpSession CastProcessorTcpSessionToAnalyzerTcpSession(PcapProcessor.TcpSession tcpSession)
+        {
+            return new PcapAnalyzer.TcpSession()
+            {
+                SourceIp = tcpSession.SourceIp,
+                DestinationIp = tcpSession.DestinationIp,
+                SourcePort = tcpSession.SourcePort,
+                DestinationPort = tcpSession.DestinationPort,
+                Data = tcpSession.Data,
+                Packets = tcpSession.Packets.Select(p => CastProcessorTcpPacketToAnalyzerTcpPacket(p)).ToList()
+            };
+        }
+
+        public static PcapAnalyzer.UdpStream CastProcessorUdpStreamToAnalyzerUdpStream(PcapProcessor.UdpSession udpStream)
+        {
+            return new PcapAnalyzer.UdpStream()
+            {
+                SourceIp = udpStream.SourceIp,
+                DestinationIp = udpStream.DestinationIp,
+                SourcePort = udpStream.SourcePort,
+                DestinationPort = udpStream.DestinationPort,
+                Data = udpStream.Data,
+                Packets = udpStream.Packets.Select(p => CastProcessorUdpPacketToAnalyzerUdpPacket(p)).ToList()
+            };
+        }
+
         public static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.NetworkHash hash)
         {
             BruteForce.Hash res = null;
@@ -99,5 +146,6 @@ namespace BruteSharkCli
                 HashedData = kerberosHash.Hash
             };
         }
+
     }
 }

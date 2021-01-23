@@ -43,7 +43,6 @@ namespace BruteSharkCli
             return dataTable;
         }
 
-
         public static void PrintBruteSharkAsciiArt()
         {
             var bruteSharkAscii =@" 
@@ -67,6 +66,7 @@ namespace BruteSharkCli
 
             Console.WriteLine(bruteSharkAscii);
         }
+
         internal static void ExportHashes(string dirPath, HashSet<PcapAnalyzer.NetworkHash> hashes)
         {
             // Run on each Hash Type we found.
@@ -81,7 +81,7 @@ namespace BruteSharkCli
 
                     var hashesToExport = hashes.Where(h => (h as PcapAnalyzer.NetworkHash).HashType == hashType)
                                                 .Select(h => BruteForce.Utilities.ConvertToHashcatFormat(
-                                                             Casting.CastAnalyzerHashToBruteForceHash(h)));
+                                                             CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h)));
 
                     var outputFilePath = MakeUnique(Path.Combine(hashesPath, $"Brute Shark - {hashType} Hashcat Export.txt"));
 
@@ -102,6 +102,7 @@ namespace BruteSharkCli
                 }
             }
         }
+
         public static string MakeUnique(string path)
         {
             string dir = Path.GetDirectoryName(path);
@@ -116,6 +117,7 @@ namespace BruteSharkCli
                 path = Path.Combine(dir, fileName + " " + i + fileExt);
             }
         }
+
         internal static void ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
         {
             string netowrkMapPath = Path.Combine(Path.Combine(dirPath, "NetworkMap"), "networkmap.json");
@@ -125,5 +127,6 @@ namespace BruteSharkCli
 
             Console.WriteLine($"Successfully exported network map to json file:  {netowrkMapPath}");
         }
+
     }
 }
