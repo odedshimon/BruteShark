@@ -79,7 +79,7 @@ namespace BruteSharkDesktop
                                             .Where(h => (h as PcapAnalyzer.NetworkHash).HashType == selectedHashType.ToString())
                                             .Select(h =>
                                                 BruteForce.Utilities.ConvertToHashcatFormat(
-                                                    Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
+                                                    CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
 
                 var outputFilePath = MakeUnique(Path.Combine(this.selectedFolderTextBox.Text, $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
 

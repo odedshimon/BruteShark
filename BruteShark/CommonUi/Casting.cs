@@ -65,19 +65,23 @@ namespace CommonUi
             }
             else if (hash is PcapAnalyzer.CramMd5Hash)
             {
-                res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.CramMd5Hash);
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.CramMd5Hash);
             }
             else if (hash is PcapAnalyzer.NtlmHash)
             {
-                res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.NtlmHash);
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.NtlmHash);
             }
             else if (hash is PcapAnalyzer.KerberosHash)
             {
-                res = CastAnalyzerrHashToBruteForceHash(hash as PcapAnalyzer.KerberosHash);
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosHash);
             }
             else if (hash is PcapAnalyzer.KerberosTgsRepHash)
             {
                 res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosTgsRepHash);
+            }
+            else if (hash is PcapAnalyzer.KerberosAsRepHash)
+            {
+                res = CastAnalyzerHashToBruteForceHash(hash as PcapAnalyzer.KerberosAsRepHash);
             }
             else
             {
@@ -115,7 +119,7 @@ namespace CommonUi
             };
         }
 
-        public static BruteForce.Hash CastAnalyzerrHashToBruteForceHash(PcapAnalyzer.NtlmHash ntlmHash)
+        public static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.NtlmHash ntlmHash)
         {
             return new BruteForce.NtlmHash()
             {
@@ -128,7 +132,7 @@ namespace CommonUi
             };
         }
 
-        public static BruteForce.Hash CastAnalyzerrHashToBruteForceHash(PcapAnalyzer.CramMd5Hash cramMd5Hash)
+        public static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.CramMd5Hash cramMd5Hash)
         {
             return new BruteForce.CramMd5Hash()
             {
@@ -137,7 +141,7 @@ namespace CommonUi
             };
         }
 
-        public static BruteForce.Hash CastAnalyzerrHashToBruteForceHash(PcapAnalyzer.KerberosHash kerberosHash)
+        public static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.KerberosHash kerberosHash)
         {
             return new BruteForce.KerberosHash()
             {
