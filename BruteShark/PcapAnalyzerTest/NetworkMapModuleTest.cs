@@ -21,7 +21,7 @@ namespace PcapAnalyzerTest
         public void NetworkMapAsJsonString_Test()
         {
             // Arrange
-            var connections = new List<PcapAnalyzer.NetworkConnection>() {
+            var connections = new HashSet<PcapAnalyzer.NetworkConnection>() {
                 new PcapAnalyzer.NetworkConnection()
                 {
                     Source = "1.1.1.1",
@@ -44,7 +44,7 @@ namespace PcapAnalyzerTest
 ]";
 
             // Act.
-            string jsonString = PcapAnalyzer.NetwrokMapJsonExporter.GetNetworkMapAsJsonString(connections);
+            string jsonString = CommonUi.Exporting.GetNetworkMapAsJsonString(connections);
 
             // Assert.
             Assert.AreEqual(expectedJson, jsonString);
