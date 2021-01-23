@@ -81,10 +81,10 @@ namespace BruteSharkDesktop
         private void OnProcessingFinished(object sender, EventArgs e)
         {
             this.progressBar.Value = this.progressBar.Maximum;
-            handleFailedFiles();
+            HandleFailedFiles();
         }
 
-        private void handleFailedFiles()
+        private void HandleFailedFiles()
         {
             // The tag holds the full file path.
             var failedFilesString = string.Join(
@@ -219,12 +219,12 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 foreach (string filePath in openFileDialog.FileNames)
                 {
-                    addFile(filePath);
+                    AddFile(filePath);
                 }
             }
         }
 
-        private void addFile(string filePath)
+        private void AddFile(string filePath)
         {
             _files.Add(filePath);
 
@@ -242,12 +242,12 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             this.filesListView.Items.Add(listViewRow);
         }
 
-        private void runButton_Click(object sender, EventArgs e)
+        private void RunButton_Click(object sender, EventArgs e)
         {
             new Thread(() => _processor.ProcessPcaps(this._files)).Start();
         }
 
-        private void modulesTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        private void ModulesTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             this.modulesSplitContainer.Panel2.Controls.Clear();
 
@@ -276,7 +276,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             }
         }
 
-        private void removeFilesButton_Click(object sender, EventArgs e)
+        private void RemoveFilesButton_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem item in filesListView.SelectedItems)
             {
@@ -285,7 +285,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             } 
         }
 
-        private void modulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void ModulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             var module_name = ((CheckedListBox)sender).Text;
 
@@ -299,7 +299,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             }
         }
 
-        private void buildTcpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void BuildTcpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (buildTcpSessionsCheckBox.CheckState == CheckState.Checked)
             {
@@ -310,11 +310,11 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
                 this._processor.BuildTcpSessions = false;
-                messageOnBuildSessionsConfigurationChanged();
+                MessageOnBuildSessionsConfigurationChanged();
             }
         }
 
-        private void buildUdpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void BuildUdpSessionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (buildUdpSessionsCheckBox.CheckState == CheckState.Checked)
             {
@@ -325,11 +325,11 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 buildUdpSessionsCheckBox.Text = "Build UDP Sessions: OFF";
                 this._processor.BuildUdpSessions = false;
-                messageOnBuildSessionsConfigurationChanged();
+                MessageOnBuildSessionsConfigurationChanged();
             }
         }
 
-        private void messageOnBuildSessionsConfigurationChanged()
+        private void MessageOnBuildSessionsConfigurationChanged()
         {
             MessageBox.Show(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
 This means a faster processing but also that some obects may not be extracted.");

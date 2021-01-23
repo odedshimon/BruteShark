@@ -58,7 +58,7 @@ namespace BruteSharkDesktop
             }
         }
 
-        private void createHashcatFileButton_Click(object sender, EventArgs e)
+        private void CreateHashcatFileButton_Click(object sender, EventArgs e)
         {
             var selectedHashType = this.hashesComboBox.SelectedItem;
 
@@ -76,15 +76,14 @@ namespace BruteSharkDesktop
             try
             {
                 var hashesToExport = _hashesTableUserControl.Items
-                                            .Where(h => (h as PcapAnalyzer.NetworkHash).HashType == selectedHashType.ToString())
-                                            .Select(h =>
-                                                BruteForce.Utilities.ConvertToHashcatFormat(
-                                                    CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
+                                        .Where(h => (h as PcapAnalyzer.NetworkHash).HashType == selectedHashType.ToString())
+                                        .Select(h =>
+                                            BruteForce.Utilities.ConvertToHashcatFormat(
+                                                CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
 
-                var outputFilePath = CommonUi.Exporting.GetUniqueFilePath(
-                    Path.Combine(
-                        this.selectedFolderTextBox.Text, 
-                        $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
+                var outputFilePath = CommonUi.Exporting.GetUniqueFilePath(Path.Combine(
+                                        this.selectedFolderTextBox.Text, 
+                                        $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
 
                 using (var streamWriter = new StreamWriter(outputFilePath, true))
                 {
@@ -102,7 +101,7 @@ namespace BruteSharkDesktop
             }
         }
 
-        private void choseDirectoryButton_Click(object sender, EventArgs e)
+        private void ChoseDirectoryButton_Click(object sender, EventArgs e)
         {
             var selecetDirectoryDialog = new FolderBrowserDialog();
 
