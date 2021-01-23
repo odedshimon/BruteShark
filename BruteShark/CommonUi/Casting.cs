@@ -151,5 +151,16 @@ namespace CommonUi
             };
         }
 
+        private static BruteForce.Hash CastAnalyzerHashToBruteForceHash(PcapAnalyzer.KerberosAsRepHash kerberosAsRepHash)
+        {
+            return new BruteForce.KerberosAsRepHash()
+            {
+                ServiceName = kerberosAsRepHash.ServiceName,
+                Realm = kerberosAsRepHash.Realm,
+                HashedData = kerberosAsRepHash.Hash,
+                Username = kerberosAsRepHash.Username
+            };
+        }
+
     }
 }

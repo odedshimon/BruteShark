@@ -69,11 +69,11 @@ namespace BruteSharkCli
 
         internal static void ExportHashes(string dirPath, HashSet<PcapAnalyzer.NetworkHash> hashes)
         {
-            // Run on each Hash Type we found.
             string hashesPath = Path.Combine(dirPath, "Hasehs");
             Directory.CreateDirectory(hashesPath);
 
-            foreach (string hashType in hashes.Select(h => h.HashType).Distinct())
+            // Run on each Hash Type we found.
+            foreach (string hashType in hashes.Select(hash => hash.HashType).Distinct())
             {
                 try
                 {
@@ -100,16 +100,6 @@ namespace BruteSharkCli
                     continue;
                 }
             }
-        }
-
-        internal static void ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
-        {
-            string netowrkMapPath = Path.Combine(Path.Combine(dirPath, "NetworkMap"), "networkmap.json");
-            Directory.CreateDirectory(netowrkMapPath);
-
-            PcapAnalyzer.NetwrokMapJsonExporter.FileExport(connections.ToList<PcapAnalyzer.NetworkConnection>(), netowrkMapPath);
-
-            Console.WriteLine($"Successfully exported network map to json file:  {netowrkMapPath}");
         }
 
     }

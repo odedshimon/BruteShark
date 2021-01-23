@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace CommonUi
 {
@@ -21,5 +22,31 @@ namespace CommonUi
                 filePath = Path.Combine(dir, fileName + " " + i + fileExt);
             }
         }
+
+        public static string GetNetworkMapAsJsonString(HashSet<PcapAnalyzer.NetworkConnection> connections)
+        {
+            string connectionsJsonSerialized = JsonSerializer.Serialize(connections, new JsonSerializerOptions() { WriteIndented = true });
+            return connectionsJsonSerialized;
+        }
+
+        public static string ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
+        {
+            var filePath = GetUniqueFilePath(Path.Combine(dirPath, "BruteShark Network Map.json"));
+            File.WriteAllText(filePath, GetNetworkMapAsJsonString(connections));
+            return filePath;
+        }
+
+        public static void ExportFiles(string dirPath, HashSet<PcapAnalyzer.NetworkFile> networkFiles)
+        {
+            string hashesPath = Path.Combine(dirPath, "Files");
+            Directory.CreateDirectory(hashesPath);
+
+            foreach (var file in networkFiles)
+            {
+                var filePath = GetUniqueFilePath(Path.Combine(hashesPath, $"{file.Source} - {file.Destination}.{file.Extention}"));
+                File.WriteAllBytes(filePath, file.FileData);
+            }
+        }
+
     }
 }
