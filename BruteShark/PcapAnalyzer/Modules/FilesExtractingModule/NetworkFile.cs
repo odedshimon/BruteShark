@@ -43,5 +43,10 @@ namespace PcapAnalyzer
                    this.Extention.GetHashCode() ^
                    this.Algorithm.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"File Extention: {Extention} carving aglorithm: {Algorithm}";
+        }
     }
 }

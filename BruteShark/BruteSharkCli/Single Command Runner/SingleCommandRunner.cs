@@ -48,8 +48,15 @@ namespace BruteSharkCli
             try
             {
                 SetupRun();
+                if (_cliFlags.CaptureDevice != null)
+                {
+                    Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device");
+                    _processor.ProcessPcaps(filesPaths: _files, liveCaptureDevice: _cliFlags.CaptureDevice);
+                }
+                else {
+                    _processor.ProcessPcaps(_files);
+                }
                 
-                _processor.ProcessPcaps(_files);
             }
             catch (Exception ex)
             {
@@ -78,12 +85,6 @@ namespace BruteSharkCli
             if (_cliFlags.Modules != null)
             {
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
-            }
-
-            if (_cliFlags.CaptureDevice != null)
-            {
-                Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} files");
-                _processor.liveCapture(_cliFlags.CaptureDevice);
             }
             else if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
@@ -204,6 +205,11 @@ namespace BruteSharkCli
             {
                 var networkConnection = e.ParsedItem as NetworkConnection;
                 _connections.Add(networkConnection);
+            }
+            if (e.ParsedItem is PcapAnalyzer.NetworkFile)
+            {
+                var networkFile = e.ParsedItem as NetworkFile;
+                PrintDetectedItem(networkFile);
             }
         }
 

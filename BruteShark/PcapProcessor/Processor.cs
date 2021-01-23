@@ -43,10 +43,16 @@ namespace PcapProcessor
         private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
 
+        //live capture section 
+        private Queue<PacketDotNet.Packet> _packets;
+        private object _packets_queue_lock;
+        private bool BackgroundThreadStop;
+
 
         public Processor()
         {
             IsLiveCapture = false;
+            BackgroundThreadStop = false;
             this.BuildTcpSessions = false;
             this.BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
@@ -66,32 +72,34 @@ namespace PcapProcessor
                 Precents = e.Precents
             });
         }
-        
+
         public void liveCapture(string device)
         {
-            liveCapture = true;
+            _packets = new Queue<PacketDotNet.Packet>();
+            _packets_queue_lock = new object();
+            IsLiveCapture = true;
             BuildTcpSessions = true;
             BuildUdpSessions = true;
+            _tcpSessionsBuilder.Clear();
+            _udpStreamBuilder.Clear();
             var availiableDevices = CaptureDeviceList.Instance;
             List<string> availiableDevicesNames = availiableDevices.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
+            var backgroundThread = new System.Threading.Thread(ProccesPacketFromQueue);
 
-            if(availiableDevicesNames.Contains(device))
+            if (availiableDevicesNames.Contains(device))
             {
                 ICaptureDevice _device = availiableDevices[availiableDevicesNames.IndexOf(device)];
-                // Register our handler function to the 'packet arrival' event
-                _device.OnPacketArrival += new PacketArrivalEventHandler(ProcessPcapPacket);
-                
-
-                // Open the device for capturing
                 int readTimeoutMilliseconds = 1000;
+
                 if (_device is NpcapDevice)
                 {
                     var nPcap = _device as NpcapDevice;
-                    nPcap.Open(SharpPcap.Npcap.OpenFlags.DataTransferUdp | SharpPcap.Npcap.OpenFlags.NoCaptureLocal, readTimeoutMilliseconds);
+                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
+                    nPcap.Mode = CaptureMode.Packets;
                 }
                 else if (_device is LibPcapLiveDevice)
                 {
-                    var livePcapDevice =_device as LibPcapLiveDevice;
+                    var livePcapDevice = _device as LibPcapLiveDevice;
                     livePcapDevice.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
                 }
                 else
@@ -99,39 +107,52 @@ namespace PcapProcessor
                     throw new InvalidOperationException("unknown device type of " + device.GetType().ToString());
                 }
 
+                // Register our handler function to the 'packet arrival' event
+                _device.OnPacketArrival += new PacketArrivalEventHandler(ProcessPcapPacket);
+                
                 // Start the capturing process
+                backgroundThread.Start();
                 _device.StartCapture();
-
-                // Wait for 'Enter' from the user.
+                
+                // Wait for 'ctrl-c' from the user.
+                Console.TreatControlCAsInput = true;
                 Console.ReadLine();
 
                 // Stop the capturing process
                 _device.StopCapture();
 
-                Console.WriteLine("-- Capture stopped.");
+                //waiting on the packet procesing thread to finish
+                backgroundThread.Join();
 
-                // Print out the device statistics
-                Console.WriteLine(_device.Statistics.ToString());
-
+                // Raise event for each Tcp\Udp session that was built.
+                // TODO: think about detecting complete sesions on the fly and raising 
+                // events accordingly.
+                _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                {
+                    TcpSession = session
+                }));
+                
+                _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                {
+                    UdpSession = session
+                }));
+                
                 // Close the pcap device
                 _device.Close();
-                ProcessingFinished?.Invoke(this, new EventArgs());
             }
             else
             {
                 throw new Exception($"No such device {device}");
             }
-
-
         }
-        public void ProcessPcaps(IEnumerable<string> filesPaths, string livCaptureDevice = null)
+        public void ProcessPcaps(IEnumerable<string> filesPaths, string liveCaptureDevice = null)
         {
-            if(livCaptureDevice != null)
+            if (liveCaptureDevice != null)
             {
-                liveCapture(livCaptureDevice);
+                liveCapture(liveCaptureDevice);
             }
-            else 
-            { 
+            else
+            {
                 _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
 
                 foreach (var filePath in filesPaths)
@@ -139,7 +160,6 @@ namespace PcapProcessor
                     this.ProcessPcap(filePath);
                 }
             }
-
             ProcessingFinished?.Invoke(this, new EventArgs());
         }
 
@@ -248,7 +268,6 @@ namespace PcapProcessor
 
             }
         }
-
         private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
         {
             FileProcessingStatusChanged?.Invoke(this, new FileProcessingStatusChangedEventArgs()
@@ -257,7 +276,6 @@ namespace PcapProcessor
                 Status = status
             });
         }
-
         private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
         {
             ProcessPacket(packet);
@@ -266,7 +284,18 @@ namespace PcapProcessor
         private void ProcessPcapPacket(object sender, CaptureEventArgs e)
         {
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-            ProcessPacket(packet);
+            if (IsLiveCapture)
+            {
+                lock (_packets_queue_lock)
+                {
+                    _packets.Enqueue(packet);
+                }
+            }
+            else
+            {
+                ProcessPacket(packet);
+            }
+
         }
         void ProcessPacket(PacketDotNet.Packet packet)
         {
@@ -294,16 +323,6 @@ namespace PcapProcessor
                     if (this.BuildUdpSessions)
                     {
                         this._udpStreamBuilder.HandlePacket(udpPacket);
-
-                        // For Live capture test
-                        if(IsLiveCapture)
-                        { 
-                            this._udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-                            {
-                                UdpSession = session
-                            }));
-                        }
-
                     }
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
@@ -327,16 +346,7 @@ namespace PcapProcessor
                     if (this.BuildTcpSessions)
                     {
                         this._tcpSessionsBuilder.HandlePacket(tcpPacket);
-                        if (IsLiveCapture) 
-                        { 
-                            this._tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                            {
-                                TcpSession = session
-                            }));
-                        }
-
                     }
-
 
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
@@ -348,5 +358,31 @@ namespace PcapProcessor
             }
         }
 
+        private void ProccesPacketFromQueue()
+        {
+            bool shouldSleep = true;
+
+            lock (_packets_queue_lock)
+            {
+                if (_packets.Count != 0)
+                {
+                    shouldSleep = false;
+                }
+            }
+            if (shouldSleep)
+            {
+                System.Threading.Thread.Sleep(5000);
+            }
+
+            while (_packets.Count > 0)
+            {
+                {
+                    lock (_packets_queue_lock)
+                    { 
+                        ProcessPacket(_packets.Dequeue());
+                    }
+                }
+            }
+        }
     }
 }
