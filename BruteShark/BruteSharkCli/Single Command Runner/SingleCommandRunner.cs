@@ -50,7 +50,9 @@ namespace BruteSharkCli
                 SetupRun();
                 if (_cliFlags.CaptureDevice != null)
                 {
-                    Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device - Press any key to stop");
+                    Console.ForegroundColor = ConsoleColor.White;
                     _processor.ProcessPcaps(filesPaths: _files, liveCaptureDevice: _cliFlags.CaptureDevice);
                 }
                 else {
@@ -170,7 +172,7 @@ namespace BruteSharkCli
                 }
            }
 
-            Console.WriteLine("[X] Bruteshark finished processing");
+            Console.WriteLine("[+] Bruteshark finished processing");
         }
 
         private void AddFile(string filePath)
