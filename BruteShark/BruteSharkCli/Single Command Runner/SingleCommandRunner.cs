@@ -170,7 +170,8 @@ namespace BruteSharkCli
                     }
                     else if (moduleName.Contains("FileExtracting"))
                     {
-                        CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
+                        var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
+                        Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
                     }
                     // Todo - add exporting of dns module results
                 }

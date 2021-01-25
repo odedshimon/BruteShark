@@ -36,16 +36,18 @@ namespace CommonUi
             return filePath;
         }
 
-        public static void ExportFiles(string dirPath, HashSet<PcapAnalyzer.NetworkFile> networkFiles)
+        public static string ExportFiles(string dirPath, HashSet<PcapAnalyzer.NetworkFile> networkFiles)
         {
-            string hashesPath = Path.Combine(dirPath, "Files");
-            Directory.CreateDirectory(hashesPath);
+            var extractedFilesDir = Path.Combine(dirPath, "Files");
+            Directory.CreateDirectory(extractedFilesDir);
 
             foreach (var file in networkFiles)
             {
-                var filePath = GetUniqueFilePath(Path.Combine(hashesPath, $"{file.Source} - {file.Destination}.{file.Extention}"));
+                var filePath = GetUniqueFilePath(Path.Combine(extractedFilesDir, $"{file.Source} - {file.Destination}.{file.Extention}"));
                 File.WriteAllBytes(filePath, file.FileData);
             }
+
+            return extractedFilesDir;
         }
 
     }
