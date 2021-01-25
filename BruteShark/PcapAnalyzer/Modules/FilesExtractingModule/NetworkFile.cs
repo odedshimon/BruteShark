@@ -43,5 +43,11 @@ namespace PcapAnalyzer
                    this.Extention.GetHashCode() ^
                    this.Algorithm.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"File: {Source}=>{Destination} File Type: {this.Extention} File Size: {this.FileSize} Bytes";
+        }
+
     }
 }

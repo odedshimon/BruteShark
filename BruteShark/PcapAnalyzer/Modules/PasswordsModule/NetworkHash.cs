@@ -32,7 +32,7 @@ namespace PcapAnalyzer
 
         public override string ToString()
         {
-            return $"Hash: {Source}=>{Destination}:{Destination}({Protocol}) {this.HashType} => {this.Hash}";
+            return $"Hash: {Source}=>{Destination} ({Protocol}) {this.HashType} => {this.Hash}";
         }
     }
 }

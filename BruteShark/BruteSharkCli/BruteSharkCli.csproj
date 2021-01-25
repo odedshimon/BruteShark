@@ -9,6 +9,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BruteForce\BruteForce.csproj" />
+	  <ProjectReference Include="..\CommonUi\CommonUi.csproj" />
 	  <ProjectReference Include="..\PcapAnalyzer\PcapAnalyzer.csproj" />
 	  <ProjectReference Include="..\PcapProcessor\PcapProcessor.csproj" />
 	</ItemGroup>

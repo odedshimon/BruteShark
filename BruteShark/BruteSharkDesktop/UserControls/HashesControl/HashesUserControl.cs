@@ -58,7 +58,7 @@ namespace BruteSharkDesktop
             }
         }
 
-        private void createHashcatFileButton_Click(object sender, EventArgs e)
+        private void CreateHashcatFileButton_Click(object sender, EventArgs e)
         {
             var selectedHashType = this.hashesComboBox.SelectedItem;
 
@@ -76,12 +76,14 @@ namespace BruteSharkDesktop
             try
             {
                 var hashesToExport = _hashesTableUserControl.Items
-                                            .Where(h => (h as PcapAnalyzer.NetworkHash).HashType == selectedHashType.ToString())
-                                            .Select(h =>
-                                                BruteForce.Utilities.ConvertToHashcatFormat(
-                                                    Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
+                                        .Where(h => (h as PcapAnalyzer.NetworkHash).HashType == selectedHashType.ToString())
+                                        .Select(h =>
+                                            BruteForce.Utilities.ConvertToHashcatFormat(
+                                                CommonUi.Casting.CastAnalyzerHashToBruteForceHash(h as PcapAnalyzer.NetworkHash)));
 
-                var outputFilePath = MakeUnique(Path.Combine(this.selectedFolderTextBox.Text, $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
+                var outputFilePath = CommonUi.Exporting.GetUniqueFilePath(Path.Combine(
+                                        this.selectedFolderTextBox.Text, 
+                                        $"Brute Shark - {selectedHashType} Hashcat Export.txt"));
 
                 using (var streamWriter = new StreamWriter(outputFilePath, true))
                 {
@@ -99,7 +101,7 @@ namespace BruteSharkDesktop
             }
         }
 
-        private void choseDirectoryButton_Click(object sender, EventArgs e)
+        private void ChoseDirectoryButton_Click(object sender, EventArgs e)
         {
             var selecetDirectoryDialog = new FolderBrowserDialog();
 
@@ -108,20 +110,6 @@ namespace BruteSharkDesktop
                 this.selectedFolderTextBox.Text = selecetDirectoryDialog.SelectedPath;
             }
         }
-
-        public string MakeUnique(string path)
-        {
-            string dir = Path.GetDirectoryName(path);
-            string fileName = Path.GetFileNameWithoutExtension(path);
-            string fileExt = Path.GetExtension(path);
-
-            for (int i = 1; ; ++i)
-            {
-                if (!File.Exists(path))
-                    return new FileInfo(path).FullName;
-
-                path = Path.Combine(dir, fileName + " " + i + fileExt);
-            }
-        }
+        
     }
 }

@@ -14,6 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\CommonUi\CommonUi.csproj" />
 	  <ProjectReference Include="..\PcapAnalyzer\PcapAnalyzer.csproj" />
   </ItemGroup>
 
