@@ -122,6 +122,8 @@ namespace PcapProcessor
                 _device.StopCapture();
 
                 //waiting on the packet procesing thread to finish
+                
+                
                 backgroundThread.Join();
 
                 // Raise event for each Tcp\Udp session that was built.
@@ -346,6 +348,16 @@ namespace PcapProcessor
                     if (this.BuildTcpSessions)
                     {
                         this._tcpSessionsBuilder.HandlePacket(tcpPacket);
+                        _tcpSessionsBuilder.completedSessions.AsParallel().ForAll((session) =>
+                        {
+                                TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                                {
+                                    TcpSession = session
+                                });
+                            _tcpSessionsBuilder.completedSessions.Remove(session);
+                        });
+
+ 
                     }
 
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
