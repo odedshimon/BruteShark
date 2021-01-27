@@ -62,8 +62,8 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
-            AddCommand(new CliShellCommand("export-networkmap", p => Utilities.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
             AddCommand(new CliShellCommand("capture-from-device", p => _networkDevice = p, "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
+            AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
 
             // Add the help command
             this.AddCommand(new CliShellCommand(
@@ -167,7 +167,7 @@ namespace BruteSharkCli
 
         private void PrintNetworkMap()
         {
-            Console.WriteLine(NetwrokMapJsonExporter.GetNetworkMapAsJsonString(this._connections.ToList()));
+            Console.WriteLine(CommonUi.Exporting.GetNetworkMapAsJsonString(this._connections));
         }
 
         private void StartAnalyzing()

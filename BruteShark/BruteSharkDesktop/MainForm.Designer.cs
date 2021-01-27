@@ -137,7 +137,7 @@
             this.removeFilesButton.TabIndex = 1;
             this.removeFilesButton.Text = "-";
             this.removeFilesButton.UseVisualStyleBackColor = true;
-            this.removeFilesButton.Click += new System.EventHandler(this.removeFilesButton_Click);
+            this.removeFilesButton.Click += new System.EventHandler(this.RemoveFilesButton_Click);
             // 
             // addFilesButton
             // 
@@ -196,7 +196,7 @@
             this.runButton.TabIndex = 2;
             this.runButton.Text = "Run!";
             this.runButton.UseVisualStyleBackColor = true;
-            this.runButton.Click += new System.EventHandler(this.runButton_Click);
+            this.runButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // optionsGroupBox
             // 
@@ -221,7 +221,7 @@
             this.buildUdpSessionsCheckBox.TabIndex = 0;
             this.buildUdpSessionsCheckBox.Text = "Build UdpSessions: ON";
             this.buildUdpSessionsCheckBox.UseVisualStyleBackColor = true;
-            this.buildUdpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.buildUdpSessionsCheckBox_CheckedChanged);
+            this.buildUdpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.BuildUdpSessionsCheckBox_CheckedChanged);
             // 
             // buildTcpSessionsCheckBox
             // 
@@ -235,7 +235,7 @@
             this.buildTcpSessionsCheckBox.TabIndex = 0;
             this.buildTcpSessionsCheckBox.Text = "Build Tcp Sessions: ON";
             this.buildTcpSessionsCheckBox.UseVisualStyleBackColor = true;
-            this.buildTcpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.buildTcpSessionsCheckBox_CheckedChanged);
+            this.buildTcpSessionsCheckBox.CheckedChanged += new System.EventHandler(this.BuildTcpSessionsCheckBox_CheckedChanged);
             // 
             // modulesGroupBox
             // 
@@ -260,7 +260,7 @@
             this.modulesCheckedListBox.Name = "modulesCheckedListBox";
             this.modulesCheckedListBox.Size = new System.Drawing.Size(284, 130);
             this.modulesCheckedListBox.TabIndex = 0;
-            this.modulesCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.modulesCheckedListBox_ItemCheck);
+            this.modulesCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ModulesCheckedListBox_ItemCheck);
             // 
             // secondaryLowerSplitContainer
             // 
@@ -329,7 +329,7 @@
             treeNode9});
             this.modulesTreeView.Size = new System.Drawing.Size(228, 449);
             this.modulesTreeView.TabIndex = 0;
-            this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modulesTreeView_AfterSelect);
+            this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
             // progressBar
             // 

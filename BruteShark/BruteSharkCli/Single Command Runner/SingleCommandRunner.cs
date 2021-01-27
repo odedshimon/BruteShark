@@ -13,9 +13,12 @@ namespace BruteSharkCli
     {
         private SingleCommandFlags _cliFlags;
         private List<string> _files;
+
+        private HashSet<PcapAnalyzer.NetworkFile> _extractedFiles;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
@@ -29,11 +32,12 @@ namespace BruteSharkCli
         { 
             _analyzer = analyzer;
             _processor = processor;
-            
+            _files = new List<string>();
+
             _hashes = new HashSet<NetworkHash>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
-            _files = new List<string>();
+            _extractedFiles = new HashSet<NetworkFile>();
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
@@ -83,8 +87,14 @@ namespace BruteSharkCli
 
         private void SetupRun()
         {
+            // That can happen when the user enter vesion \ help commad, exit gracefully.
+            if (_cliFlags is null)
+            {
+                Environment.Exit(0);
+            }
+
             // Load modules.
-            if (_cliFlags.Modules != null)
+            if (_cliFlags?.Modules?.Any() == true)
             {
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
             }
@@ -101,7 +111,7 @@ namespace BruteSharkCli
 
                 Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
-            else
+            else if(_cliFlags.InputDir != null)
             {
                 VerifyDir(_cliFlags.InputDir);
                 Console.WriteLine($"[+] Started analyzing {_files.Count} files");
@@ -158,7 +168,8 @@ namespace BruteSharkCli
                 {
                     if (moduleName.Contains("NetworkMap"))
                     {
-                        Utilities.ExportNetworkMap(_cliFlags.OutputDir, _connections);
+                        var filePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _connections);
+                        Console.WriteLine($"Successfully exported network map to json file: {filePath}");
                     }
                     else if (moduleName.Contains("Credentials"))
                     {
@@ -166,7 +177,8 @@ namespace BruteSharkCli
                     }
                     else if (moduleName.Contains("FileExtracting"))
                     {
-                        // Todo - extract files to output
+                        var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
+                        Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
                     }
                     // Todo - add exporting of dns module results
                 }
@@ -196,14 +208,21 @@ namespace BruteSharkCli
                     PrintDetectedItem(e.ParsedItem);
                 }
             }
-            if (e.ParsedItem is PcapAnalyzer.NetworkHash)
+            else if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
                 if (_hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash))
                 {
                     PrintDetectedItem(e.ParsedItem);
                 }
             }
-            if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
+            else if (e.ParsedItem is PcapAnalyzer.NetworkFile)
+            {
+                if (_extractedFiles.Add(e.ParsedItem as PcapAnalyzer.NetworkFile))
+                {
+                    PrintDetectedItem(e.ParsedItem);
+                }
+            }
+            else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var networkConnection = e.ParsedItem as NetworkConnection;
                 _connections.Add(networkConnection);

@@ -46,7 +46,8 @@ namespace PcapAnalyzer
 
         public override string ToString()
         {
-            return $"File (File Extention: {Extention}, carving aglorithm: {Algorithm})";
+            return $"File: {Source}=>{Destination} File Type: {this.Extention} File Size: {this.FileSize} Bytes";
         }
+
     }
 }

@@ -153,7 +153,7 @@
             this.choseDirectoryButton.TabIndex = 5;
             this.choseDirectoryButton.Text = "...";
             this.choseDirectoryButton.UseVisualStyleBackColor = true;
-            this.choseDirectoryButton.Click += new System.EventHandler(this.choseDirectoryButton_Click);
+            this.choseDirectoryButton.Click += new System.EventHandler(this.ChoseDirectoryButton_Click);
             // 
             // createHashcatFileButton
             // 
@@ -164,7 +164,7 @@
             this.createHashcatFileButton.TabIndex = 0;
             this.createHashcatFileButton.Text = "Create Hashcat Hashes file";
             this.createHashcatFileButton.UseVisualStyleBackColor = true;
-            this.createHashcatFileButton.Click += new System.EventHandler(this.createHashcatFileButton_Click);
+            this.createHashcatFileButton.Click += new System.EventHandler(this.CreateHashcatFileButton_Click);
             // 
             // label3
             // 

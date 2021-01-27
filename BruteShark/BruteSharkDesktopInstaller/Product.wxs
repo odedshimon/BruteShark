@@ -127,6 +127,10 @@
 				<File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="System.Runtime.CompilerServices.Unsafe.dll" />
 			</Component>
 
+			<Component Id="CommonUi.dll">
+				<File Id="CommonUi.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="CommonUi.dll" />
+			</Component>
+
 		</ComponentGroup>
 	</Fragment>
 </Wix>

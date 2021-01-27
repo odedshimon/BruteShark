@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapProcessor", "PcapProcessor\PcapProcessor.csproj", "{D76EA36E-074E-4FE5-9D37-6339BF8F9F00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcapProcessorTest", "PcapProcessorTest\PcapProcessorTest.csproj", "{9B087183-652A-4842-BCA0-F9C604A1F437}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapProcessorTest", "PcapProcessorTest\PcapProcessorTest.csproj", "{9B087183-652A-4842-BCA0-F9C604A1F437}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapAnalyzer", "PcapAnalyzer\PcapAnalyzer.csproj", "{581824EF-9C88-4B3B-BF52-687C4248FC92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcapAnalyzerTest", "PcapAnalyzerTest\PcapAnalyzerTest.csproj", "{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapAnalyzerTest", "PcapAnalyzerTest\PcapAnalyzerTest.csproj", "{E9CE1E32-3B8D-4850-A426-46C2457CBBF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BruteSharkCli", "BruteSharkCli\BruteSharkCli.csproj", "{18953BCA-4A67-49F1-8A03-08D684A96952}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{58CF6E5D-3319-4AE0-B4A1-844A6D978ABC}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "BruteSharkDesktopInstaller", "BruteSharkDesktopInstaller\BruteSharkDesktopInstaller.wixproj", "{3522D92C-B0FD-4CD9-AF5C-5A741F00525B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUi", "CommonUi\CommonUi.csproj", "{8CB8CFAD-7384-475E-9673-A717F807C9DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,14 @@ Global
 		{3522D92C-B0FD-4CD9-AF5C-5A741F00525B}.Release|Any CPU.ActiveCfg = Release|x86
 		{3522D92C-B0FD-4CD9-AF5C-5A741F00525B}.Release|x86.ActiveCfg = Release|x86
 		{3522D92C-B0FD-4CD9-AF5C-5A741F00525B}.Release|x86.Build.0 = Release|x86
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Debug|x86.Build.0 = Debug|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CB8CFAD-7384-475E-9673-A717F807C9DE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

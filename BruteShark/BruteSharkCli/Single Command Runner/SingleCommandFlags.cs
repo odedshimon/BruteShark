@@ -7,10 +7,10 @@ namespace BruteSharkCli
 {
     public class SingleCommandFlags
     {
-        [Option('d', "input-dir", Required = false, HelpText = "The input directory containing the files to be processed.")]
+        [Option('d', "input-dir", Required = false, SetName ="dir_input",  HelpText = "The input directory containing the files to be processed.")]
         public string InputDir { get; set; }
 
-        [Option('i', "input", Required = false, Separator = ',', HelpText = "The files to be processed seperated by comma")]
+        [Option('i', "input", Required = false, SetName = "files_input", Separator = ',', HelpText = "The files to be processed seperated by comma")]
         public IEnumerable<string> InputFiles { get; set; }
 
         [Option('m', "modules", Required = false , Separator = ',', HelpText = "The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap")]
