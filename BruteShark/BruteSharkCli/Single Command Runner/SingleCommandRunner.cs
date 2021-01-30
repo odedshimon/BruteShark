@@ -54,8 +54,13 @@ namespace BruteSharkCli
                 SetupRun();
                 if (_cliFlags.CaptureDevice != null)
                 {
+                    
+                    if (_cliFlags.PromisciousMode)
+                    { 
+                        _processor.PromisciousMode = true; 
+                    }
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device - Press any key to stop");
+                    Console.WriteLine(_processor.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
                     Console.ForegroundColor = ConsoleColor.White;
                     _processor.ProcessPcaps(filesPaths: _files, liveCaptureDevice: _cliFlags.CaptureDevice);
                 }

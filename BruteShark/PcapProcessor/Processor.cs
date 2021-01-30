@@ -39,6 +39,8 @@ namespace PcapProcessor
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
         public bool IsLiveCapture { get; set; }
+        public bool PromisciousMode { get; set; }
+
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
@@ -46,13 +48,12 @@ namespace PcapProcessor
         //live capture section 
         private Queue<PacketDotNet.Packet> _packets;
         private object _packets_queue_lock;
-        private bool BackgroundThreadStop;
 
 
         public Processor()
         {
+            PromisciousMode = false;
             IsLiveCapture = false;
-            BackgroundThreadStop = false;
             this.BuildTcpSessions = false;
             this.BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
@@ -93,14 +94,23 @@ namespace PcapProcessor
 
                 if (_device is NpcapDevice)
                 {
+
                     var nPcap = _device as NpcapDevice;
-                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
+                    if (PromisciousMode)
+                    {
+                        nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
+                    }
+                    else
+                    {
+                        nPcap.Open();
+                    }
+                    
                     nPcap.Mode = CaptureMode.Packets;
                 }
                 else if (_device is LibPcapLiveDevice)
                 {
                     var livePcapDevice = _device as LibPcapLiveDevice;
-                    livePcapDevice.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
+                    livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
                 }
                 else
                 {
@@ -122,6 +132,7 @@ namespace PcapProcessor
                 _device.StopCapture();
 
                 //waiting on the packet procesing thread to finish
+                
                 
                 
                 backgroundThread.Join();
@@ -383,7 +394,7 @@ namespace PcapProcessor
             }
             if (shouldSleep)
             {
-                System.Threading.Thread.Sleep(5000);
+                System.Threading.Thread.Sleep(1000);
             }
 
             while (_packets.Count > 0)
