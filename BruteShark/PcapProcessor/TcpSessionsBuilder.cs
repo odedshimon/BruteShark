@@ -11,6 +11,7 @@ namespace PcapProcessor
     internal class TcpSessionsBuilder
     {
         private Dictionary<TcpSession, TcpRecon> _sessions;
+        internal List<TcpSession> completedSessions { get; }
 
         public IEnumerable<TcpSession> Sessions
         {
@@ -39,6 +40,7 @@ namespace PcapProcessor
         public TcpSessionsBuilder()
         {
             this._sessions = new Dictionary<TcpSession, TcpRecon>();
+            this.completedSessions = new List<TcpSession>();
         }
 
         public void HandlePacket(PacketDotNet.TcpPacket tcpPacket)
@@ -58,8 +60,16 @@ namespace PcapProcessor
             }
 
             _sessions[session].ReassemblePacket(tcpPacket);
+            // if the tcp packet contains FIN,ACK flags or just the FIN flag then we can determine 
+            // that the session is terminated and that no more data is about to be sen  t
+            if (tcpPacket.Flags == 17 || tcpPacket.Flags == 1)
+            {
+                session.Data = _sessions[session].Data;
+                completedSessions.Add(session);
+                _sessions.Remove(session);
+            }
         }
-        
+
         public void Clear()
         {
             this._sessions.Clear();

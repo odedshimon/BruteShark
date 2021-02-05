@@ -18,6 +18,7 @@ namespace BruteSharkCli
         private bool _exit;
 
         private List<string> _files;
+        private string _networkDevice;
         private List<CliShellCommand> _commands;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
@@ -39,7 +40,7 @@ namespace BruteSharkCli
             this.Seperator = seperator;
             _printingLock = new object();
             _files = new List<string>();
-
+            _networkDevice = null;
             _processor = processor;
             _analyzer = analyzer;
 
@@ -61,6 +62,8 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
+            AddCommand(new CliShellCommand("capture-from-device", p => _networkDevice = p, "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
+            AddCommand(new CliShellCommand("capture-promiscious-mode", p => _processor.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode(requires superuser privileges, default is normal mode)"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
 
             // Add the help command
@@ -170,7 +173,7 @@ namespace BruteSharkCli
 
         private void StartAnalyzing()
         {
-            _processor.ProcessPcaps(this._files);
+            _processor.ProcessPcaps(this._files, liveCaptureDevice: _networkDevice);
             Console.SetCursorPosition(0, Console.CursorTop + 5);
         }
 

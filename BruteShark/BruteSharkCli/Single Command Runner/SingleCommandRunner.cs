@@ -55,8 +55,22 @@ namespace BruteSharkCli
             try
             {
                 SetupRun();
-                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
-                _processor.ProcessPcaps(_files);
+                if (_cliFlags.CaptureDevice != null)
+                {
+                    
+                    if (_cliFlags.PromisciousMode)
+                    { 
+                        _processor.PromisciousMode = true; 
+                    }
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(_processor.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    _processor.ProcessPcaps(filesPaths: _files, liveCaptureDevice: _cliFlags.CaptureDevice);
+                }
+                else {
+                    _processor.ProcessPcaps(_files);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -92,12 +106,7 @@ namespace BruteSharkCli
             {
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
             }
-            else
-            {
-                throw new Exception("No mudules selected");
-            }
-
-            if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
+            else if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
                 throw new Exception("Only one of the arguments -i and -d can be presented in a single command mode run");
             }
@@ -107,10 +116,13 @@ namespace BruteSharkCli
                 {
                     AddFile(filePath);
                 }
+
+                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
-            else
+            else if(_cliFlags.InputDir != null)
             {
                 VerifyDir(_cliFlags.InputDir);
+                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
         }
 
@@ -182,7 +194,7 @@ namespace BruteSharkCli
 
             }
 
-            Console.WriteLine("[X] Bruteshark finished processing");
+            Console.WriteLine("[+] Bruteshark finished processing");
         }
 
         private void AddFile(string filePath)

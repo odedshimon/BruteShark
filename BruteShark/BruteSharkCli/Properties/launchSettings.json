@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BruteSharkCli": {
+      "commandName": "Project",
+      "commandLineArgs": "m \"FileExtracting,Hashes\" -l Ethernet"
+    }
+  }
+}
