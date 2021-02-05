@@ -6,12 +6,15 @@ namespace PcapAnalyzer
 {
     public class DnsNameMapping
     {
-        public DnsNameMapping()
-        {
-        }
+        public DnsNameMapping() { }
 
         public string Query { get; set; }
         public string Destination { get; set; }
+
+        public override string ToString()
+        {
+            return $"DNS Mapping: {this.Query} -> {this.Destination}";
+        }
     }
 
     class DnsNameMappingComparer : IEqualityComparer<DnsNameMapping>
