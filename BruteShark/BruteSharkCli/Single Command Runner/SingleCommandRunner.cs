@@ -57,7 +57,6 @@ namespace BruteSharkCli
                 SetupRun();
                 if (_cliFlags.CaptureDevice != null)
                 {
-                    
                     if (_cliFlags.PromisciousMode)
                     { 
                         _processor.PromisciousMode = true; 
@@ -106,7 +105,12 @@ namespace BruteSharkCli
             {
                 LoadModules(ParseCliModuleNames(_cliFlags.Modules));
             }
-            else if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
+            else
+            {
+                throw new Exception("No mudules selected");
+            }
+
+            if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
             {
                 throw new Exception("Only one of the arguments -i and -d can be presented in a single command mode run");
             }
@@ -116,13 +120,10 @@ namespace BruteSharkCli
                 {
                     AddFile(filePath);
                 }
-
-                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
-            else if(_cliFlags.InputDir != null)
+            else if (_cliFlags.InputDir != null)
             {
                 VerifyDir(_cliFlags.InputDir);
-                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
             }
         }
 

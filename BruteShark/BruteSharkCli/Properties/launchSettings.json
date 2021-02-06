@@ -2,7 +2,7 @@
   "profiles": {
     "BruteSharkCli": {
       "commandName": "Project",
-      "commandLineArgs": "m \"FileExtracting,Hashes\" -l Ethernet"
+      "commandLineArgs": " -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\\\\Users\\King\\Desktop\\Test -p"
     }
   }
 }
