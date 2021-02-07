@@ -8,8 +8,7 @@ using System.Linq;
 using System.Threading;
 using Haukcode.PcapngUtils;
 using Haukcode.PcapngUtils.Common;
-using SharpPcap.Npcap;
-using System.Collections.ObjectModel;
+
 
 namespace PcapProcessor
 {
@@ -40,15 +39,10 @@ namespace PcapProcessor
         public bool BuildUdpSessions { get; set; }
         public bool IsLiveCapture { get; set; }
         public bool PromisciousMode { get; set; }
-
+        public Sniffer sniffer { get; set;}
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
-
-        //live capture section 
-        private Queue<PacketDotNet.Packet> _packets;
-        private object _packets_queue_lock;
-
 
         public Processor()
         {
@@ -76,88 +70,27 @@ namespace PcapProcessor
 
         public void liveCapture(string device)
         {
-            _packets = new Queue<PacketDotNet.Packet>();
-            _packets_queue_lock = new object();
-            IsLiveCapture = true;
-            BuildTcpSessions = true;
-            BuildUdpSessions = true;
-            _tcpSessionsBuilder.Clear();
-            _udpStreamBuilder.Clear();
-            var availiableDevices = CaptureDeviceList.Instance;
-            List<string> availiableDevicesNames = availiableDevices.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
-            var backgroundThread = new System.Threading.Thread(ProccesPacketFromQueue);
+            sniffer = new Sniffer(device, PromisciousMode);
+            sniffer.SnifferPacketArrived += ProcessPacketSnifferPacket;
+            sniffer.StartSniffing();
 
-            if (availiableDevicesNames.Contains(device))
+            _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
             {
-                ICaptureDevice _device = availiableDevices[availiableDevicesNames.IndexOf(device)];
-                int readTimeoutMilliseconds = 1000;
-
-                if (_device is NpcapDevice)
-                {
-
-                    var nPcap = _device as NpcapDevice;
-                    if (PromisciousMode)
-                    {
-                        nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
-                    }
-                    else
-                    {
-                        nPcap.Open();
-                    }
-                    
-                    nPcap.Mode = CaptureMode.Packets;
-                }
-                else if (_device is LibPcapLiveDevice)
-                {
-                    var livePcapDevice = _device as LibPcapLiveDevice;
-                    livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
-                }
-                else
-                {
-                    throw new InvalidOperationException("unknown device type of " + device.GetType().ToString());
-                }
-
-                // Register our handler function to the 'packet arrival' event
-                _device.OnPacketArrival += new PacketArrivalEventHandler(ProcessPcapPacket);
+                TcpSession = session
+            }));
                 
-                // Start the capturing process
-                backgroundThread.Start();
-                _device.StartCapture();
-                
-                // Wait for 'ctrl-c' from the user.
-                Console.TreatControlCAsInput = true;
-                Console.ReadLine();
-
-                // Stop the capturing process
-                _device.StopCapture();
-
-                //waiting on the packet procesing thread to finish
-                
-                
-                
-                backgroundThread.Join();
-
-                // Raise event for each Tcp\Udp session that was built.
-                // TODO: think about detecting complete sesions on the fly and raising 
-                // events accordingly.
-                _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                {
-                    TcpSession = session
-                }));
-                
-                _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-                {
-                    UdpSession = session
-                }));
-                
-                // Close the pcap device
-                _device.Close();
-            }
-            else
+            _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
             {
-                throw new Exception($"No such device {device}");
+                UdpSession = session
+            }));
             }
+
+        private void ProcessPacketSnifferPacket(object sender, SnifferPacketArrivedEventArgs e)
+        {
+            var packet = e.Packet;
+            ProcessPacket(packet);
         }
+
         public void ProcessPcaps(IEnumerable<string> filesPaths, string liveCaptureDevice = null)
         {
             if (liveCaptureDevice != null)
@@ -297,17 +230,7 @@ namespace PcapProcessor
         private void ProcessPcapPacket(object sender, CaptureEventArgs e)
         {
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-            if (IsLiveCapture)
-            {
-                lock (_packets_queue_lock)
-                {
-                    _packets.Enqueue(packet);
-                }
-            }
-            else
-            {
-                ProcessPacket(packet);
-            }
+            ProcessPacket(packet);
 
         }
         void ProcessPacket(PacketDotNet.Packet packet)
@@ -381,31 +304,5 @@ namespace PcapProcessor
             }
         }
 
-        private void ProccesPacketFromQueue()
-        {
-            bool shouldSleep = true;
-
-            lock (_packets_queue_lock)
-            {
-                if (_packets.Count != 0)
-                {
-                    shouldSleep = false;
-                }
-            }
-            if (shouldSleep)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-
-            while (_packets.Count > 0)
-            {
-                {
-                    lock (_packets_queue_lock)
-                    { 
-                        ProcessPacket(_packets.Dequeue());
-                    }
-                }
-            }
-        }
     }
 }
