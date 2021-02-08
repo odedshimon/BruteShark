@@ -1,4 +1,5 @@
-﻿using SharpPcap;
+﻿using PcapProcessor.Objects;
+using SharpPcap;
 using SharpPcap.LibPcap;
 using SharpPcap.Npcap;
 using System;
@@ -10,23 +11,41 @@ namespace PcapProcessor
 {
     public class Sniffer
     {
+        public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
+        public event UdpPacketArivedEventHandler UdpPacketArived;
+        public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
+        public event UdpSessionArrivedEventHandler UdpSessionArrived;
+        public delegate void TcpPacketArivedEventHandler(object sender, TcpPacketArivedEventArgs e);
+        public event TcpPacketArivedEventHandler TcpPacketArived;
+        public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
+        public event TcpSessionArivedEventHandler TcpSessionArrived;
+        public event EventHandler ProcessingFinished;
+        public bool BuildTcpSessions { get; set; }
+        public bool BuildUdpSessions { get; set; }
+        public bool IsLiveCapture { get; set; }
         public bool PromisciousMode { get; set; }
+        private TcpSessionsBuilder _tcpSessionsBuilder;
+        
+        private UdpStreamBuilder _udpStreamBuilder;
         public List<string> AvailiableDevicesNames = CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
         internal Queue<PacketDotNet.Packet> _packets { get; set; }
         internal object _packets_queue_lock { get; set; }
-        internal string _networkInterface { get; set; }
-        public event SnifferPacketArrivedEventHandler SnifferPacketArrived;
-        public delegate void SnifferPacketArrivedEventHandler(object sender, SnifferPacketArrivedEventArgs e);
-        public Sniffer(string networkInterface, bool promisciousMode = false)
+        public string _networkInterface { get; set; }
+        public Sniffer()
         {
-            _networkInterface = networkInterface;
+            BuildTcpSessions = false;
+            BuildUdpSessions = false;
+            _tcpSessionsBuilder = new TcpSessionsBuilder();
+            _udpStreamBuilder = new UdpStreamBuilder();
             _packets = new Queue<PacketDotNet.Packet>();
             _packets_queue_lock = new object();
-            PromisciousMode = promisciousMode;
         }
 
         public void StartSniffing()
         {
+            _tcpSessionsBuilder.Clear();
+            _udpStreamBuilder.Clear();
+
             var backgroundThread = new System.Threading.Thread(RaisePacketArrivedEvent);
             var availiableDevices = CaptureDeviceList.Instance;
 
@@ -61,7 +80,7 @@ namespace PcapProcessor
                 }
 
                 // Register our handler function to the 'packet arrival' event
-                _device.OnPacketArrival += new PacketArrivalEventHandler(InsertPacketToQueue);
+                _device.OnPacketArrival += InsertPacketToQueue;
 
                 // Start the capturing process
                 backgroundThread.Start();
@@ -79,10 +98,90 @@ namespace PcapProcessor
                 backgroundThread.Join();
                 // Close the pcap device
                 _device.Close();
+
+                _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                {
+                    TcpSession = session
+                }));
+
+                _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+                {
+                    UdpSession = session
+                }));
+
+                ProcessingFinished?.Invoke(this, new EventArgs());
             }
             else
             {
                 throw new Exception($"No such device {_networkInterface}");
+            }
+        }
+        void ProcessPacket(PacketDotNet.Packet packet)
+        {
+            try
+            {
+                var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
+                var udpPacket = packet.Extract<PacketDotNet.UdpPacket>();
+
+                if (udpPacket != null)
+                {
+                    var ipPacket = (PacketDotNet.IPPacket)udpPacket.ParentPacket;
+
+                    UdpPacketArived?.Invoke(this, new UdpPacketArivedEventArgs
+                    {
+                        Packet = new UdpPacket
+                        {
+                            SourcePort = udpPacket.SourcePort,
+                            DestinationPort = udpPacket.DestinationPort,
+                            SourceIp = ipPacket.SourceAddress.ToString(),
+                            DestinationIp = ipPacket.DestinationAddress.ToString(),
+                            Data = udpPacket.PayloadData ?? new byte[] { }
+                        }
+                    });
+
+                    if (this.BuildUdpSessions)
+                    {
+                        this._udpStreamBuilder.HandlePacket(udpPacket);
+                    }
+                    
+                }
+                else if (tcpPacket != null)
+                {
+                    var ipPacket = (PacketDotNet.IPPacket)tcpPacket.ParentPacket;
+
+                    // Raise event Tcp packet arived event.
+                    TcpPacketArived?.Invoke(this, new TcpPacketArivedEventArgs
+                    {
+                        Packet = new TcpPacket
+                        {
+                            SourcePort = tcpPacket.SourcePort,
+                            DestinationPort = tcpPacket.DestinationPort,
+                            SourceIp = ipPacket.SourceAddress.ToString(),
+                            DestinationIp = ipPacket.DestinationAddress.ToString(),
+                            Data = tcpPacket.PayloadData ?? new byte[] { }
+                        }
+                    });
+
+                    if (this.BuildTcpSessions)
+                    {
+                        this._tcpSessionsBuilder.HandlePacket(tcpPacket);
+                        _tcpSessionsBuilder.completedSessions.AsParallel().ForAll((session) =>
+                        {
+                            TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+                            {
+                                TcpSession = session
+                            });
+                            _tcpSessionsBuilder.completedSessions.Remove(session);
+                        });
+
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: handle or throw this
+                //Console.WriteLine(ex);
             }
         }
 
@@ -115,10 +214,7 @@ namespace PcapProcessor
                 {
                     lock (_packets_queue_lock)
                     {
-                        SnifferPacketArrived?.Invoke(this, new SnifferPacketArrivedEventArgs()
-                        {
-                            Packet = _packets.Dequeue()
-                        });
+                        ProcessPacket(_packets.Dequeue());
                     }
                 }
             }

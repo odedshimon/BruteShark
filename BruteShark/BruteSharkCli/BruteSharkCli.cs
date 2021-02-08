@@ -13,11 +13,13 @@ namespace BruteSharkCli
     internal class BruteSharkCli
     {
         private PcapProcessor.Processor _processor;
+        private Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
         private readonly string[] _args;
 
         public BruteSharkCli(string[] args)
         {
+            _sniffer = new Sniffer();
             _args = args;            
             _processor = new PcapProcessor.Processor();
             _analyzer = new PcapAnalyzer.Analyzer();
@@ -35,7 +37,7 @@ namespace BruteSharkCli
 
         private void RunShellMode()
         {
-            var shell = new CliShell(_analyzer, _processor, seperator: "Brute-Shark > ");
+            var shell = new CliShell(_analyzer, _processor, _sniffer, seperator: "Brute-Shark > ");
             shell.Start();
         }
 
@@ -43,7 +45,7 @@ namespace BruteSharkCli
         {
             try
             {
-                var cli = new SingleCommandRunner(_analyzer, _processor, _args);
+                var cli = new SingleCommandRunner(_analyzer, _processor, _sniffer, _args);
                 cli.Run();
             }
             catch (Exception ex)

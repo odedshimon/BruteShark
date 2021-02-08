@@ -1,4 +1,5 @@
 ﻿using PcapAnalyzer;
+using PcapProcessor;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,17 +27,20 @@ namespace BruteSharkCli
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
+        private Sniffer _sniffer;
+        private bool liveCapture;
 
         public string Seperator { get; set; }
 
 
-        public CliShell(PcapAnalyzer.Analyzer analyzer, PcapProcessor.Processor processor, string seperator = ">")
+        public CliShell(PcapAnalyzer.Analyzer analyzer, PcapProcessor.Processor processor,Sniffer sniffer, string seperator = ">")
         {
+            sniffer = sniffer;
             _tcpPacketsCount = 0;
             _udpPacketsCount = 0;
             _udpStreamsCount = 0;
             _tcpSessionsCount = 0;
-
+            liveCapture = false;
             this.Seperator = seperator;
             _printingLock = new object();
             _files = new List<string>();
@@ -49,6 +53,11 @@ namespace BruteSharkCli
             _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
             _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
             _processor.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
+            
+            sniffer.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
+            sniffer.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
+            sniffer.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
+            sniffer.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
 
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
@@ -62,8 +71,9 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
-            AddCommand(new CliShellCommand("capture-from-device", p => _networkDevice = p, "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
-            AddCommand(new CliShellCommand("capture-promiscious-mode", p => _processor.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode(requires superuser privileges, default is normal mode)"));
+            AddCommand(new CliShellCommand("capture-from-device", p => initLiveCapture(p), "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
+            AddCommand(new CliShellCommand("capture-promiscious-mode", p => sniffer.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode(requires superuser privileges, default is normal mode)"));
+            AddCommand(new CliShellCommand("show-network-devices", p => PrintNetworkDevices(), "Show the available network devices for live capture"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
 
             // Add the help command
@@ -79,6 +89,17 @@ namespace BruteSharkCli
                  "Exit CLI"));
 
             LoadModules(_analyzer.AvailableModulesNames);
+        }
+
+        private void initLiveCapture(string networkDevice)
+        {
+            _sniffer._networkInterface = networkDevice;
+            liveCapture = true;
+        }
+
+        private void PrintNetworkDevices()
+        {
+            _sniffer.AvailiableDevicesNames.ToDataTable().Print();
         }
 
         private void LoadModules(List<string> modules)
@@ -173,8 +194,17 @@ namespace BruteSharkCli
 
         private void StartAnalyzing()
         {
-            _processor.ProcessPcaps(this._files, liveCaptureDevice: _networkDevice);
-            Console.SetCursorPosition(0, Console.CursorTop + 5);
+            if (liveCapture)
+            {
+                _sniffer.StartSniffing();
+                Console.SetCursorPosition(0, Console.CursorTop + 5);
+            }
+            else 
+            { 
+               _processor.ProcessPcaps(this._files, liveCaptureDevice: _networkDevice);
+                Console.SetCursorPosition(0, Console.CursorTop + 5);
+            }
+            
         }
 
         private void UpdateTcpSessionsCount()

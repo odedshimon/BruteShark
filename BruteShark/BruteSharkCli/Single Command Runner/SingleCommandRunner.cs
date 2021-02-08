@@ -19,7 +19,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
-
+        private Sniffer _sniffer; 
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
@@ -30,8 +30,9 @@ namespace BruteSharkCli
             { "DNS", "DNS"}
         };
 
-        public SingleCommandRunner(Analyzer analyzer, Processor processor, string[] args)
-        { 
+        public SingleCommandRunner(Analyzer analyzer, Processor processor, Sniffer sniffer,string[] args)
+        {
+            _sniffer = sniffer;
             _analyzer = analyzer;
             _processor = processor;
             _files = new List<string>();
@@ -57,14 +58,15 @@ namespace BruteSharkCli
                 SetupRun();
                 if (_cliFlags.CaptureDevice != null)
                 {
+                    _sniffer._networkInterface = _cliFlags.CaptureDevice;
                     if (_cliFlags.PromisciousMode)
-                    { 
-                        _processor.PromisciousMode = true; 
+                    {
+                        _sniffer.PromisciousMode = true; 
                     }
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(_processor.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
+                    Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
                     Console.ForegroundColor = ConsoleColor.White;
-                    _processor.ProcessPcaps(filesPaths: _files, liveCaptureDevice: _cliFlags.CaptureDevice);
+                    _sniffer.StartSniffing();
                 }
                 else {
                     _processor.ProcessPcaps(_files);
