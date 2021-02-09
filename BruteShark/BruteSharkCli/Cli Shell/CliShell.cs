@@ -35,7 +35,7 @@ namespace BruteSharkCli
 
         public CliShell(PcapAnalyzer.Analyzer analyzer, PcapProcessor.Processor processor,Sniffer sniffer, string seperator = ">")
         {
-            sniffer = sniffer;
+            _sniffer = sniffer;
             _tcpPacketsCount = 0;
             _udpPacketsCount = 0;
             _udpStreamsCount = 0;
@@ -99,7 +99,7 @@ namespace BruteSharkCli
 
         private void PrintNetworkDevices()
         {
-            _sniffer.AvailiableDevicesNames.ToDataTable().Print();
+            _sniffer.AvailiableDevicesNames.Select(d => new NetworkDevice(d)) .ToList().ToDataTable().Print(); 
         }
 
         private void LoadModules(List<string> modules)
@@ -196,6 +196,7 @@ namespace BruteSharkCli
         {
             if (liveCapture)
             {
+                Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_sniffer._networkInterface} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_sniffer._networkInterface} device- Press any key to stop");
                 _sniffer.StartSniffing();
                 Console.SetCursorPosition(0, Console.CursorTop + 5);
             }

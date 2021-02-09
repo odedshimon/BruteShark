@@ -44,6 +44,7 @@ namespace PcapProcessor
         public void StartSniffing()
         {
             _tcpSessionsBuilder.Clear();
+            _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder.Clear();
 
             var backgroundThread = new System.Threading.Thread(RaisePacketArrivedEvent);
@@ -113,6 +114,7 @@ namespace PcapProcessor
             }
             else
             {
+                
                 throw new Exception($"No such device {_networkInterface}");
             }
         }

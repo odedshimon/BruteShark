@@ -12,6 +12,7 @@ namespace PcapProcessor
     {
         private Dictionary<TcpSession, TcpRecon> _sessions;
         internal List<TcpSession> completedSessions { get; }
+        public bool IsLiveCapture { get; set; }
 
         public IEnumerable<TcpSession> Sessions
         {
@@ -39,6 +40,7 @@ namespace PcapProcessor
 
         public TcpSessionsBuilder()
         {
+            IsLiveCapture = false;
             this._sessions = new Dictionary<TcpSession, TcpRecon>();
             this.completedSessions = new List<TcpSession>();
         }
@@ -62,11 +64,14 @@ namespace PcapProcessor
             _sessions[session].ReassemblePacket(tcpPacket);
             // if the tcp packet contains FIN,ACK flags or just the FIN flag then we can determine 
             // that the session is terminated and that no more data is about to be sen  t
-            if (tcpPacket.Flags == 17 || tcpPacket.Flags == 1)
-            {
-                session.Data = _sessions[session].Data;
-                completedSessions.Add(session);
-                _sessions.Remove(session);
+            if (IsLiveCapture)
+            { 
+                if (tcpPacket.Flags == 17 || tcpPacket.Flags == 1)
+                {
+                    session.Data = _sessions[session].Data;
+                    completedSessions.Add(session);
+                    _sessions.Remove(session);
+                }
             }
         }
 
