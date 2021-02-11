@@ -73,6 +73,7 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             AddCommand(new CliShellCommand("capture-from-device", p => initLiveCapture(p), "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
             AddCommand(new CliShellCommand("capture-promiscious-mode", p => sniffer.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode(requires superuser privileges, default is normal mode)"));
+            AddCommand(new CliShellCommand("add-captrue-filter", p => VerifyFilter(p), "Add a capture filter to the live traffic capture(filters must be bpf syntax filters)"));
             AddCommand(new CliShellCommand("show-network-devices", p => PrintNetworkDevices(), "Show the available network devices for live capture"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
 
@@ -89,6 +90,19 @@ namespace BruteSharkCli
                  "Exit CLI"));
 
             LoadModules(_analyzer.AvailableModulesNames);
+        }
+
+        private void VerifyFilter(string p)
+        {
+            if(Sniffer.CheckCaptureFilter(p))
+            {
+                _sniffer.Filter = p;
+            }
+            else
+            {
+                Console.WriteLine($"Capture filter: {p} is not a valid filter, filters must be in bpf format");
+            }
+            
         }
 
         private void initLiveCapture(string networkDevice)
@@ -196,9 +210,16 @@ namespace BruteSharkCli
         {
             if (liveCapture)
             {
+                try
+                {
                 Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_sniffer._networkInterface} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_sniffer._networkInterface} device- Press any key to stop");
                 _sniffer.StartSniffing();
-                Console.SetCursorPosition(0, Console.CursorTop + 5);
+                Console.SetCursorPosition(0, Console.CursorTop + 6);
+                }
+                catch (SharpPcap.PcapException e)
+                {
+                    Console.WriteLine($"Capture Filter: {_sniffer.Filter} is invalid");
+                }
             }
             else 
             { 
@@ -246,7 +267,7 @@ namespace BruteSharkCli
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.WriteLine($"\r[+] Network Connections Found: {_connections.Count}");
-                Console.SetCursorPosition(0, Console.CursorTop - 5);
+                Console.SetCursorPosition(0, liveCapture ? Console.CursorTop - 6 : Console.CursorTop - 5);
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }

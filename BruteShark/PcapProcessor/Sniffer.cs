@@ -24,6 +24,7 @@ namespace PcapProcessor
         public bool BuildUdpSessions { get; set; }
         public bool IsLiveCapture { get; set; }
         public bool PromisciousMode { get; set; }
+        public string Filter { get; set; }
         private TcpSessionsBuilder _tcpSessionsBuilder;
         
         private UdpStreamBuilder _udpStreamBuilder;
@@ -33,6 +34,7 @@ namespace PcapProcessor
         public string _networkInterface { get; set; }
         public Sniffer()
         {
+            Filter = string.Empty;
             BuildTcpSessions = false;
             BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
@@ -78,6 +80,12 @@ namespace PcapProcessor
                 else
                 {
                     throw new InvalidOperationException("unknown device type of " + _networkInterface.GetType().ToString());
+                }
+
+                // Setup capture filter
+                if (Filter != string.Empty)
+                {
+                    _device.Filter = Filter;                    
                 }
 
                 // Register our handler function to the 'packet arrival' event
@@ -185,6 +193,12 @@ namespace PcapProcessor
                 // TODO: handle or throw this
                 //Console.WriteLine(ex);
             }
+        }
+
+        public static bool CheckCaptureFilter(string filter)
+        {
+            string outString;
+            return PcapDevice.CheckFilter(filter, out outString);
         }
 
         private void InsertPacketToQueue(object sender, CaptureEventArgs e)

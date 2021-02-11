@@ -69,6 +69,20 @@ namespace BruteSharkCli
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
                     Console.ForegroundColor = ConsoleColor.White;
+                    // Setup capture filter
+                    if (_cliFlags.CaptrueFilter != null)
+                    {
+                        if (Sniffer.CheckCaptureFilter(_cliFlags.CaptrueFilter))
+                        { 
+                            _sniffer.Filter = _cliFlags.CaptrueFilter; 
+                        }    
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
+                            return;
+                        }
+                    }
                     _sniffer.StartSniffing();
                 }
                 else {

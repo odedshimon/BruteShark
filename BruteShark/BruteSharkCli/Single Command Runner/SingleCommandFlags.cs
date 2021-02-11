@@ -28,5 +28,8 @@ namespace BruteSharkCli
 
         [Option('l', "live-capture", Required = false, Default = null, HelpText = "Caputre and process packets live from a network interface.")]
         public string CaptureDevice { get; set; }
+        
+        [Option('f', "filter", Required = false, Default = null, HelpText = "add a capture bpf filter to the live traffic processing.")]
+        public string CaptrueFilter { get; set; }
     }
 }
