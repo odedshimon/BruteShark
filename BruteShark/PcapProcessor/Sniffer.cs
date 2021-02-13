@@ -55,7 +55,9 @@ namespace PcapProcessor
             _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder.Clear();
 
-            var backgroundThread = new System.Threading.Thread(RaisePacketArrivedEvent);
+            var backgroundThread = new Thread(RaisePacketArrivedEvent);
+            backgroundThread.Name = "Packets Processing Thread";
+
             var availiableDevices = CaptureDeviceList.Instance;
 
             if (AvailiableDevicesNames.Contains(_networkInterface))
@@ -105,7 +107,7 @@ namespace PcapProcessor
                 // Console.TreatControlCAsInput = true;
                 // Console.ReadLine();
 
-                Thread.Sleep(1000 * 150);
+                Thread.Sleep(1000 * 50);
 
                 // Stop the capturing process
                 _device.StopCapture();
@@ -218,25 +220,29 @@ namespace PcapProcessor
 
         private void RaisePacketArrivedEvent()
         {
-            bool shouldSleep = true;
+            while (true)
+            {
+                bool shouldSleep = true;
 
-            lock (_packets_queue_lock)
-            {
-                if (_packets.Count != 0)
-                {
-                    shouldSleep = false;
-                }
-            }
-            if (shouldSleep)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-
-            while (_packets.Count > 0)
-            {
                 lock (_packets_queue_lock)
                 {
-                    ProcessPacket(_packets.Dequeue());
+                    if (_packets.Count != 0)
+                    {
+                        shouldSleep = false;
+                    }
+                }
+
+                if (shouldSleep)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
+
+                while (_packets.Count > 0)
+                {
+                    lock (_packets_queue_lock)
+                    {
+                        ProcessPacket(_packets.Dequeue());
+                    }
                 }
             }
         }
