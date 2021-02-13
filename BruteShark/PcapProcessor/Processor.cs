@@ -63,7 +63,6 @@ namespace PcapProcessor
                 });
             }
 
-
             public void ProcessPcaps(IEnumerable<string> filesPaths, string liveCaptureDevice = null)
             {                
                 _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
@@ -159,6 +158,7 @@ namespace PcapProcessor
                 device.Open();
                 device.Capture();
             }
+
             private void ConvertPacket(object sender, IPacket packet)
             {
                 var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
@@ -180,6 +180,7 @@ namespace PcapProcessor
 
                 }
             }
+
             private void RaiseFileProcessingStatusChangedEvent(FileProcessingStatus status, string filePath)
             {
                 FileProcessingStatusChanged?.Invoke(this, new FileProcessingStatusChangedEventArgs()
@@ -188,6 +189,7 @@ namespace PcapProcessor
                     Status = status
                 });
             }
+
             private void ProccessPcapNgPacket(PacketDotNet.Packet packet)
             {
                 ProcessPacket(packet);
@@ -197,8 +199,8 @@ namespace PcapProcessor
             {
                 var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
                 ProcessPacket(packet);
-
             }
+
             void ProcessPacket(PacketDotNet.Packet packet)
             {
                 try
@@ -256,8 +258,6 @@ namespace PcapProcessor
                                 });
                                 _tcpSessionsBuilder.completedSessions.Remove(session);
                             });
-
-
                         }
 
                         _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);

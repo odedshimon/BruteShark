@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace PcapProcessor
 {
@@ -20,18 +21,23 @@ namespace PcapProcessor
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
         public event EventHandler ProcessingFinished;
+
+        private TcpSessionsBuilder _tcpSessionsBuilder;
+        private UdpStreamBuilder _udpStreamBuilder;
+
+        internal Queue<PacketDotNet.Packet> _packets { get; set; }
+        internal object _packets_queue_lock { get; set; }
+
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
         public bool IsLiveCapture { get; set; }
         public bool PromisciousMode { get; set; }
+
         public string Filter { get; set; }
-        private TcpSessionsBuilder _tcpSessionsBuilder;
-        
-        private UdpStreamBuilder _udpStreamBuilder;
-        public List<string> AvailiableDevicesNames = CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
-        internal Queue<PacketDotNet.Packet> _packets { get; set; }
-        internal object _packets_queue_lock { get; set; }
         public string _networkInterface { get; set; }
+        public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
+
+
         public Sniffer()
         {
             Filter = string.Empty;
@@ -59,7 +65,6 @@ namespace PcapProcessor
 
                 if (_device is NpcapDevice)
                 {
-
                     var nPcap = _device as NpcapDevice;
                     if (PromisciousMode)
                     {
@@ -82,22 +87,25 @@ namespace PcapProcessor
                     throw new InvalidOperationException("unknown device type of " + _networkInterface.GetType().ToString());
                 }
 
-                // Setup capture filter
+                // Setup capture filter.
                 if (Filter != string.Empty)
                 {
-                    _device.Filter = Filter;                    
+                    _device.Filter = Filter;
                 }
 
-                // Register our handler function to the 'packet arrival' event
+                // Register our handler function to the 'packet arrival' event.
                 _device.OnPacketArrival += InsertPacketToQueue;
 
                 // Start the capturing process
                 backgroundThread.Start();
                 _device.StartCapture();
 
+                // TODO: Create a function for stoping the sniffer (Console is not valid object when running fron WinForms)
                 // Wait for 'ctrl-c' from the user.
-                Console.TreatControlCAsInput = true;
-                Console.ReadLine();
+                // Console.TreatControlCAsInput = true;
+                // Console.ReadLine();
+
+                Thread.Sleep(1000 * 150);
 
                 // Stop the capturing process
                 _device.StopCapture();
@@ -122,10 +130,10 @@ namespace PcapProcessor
             }
             else
             {
-                
                 throw new Exception($"No such device {_networkInterface}");
             }
         }
+
         void ProcessPacket(PacketDotNet.Packet packet)
         {
             try
@@ -183,8 +191,6 @@ namespace PcapProcessor
                             });
                             _tcpSessionsBuilder.completedSessions.Remove(session);
                         });
-
-
                     }
                 }
             }
@@ -197,18 +203,19 @@ namespace PcapProcessor
 
         public static bool CheckCaptureFilter(string filter)
         {
-            string outString;
-            return PcapDevice.CheckFilter(filter, out outString);
+            return PcapDevice.CheckFilter(filter, out string outString);
         }
 
         private void InsertPacketToQueue(object sender, CaptureEventArgs e)
         {
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
+
             lock (_packets_queue_lock)
             {
                 _packets.Enqueue(packet);
             }
         }
+
         private void RaisePacketArrivedEvent()
         {
             bool shouldSleep = true;
@@ -227,14 +234,13 @@ namespace PcapProcessor
 
             while (_packets.Count > 0)
             {
+                lock (_packets_queue_lock)
                 {
-                    lock (_packets_queue_lock)
-                    {
-                        ProcessPacket(_packets.Dequeue());
-                    }
+                    ProcessPacket(_packets.Dequeue());
                 }
             }
         }
+
     }
 }
 

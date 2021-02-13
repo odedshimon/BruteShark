@@ -18,6 +18,7 @@ namespace BruteSharkDesktop
     {
         private HashSet<string> _files;
         private PcapProcessor.Processor _processor;
+        private PcapProcessor.Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
 
         private GenericTableUserControl _passwordsUserControl;
@@ -36,6 +37,7 @@ namespace BruteSharkDesktop
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
+            _sniffer = new PcapProcessor.Sniffer();
             _analyzer = new PcapAnalyzer.Analyzer();
             _processor.BuildTcpSessions = true;
             _processor.BuildUdpSessions = true;
@@ -67,7 +69,16 @@ namespace BruteSharkDesktop
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
+            InitilizeInterfacesComboBox();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeInterfacesComboBox()
+        {
+            foreach (string interfaceName in _sniffer.AvailiableDevicesNames)
+            {
+                this.interfacesComboBox.Items.Add(interfaceName);
+            }
         }
 
         private void InitilizeModulesCheckedListBox()
@@ -335,6 +346,19 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 This means a faster processing but also that some obects may not be extracted.");
         }
 
+        private void liveCaptureButton_Click(object sender, EventArgs e)
+        {
+            var selectedInterface = this.interfacesComboBox.SelectedItem.ToString();
+  
+            if (selectedInterface == null || selectedInterface.ToString() == string.Empty)
+            {
+                MessageBox.Show("No interface selected");
+                return;
+            }
+
+            _sniffer._networkInterface = selectedInterface;
+            new Thread(() => _sniffer.StartSniffing());
+        }
     }
 }
     
