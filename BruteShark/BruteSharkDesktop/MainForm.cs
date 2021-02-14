@@ -362,7 +362,7 @@ This means a faster processing but also that some obects may not be extracted.")
             _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
             _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
 
-            _sniffer._networkInterface = selectedInterface;
+            _sniffer.SelectedInterface = selectedInterface;
             new Thread(() => _sniffer.StartSniffing()) { Name = "Sniffer Thread" }.Start();
         }
     }

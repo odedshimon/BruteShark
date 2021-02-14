@@ -30,11 +30,10 @@ namespace PcapProcessor
 
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
-        public bool IsLiveCapture { get; set; }
         public bool PromisciousMode { get; set; }
-
         public string Filter { get; set; }
-        public string _networkInterface { get; set; }
+        public string SelectedInterface { get; set; }
+
         public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
 
 
@@ -55,85 +54,81 @@ namespace PcapProcessor
             _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder.Clear();
 
-            var backgroundThread = new Thread(RaisePacketArrivedEvent);
-            backgroundThread.Name = "Packets Processing Thread";
-
+            var backgroundThread = new Thread(ProcessPacketsQueue) { Name = "Packets Processing Thread" };
             var availiableDevices = CaptureDeviceList.Instance;
 
-            if (AvailiableDevicesNames.Contains(_networkInterface))
+            if (!AvailiableDevicesNames.Contains(SelectedInterface))
             {
-                ICaptureDevice _device = availiableDevices[AvailiableDevicesNames.IndexOf(_networkInterface)];
-                int readTimeoutMilliseconds = 1000;
+                throw new Exception($"No such device {SelectedInterface}");
+            }
 
-                if (_device is NpcapDevice)
-                {
-                    var nPcap = _device as NpcapDevice;
-                    if (PromisciousMode)
-                    {
-                        nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
-                    }
-                    else
-                    {
-                        nPcap.Open();
-                    }
+            ICaptureDevice _device = availiableDevices[AvailiableDevicesNames.IndexOf(SelectedInterface)];
+            int readTimeoutMilliseconds = 1000;
 
-                    nPcap.Mode = CaptureMode.Packets;
-                }
-                else if (_device is LibPcapLiveDevice)
+            if (_device is NpcapDevice)
+            {
+                var nPcap = _device as NpcapDevice;
+                if (PromisciousMode)
                 {
-                    var livePcapDevice = _device as LibPcapLiveDevice;
-                    livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
+                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
                 }
                 else
                 {
-                    throw new InvalidOperationException("unknown device type of " + _networkInterface.GetType().ToString());
+                    nPcap.Open();
                 }
 
-                // Setup capture filter.
-                if (Filter != string.Empty)
-                {
-                    _device.Filter = Filter;
-                }
-
-                // Register our handler function to the 'packet arrival' event.
-                _device.OnPacketArrival += InsertPacketToQueue;
-
-                // Start the capturing process
-                backgroundThread.Start();
-                _device.StartCapture();
-
-                // TODO: Create a function for stoping the sniffer (Console is not valid object when running fron WinForms)
-                // Wait for 'ctrl-c' from the user.
-                // Console.TreatControlCAsInput = true;
-                // Console.ReadLine();
-
-                Thread.Sleep(1000 * 50);
-
-                // Stop the capturing process
-                _device.StopCapture();
-
-                //waiting on the packet procesing thread to finish
-
-                backgroundThread.Join();
-                // Close the pcap device
-                _device.Close();
-
-                _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                {
-                    TcpSession = session
-                }));
-
-                _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
-                {
-                    UdpSession = session
-                }));
-
-                ProcessingFinished?.Invoke(this, new EventArgs());
+                nPcap.Mode = CaptureMode.Packets;
+            }
+            else if (_device is LibPcapLiveDevice)
+            {
+                var livePcapDevice = _device as LibPcapLiveDevice;
+                livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
             }
             else
             {
-                throw new Exception($"No such device {_networkInterface}");
+                throw new InvalidOperationException("Unknown device type of " + SelectedInterface.GetType().ToString());
             }
+
+            // Setup capture filter.
+            if (Filter != string.Empty)
+            {
+                _device.Filter = this.Filter;
+            }
+
+            // Register our handler function to the 'packet arrival' event.
+            _device.OnPacketArrival += InsertPacketToQueue;
+
+            // Start the capturing process
+            backgroundThread.Start();
+            _device.StartCapture();
+
+            // TODO: Create a function for stoping the sniffer (Console is not valid object when running fron WinForms)
+            // Wait for 'ctrl-c' from the user.
+            // Console.TreatControlCAsInput = true;
+            // Console.ReadLine();
+
+            Thread.Sleep(1000 * 50);
+
+            // Stop the capturing process
+            _device.StopCapture();
+
+            //waiting on the packet procesing thread to finish
+
+            backgroundThread.Join();
+            // Close the pcap device
+            _device.Close();
+
+            _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
+            {
+                TcpSession = session
+            }));
+
+            _udpStreamBuilder.Sessions.AsParallel().ForAll(session => UdpSessionArrived?.Invoke(this, new UdpSessionArrivedEventArgs()
+            {
+                UdpSession = session
+            }));
+
+            ProcessingFinished?.Invoke(this, new EventArgs());
         }
 
         void ProcessPacket(PacketDotNet.Packet packet)
@@ -218,32 +213,19 @@ namespace PcapProcessor
             }
         }
 
-        private void RaisePacketArrivedEvent()
+        private void ProcessPacketsQueue()
         {
             while (true)
             {
-                bool shouldSleep = true;
-
                 lock (_packets_queue_lock)
                 {
-                    if (_packets.Count != 0)
-                    {
-                        shouldSleep = false;
-                    }
-                }
-
-                if (shouldSleep)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                }
-
-                while (_packets.Count > 0)
-                {
-                    lock (_packets_queue_lock)
+                    while (_packets.Count > 0)
                     {
                         ProcessPacket(_packets.Dequeue());
                     }
                 }
+
+                Thread.Sleep(1000);
             }
         }
 
