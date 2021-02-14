@@ -110,7 +110,7 @@
             // 
             this.liveCaptureGroupBox.Controls.Add(this.interfacesComboBox);
             this.liveCaptureGroupBox.Controls.Add(this.liveCaptureButton);
-            this.liveCaptureGroupBox.Location = new System.Drawing.Point(616, 10);
+            this.liveCaptureGroupBox.Location = new System.Drawing.Point(1109, 10);
             this.liveCaptureGroupBox.Name = "liveCaptureGroupBox";
             this.liveCaptureGroupBox.Size = new System.Drawing.Size(194, 158);
             this.liveCaptureGroupBox.TabIndex = 2;
@@ -139,9 +139,9 @@
             // 
             this.optionsGroupBox.Controls.Add(this.buildUdpSessionsCheckBox);
             this.optionsGroupBox.Controls.Add(this.buildTcpSessionsCheckBox);
-            this.optionsGroupBox.Location = new System.Drawing.Point(1124, 10);
+            this.optionsGroupBox.Location = new System.Drawing.Point(924, 10);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(200, 158);
+            this.optionsGroupBox.Size = new System.Drawing.Size(179, 158);
             this.optionsGroupBox.TabIndex = 1;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
@@ -261,7 +261,7 @@
             // modulesGroupBox
             // 
             this.modulesGroupBox.Controls.Add(this.modulesCheckedListBox);
-            this.modulesGroupBox.Location = new System.Drawing.Point(817, 10);
+            this.modulesGroupBox.Location = new System.Drawing.Point(617, 10);
             this.modulesGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesGroupBox.Name = "modulesGroupBox";
             this.modulesGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -300,7 +300,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 431;
+            this.secondaryLowerSplitContainer.SplitterDistance = 460;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -315,7 +315,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 431);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 460);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -350,14 +350,14 @@
             treeNode3,
             treeNode7,
             treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 431);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 460);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
             // progressBar
             // 
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(0, 8);
+            this.progressBar.Location = new System.Drawing.Point(0, -21);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1463, 53);

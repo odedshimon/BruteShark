@@ -25,8 +25,8 @@ namespace PcapProcessor
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
 
-        internal Queue<PacketDotNet.Packet> _packets { get; set; }
-        internal object _packets_queue_lock { get; set; }
+        private Queue<PacketDotNet.Packet> _packets { get; set; }
+        private object _packetsQueueLock { get; set; }
 
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
@@ -45,7 +45,7 @@ namespace PcapProcessor
             _tcpSessionsBuilder = new TcpSessionsBuilder();
             _udpStreamBuilder = new UdpStreamBuilder();
             _packets = new Queue<PacketDotNet.Packet>();
-            _packets_queue_lock = new object();
+            _packetsQueueLock = new object();
         }
 
         public void StartSniffing()
@@ -207,7 +207,7 @@ namespace PcapProcessor
         {
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
 
-            lock (_packets_queue_lock)
+            lock (_packetsQueueLock)
             {
                 _packets.Enqueue(packet);
             }
@@ -217,7 +217,7 @@ namespace PcapProcessor
         {
             while (true)
             {
-                lock (_packets_queue_lock)
+                lock (_packetsQueueLock)
                 {
                     while (_packets.Count > 0)
                     {
