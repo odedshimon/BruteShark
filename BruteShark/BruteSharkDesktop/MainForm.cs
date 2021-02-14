@@ -16,6 +16,7 @@ namespace BruteSharkDesktop
 {
     public partial class MainForm : Form
     {
+        private Thread _snifferThread;
         private HashSet<string> _files;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
@@ -57,15 +58,20 @@ namespace BruteSharkDesktop
             _dnsResponseUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
+            _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
+            _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
+            _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
+            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
-            _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
-            _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
             _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
             _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
+            _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
+            _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
@@ -99,7 +105,7 @@ namespace BruteSharkDesktop
         {
             // The tag holds the full file path.
             var failedFilesString = string.Join(
-                Environment.NewLine, 
+                Environment.NewLine,
                 filesListView.Items
                     .Cast<ListViewItem>()
                     .Where(x => x.SubItems[2].Text == "Failed")
@@ -108,7 +114,7 @@ namespace BruteSharkDesktop
 
             if (failedFilesString.Length > 0)
             {
-                var failedFilesMessage = 
+                var failedFilesMessage =
 @$"BruteShark failed to analyze to following files:
 {Environment.NewLine}{failedFilesString}
  Note: if your files are in PCAPNG format it possible to convert them to a PCAP format using Tshark: 
@@ -137,7 +143,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 Invoke(func);
                 return;
-            } 
+            }
 
             Invoke(func);
         }
@@ -293,7 +299,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 _files.Remove(item.Tag.ToString());
                 item.Remove();
-            } 
+            }
         }
 
         private void ModulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -346,24 +352,22 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 This means a faster processing but also that some obects may not be extracted.");
         }
 
-        private void liveCaptureButton_Click(object sender, EventArgs e)
+        private void LiveCaptureButton_Click(object sender, EventArgs e)
         {
-            var selectedInterface = this.interfacesComboBox.SelectedItem.ToString();
-  
-            if (selectedInterface == null || selectedInterface.ToString() == string.Empty)
+            if (this.interfacesComboBox.SelectedItem == null)
             {
                 MessageBox.Show("No interface selected");
                 return;
             }
 
-            _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
-            _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
-            _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
-            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _sniffer.SelectedInterface = this.interfacesComboBox.SelectedItem.ToString(); ;
+            _snifferThread = new Thread(() => _sniffer.StartSniffing()) { Name = "Sniffer Thread", IsBackground = true };
+            _snifferThread.Start();
+        }
 
-            _sniffer.SelectedInterface = selectedInterface;
-            new Thread(() => _sniffer.StartSniffing()) { Name = "Sniffer Thread" }.Start();
+        private void StopCaptureButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO: Stop capture"); 
         }
     }
 }

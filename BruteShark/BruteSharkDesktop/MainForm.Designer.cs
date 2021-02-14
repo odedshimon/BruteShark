@@ -45,6 +45,7 @@
             treeNode8});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.liveCaptureGroupBox = new System.Windows.Forms.GroupBox();
+            this.stopCaptureButton = new System.Windows.Forms.Button();
             this.interfacesComboBox = new System.Windows.Forms.ComboBox();
             this.liveCaptureButton = new System.Windows.Forms.Button();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
@@ -108,6 +109,7 @@
             // 
             // liveCaptureGroupBox
             // 
+            this.liveCaptureGroupBox.Controls.Add(this.stopCaptureButton);
             this.liveCaptureGroupBox.Controls.Add(this.interfacesComboBox);
             this.liveCaptureGroupBox.Controls.Add(this.liveCaptureButton);
             this.liveCaptureGroupBox.Location = new System.Drawing.Point(1109, 10);
@@ -116,6 +118,16 @@
             this.liveCaptureGroupBox.TabIndex = 2;
             this.liveCaptureGroupBox.TabStop = false;
             this.liveCaptureGroupBox.Text = "Live Capture";
+            // 
+            // stopCaptureButton
+            // 
+            this.stopCaptureButton.Location = new System.Drawing.Point(100, 22);
+            this.stopCaptureButton.Name = "stopCaptureButton";
+            this.stopCaptureButton.Size = new System.Drawing.Size(88, 48);
+            this.stopCaptureButton.TabIndex = 0;
+            this.stopCaptureButton.Text = "Stop Capture";
+            this.stopCaptureButton.UseVisualStyleBackColor = true;
+            this.stopCaptureButton.Click += new System.EventHandler(this.StopCaptureButton_Click);
             // 
             // interfacesComboBox
             // 
@@ -127,13 +139,13 @@
             // 
             // liveCaptureButton
             // 
-            this.liveCaptureButton.Location = new System.Drawing.Point(6, 21);
+            this.liveCaptureButton.Location = new System.Drawing.Point(6, 22);
             this.liveCaptureButton.Name = "liveCaptureButton";
-            this.liveCaptureButton.Size = new System.Drawing.Size(182, 48);
+            this.liveCaptureButton.Size = new System.Drawing.Size(88, 48);
             this.liveCaptureButton.TabIndex = 0;
             this.liveCaptureButton.Text = "Start Capture";
             this.liveCaptureButton.UseVisualStyleBackColor = true;
-            this.liveCaptureButton.Click += new System.EventHandler(this.liveCaptureButton_Click);
+            this.liveCaptureButton.Click += new System.EventHandler(this.LiveCaptureButton_Click);
             // 
             // optionsGroupBox
             // 
@@ -300,7 +312,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 460;
+            this.secondaryLowerSplitContainer.SplitterDistance = 458;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -315,7 +327,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 460);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 458);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -350,14 +362,14 @@
             treeNode3,
             treeNode7,
             treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 460);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 458);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
             // progressBar
             // 
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(0, -21);
+            this.progressBar.Location = new System.Drawing.Point(0, -19);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1463, 53);
@@ -415,6 +427,7 @@
         private System.Windows.Forms.GroupBox liveCaptureGroupBox;
         private System.Windows.Forms.Button liveCaptureButton;
         private System.Windows.Forms.ComboBox interfacesComboBox;
+        private System.Windows.Forms.Button stopCaptureButton;
     }
 }
 

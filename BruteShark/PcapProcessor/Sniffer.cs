@@ -54,7 +54,7 @@ namespace PcapProcessor
             _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder.Clear();
 
-            var backgroundThread = new Thread(ProcessPacketsQueue) { Name = "Packets Processing Thread" };
+            var backgroundThread = new Thread(ProcessPacketsQueue) { Name = "Packets Processing Thread", IsBackground = true };
             var availiableDevices = CaptureDeviceList.Instance;
 
             if (!AvailiableDevicesNames.Contains(SelectedInterface))
