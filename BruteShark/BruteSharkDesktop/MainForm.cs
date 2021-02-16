@@ -63,6 +63,7 @@ namespace BruteSharkDesktop
             _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
             _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _sniffer.SniffingStoped += (s, e) => SwitchToMainThreadContext(() => OnSniffingStoped(s, e));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
@@ -99,6 +100,15 @@ namespace BruteSharkDesktop
         {
             this.progressBar.Value = this.progressBar.Maximum;
             HandleFailedFiles();
+        }
+
+        private void OnSniffingStoped(object sender, EventArgs e)
+        {
+            // TODO: figure why this hangs the UI
+            // MessageBox.Show("Capture Stoped");
+            //this.BeginInvoke((Action)(() => MessageBox.Show("Capture Stoped")));
+            // this.progressBar.Text = "Sniffing Stoped";
+            // this.progressBar.Refresh();
         }
 
         private void HandleFailedFiles()
@@ -367,7 +377,9 @@ This means a faster processing but also that some obects may not be extracted.")
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("TODO: Stop capture"); 
+            _sniffer.SouldStopCapture = true;
+            //_snifferThread.Join();
+            //MessageBox.Show("Capture Stoped");
         }
     }
 }

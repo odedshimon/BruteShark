@@ -45,7 +45,7 @@ namespace BruteSharkCli
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
-            _sniffer.ProcessingFinished += (s, e) => this.ExportResults();
+            _sniffer.SniffingStoped += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
 
