@@ -21,7 +21,6 @@ namespace PcapProcessor
         public event TcpPacketArivedEventHandler TcpPacketArived;
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
-        public event EventHandler SniffingStoped;
 
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
@@ -131,8 +130,6 @@ namespace PcapProcessor
                 UdpSession = session
             }));
             */
-
-            // SniffingStoped?.Invoke(this, new EventArgs());
         }
 
         private void StartPacketProcessingThread()
@@ -147,7 +144,7 @@ namespace PcapProcessor
         private void StopPacketProcessingThread()
         {
             _cts.Cancel();
-            _packetProcessingTask.Wait();
+            _packetProcessingTask.ConfigureAwait(false);
         }
 
         private void WaitForStopSniffingSignal(CancellationToken ct)

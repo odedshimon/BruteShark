@@ -16,9 +16,7 @@ namespace BruteSharkDesktop
 {
     public partial class MainForm : Form
     {
-        private Task _snifferTask;
         private CancellationTokenSource _cts;
-
         private HashSet<string> _files;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
@@ -66,7 +64,6 @@ namespace BruteSharkDesktop
             _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
             _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
             _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
-            _sniffer.SniffingStoped += (s, e) => SwitchToMainThreadContext(() => OnSniffingStoped(s, e));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
@@ -103,16 +100,6 @@ namespace BruteSharkDesktop
         {
             this.progressBar.Value = this.progressBar.Maximum;
             HandleFailedFiles();
-        }
-
-        private void OnSniffingStoped(object sender, EventArgs e)
-        {
-            // TODO: figure why this hangs the UI.
-            // MessageBox.Show("Capture Stoped");
-
-            // TODO: figure why this is not updating progress bar.
-            // this.progressBar.Text = "Sniffing Stoped";
-            // this.progressBar.Refresh();
         }
 
         private void HandleFailedFiles()
@@ -375,21 +362,25 @@ This means a faster processing but also that some obects may not be extracted.")
             }
 
             _sniffer.SelectedInterface = this.interfacesComboBox.SelectedItem.ToString();
+            StartLiveCaptureAsync();
+        }
+
+        private async void StartLiveCaptureAsync()
+        {
             _cts.Dispose();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
-            _snifferTask = new Task(() => _sniffer.StartSniffing(ct), ct);
-            _snifferTask.Start();
+            await Task.Run( () => _sniffer.StartSniffing(ct) ).ConfigureAwait(false);
+
+            // TODO: at this point we still at the task thread context which cause any click to get the UI hanging..
+            //       need to return the main thread (UI) SynchronizationContext !!
+
+            MessageBox.Show("Capture Stoped");
         }
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
             _cts.Cancel();
-            // TODO: figure why this is not coming back..
-            //_snifferTask.Wait();
-
-            // TODO: figure why this hangs the UI.
-            //MessageBox.Show("Capture Stoped");
         }
     }
 }
