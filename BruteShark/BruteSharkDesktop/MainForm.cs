@@ -16,7 +16,9 @@ namespace BruteSharkDesktop
 {
     public partial class MainForm : Form
     {
-        private Thread _snifferThread;
+        private Task _snifferTask;
+        private CancellationTokenSource _cts;
+
         private HashSet<string> _files;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
@@ -35,6 +37,7 @@ namespace BruteSharkDesktop
             InitializeComponent();
 
             _files = new HashSet<string>();
+            _cts = new CancellationTokenSource();
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
@@ -104,9 +107,10 @@ namespace BruteSharkDesktop
 
         private void OnSniffingStoped(object sender, EventArgs e)
         {
-            // TODO: figure why this hangs the UI
+            // TODO: figure why this hangs the UI.
             // MessageBox.Show("Capture Stoped");
-            //this.BeginInvoke((Action)(() => MessageBox.Show("Capture Stoped")));
+
+            // TODO: figure why this is not updating progress bar.
             // this.progressBar.Text = "Sniffing Stoped";
             // this.progressBar.Refresh();
         }
@@ -370,15 +374,21 @@ This means a faster processing but also that some obects may not be extracted.")
                 return;
             }
 
-            _sniffer.SelectedInterface = this.interfacesComboBox.SelectedItem.ToString(); ;
-            _snifferThread = new Thread(() => _sniffer.StartSniffing()) { Name = "Sniffer Thread", IsBackground = true };
-            _snifferThread.Start();
+            _sniffer.SelectedInterface = this.interfacesComboBox.SelectedItem.ToString();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            _snifferTask = new Task(() => _sniffer.StartSniffing(ct), ct);
+            _snifferTask.Start();
         }
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
-            _sniffer.SouldStopCapture = true;
-            //_snifferThread.Join();
+            _cts.Cancel();
+            // TODO: figure why this is not coming back..
+            //_snifferTask.Wait();
+
+            // TODO: figure why this hangs the UI.
             //MessageBox.Show("Capture Stoped");
         }
     }

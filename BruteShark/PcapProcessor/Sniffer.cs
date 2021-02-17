@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PcapProcessor
 {
@@ -27,16 +28,14 @@ namespace PcapProcessor
 
         private Queue<PacketDotNet.Packet> _packets { get; set; }
         private object _packetsQueueLock { get; set; }
-        private bool _souldStopPacketProcessingThread;
-        private Thread _packetProcessingThread;
+        private Task _packetProcessingTask;
+        private CancellationTokenSource _cts;
 
         public bool BuildTcpSessions { get; set; }
         public bool BuildUdpSessions { get; set; }
         public bool PromisciousMode { get; set; }
         public string Filter { get; set; }
         public string SelectedInterface { get; set; }
-        public bool SouldStopCapture { get; set; }
-
 
         public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
 
@@ -44,22 +43,22 @@ namespace PcapProcessor
         public Sniffer()
         {
             Filter = string.Empty;
-            SouldStopCapture = false;
             BuildTcpSessions = false;
             BuildUdpSessions = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
+            _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder = new UdpStreamBuilder();
             _packets = new Queue<PacketDotNet.Packet>();
             _packetsQueueLock = new object();
+            _cts = new CancellationTokenSource();
         }
 
-        public void StartSniffing()
+        public void StartSniffing(CancellationToken ct)
         {
-            this.SouldStopCapture = false;
-            _tcpSessionsBuilder.Clear();
-            _tcpSessionsBuilder.IsLiveCapture = true;
+            var readTimeoutMilliseconds = 1000;
             _udpStreamBuilder.Clear();
-
+            _tcpSessionsBuilder.Clear();
+            _packets.Clear();
             
             var availiableDevices = CaptureDeviceList.Instance;
 
@@ -69,7 +68,6 @@ namespace PcapProcessor
             }
 
             ICaptureDevice selectedDevice = availiableDevices[AvailiableDevicesNames.IndexOf(SelectedInterface)];
-            int readTimeoutMilliseconds = 1000;
 
             if (selectedDevice is NpcapDevice)
             {
@@ -111,7 +109,7 @@ namespace PcapProcessor
             selectedDevice.StartCapture();
 
             // Wait for sniffing to be stoped by user.
-            WaitForStopSniffingSignal();
+            WaitForStopSniffingSignal(ct);
 
             // Stop the capturing process.
             selectedDevice.StopCapture();
@@ -134,28 +132,31 @@ namespace PcapProcessor
             }));
             */
 
-            SniffingStoped?.Invoke(this, new EventArgs());
+            // SniffingStoped?.Invoke(this, new EventArgs());
         }
 
         private void StartPacketProcessingThread()
         {
-            _packetProcessingThread = new Thread(ProcessPacketsQueue) { Name = "Packets Processing Thread", IsBackground = true };
-            _packetProcessingThread.Start();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            _packetProcessingTask = new Task(() => ProcessPacketsQueue(ct), ct);
+            _packetProcessingTask.Start();
         }
 
         private void StopPacketProcessingThread()
         {
-            _souldStopPacketProcessingThread = true;
-            _packetProcessingThread.Join();
+            _cts.Cancel();
+            _packetProcessingTask.Wait();
         }
 
-        private void WaitForStopSniffingSignal()
+        private void WaitForStopSniffingSignal(CancellationToken ct)
         {
             while (true)
             {
                 Thread.Sleep(1000);
 
-                if (this.SouldStopCapture)
+                if (ct.IsCancellationRequested)
                 {
                     break;
                 }
@@ -244,10 +245,8 @@ namespace PcapProcessor
             }
         }
 
-        private void ProcessPacketsQueue()
+        private void ProcessPacketsQueue(CancellationToken cancellationToken)
         {
-            _souldStopPacketProcessingThread = false;
-
             while (true)
             {
                 lock (_packetsQueueLock)
@@ -256,9 +255,9 @@ namespace PcapProcessor
                     {
                         ProcessPacket(_packets.Dequeue());
 
-                        if (_souldStopPacketProcessingThread)
+                        if (cancellationToken.IsCancellationRequested) 
                         {
-                            break;
+                            return;
                         }
                     }
                 }
