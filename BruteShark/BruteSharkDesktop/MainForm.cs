@@ -349,7 +349,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void MessageOnBuildSessionsConfigurationChanged()
         {
-            MessageBox.Show(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+            ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
 This means a faster processing but also that some obects may not be extracted.");
         }
 
@@ -373,13 +373,27 @@ This means a faster processing but also that some obects may not be extracted.")
             await Task.Run(() => _sniffer.StartSniffing(ct));
 
             // We wait here until the sniffing will be stoped (by the stop button).
-            MessageBox.Show("Capture Stoped");
+            ShowInfoMessageBox("Capture Stoped");
         }
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
             _cts.Cancel();
         }
+
+        private void ShowInfoMessageBox(string text)
+        {
+            // NOTE: Info message box is also set up at front of the form, it solves the 
+            // problem of message box that is hidden under the form.
+            MessageBox.Show(
+                text: text, 
+                caption: "Info", 
+                buttons: MessageBoxButtons.OK, 
+                icon: MessageBoxIcon.Information,
+                defaultButton: MessageBoxDefaultButton.Button1, 
+                options: MessageBoxOptions.DefaultDesktopOnly);
+        }
+
     }
 }
     
