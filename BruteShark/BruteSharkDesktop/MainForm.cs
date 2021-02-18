@@ -361,7 +361,7 @@ This means a faster processing but also that some obects may not be extracted.")
                 return;
             }
 
-            _sniffer.SelectedInterface = this.interfacesComboBox.SelectedItem.ToString();
+            _sniffer.SelectedDeviceName = this.interfacesComboBox.SelectedItem.ToString();
             StartLiveCaptureAsync();
         }
 
@@ -370,11 +370,9 @@ This means a faster processing but also that some obects may not be extracted.")
             _cts.Dispose();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
-            await Task.Run( () => _sniffer.StartSniffing(ct) ).ConfigureAwait(false);
+            await Task.Run(() => _sniffer.StartSniffing(ct));
 
-            // TODO: at this point we still at the task thread context which cause any click to get the UI hanging..
-            //       need to return the main thread (UI) SynchronizationContext !!
-
+            // We wait here until the sniffing will be stoped (by the stop button).
             MessageBox.Show("Capture Stoped");
         }
 

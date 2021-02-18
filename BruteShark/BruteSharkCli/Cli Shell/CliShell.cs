@@ -107,7 +107,7 @@ namespace BruteSharkCli
 
         private void initLiveCapture(string networkDevice)
         {
-            _sniffer.SelectedInterface = networkDevice;
+            _sniffer.SelectedDeviceName = networkDevice;
             liveCapture = true;
         }
 
@@ -212,7 +212,7 @@ namespace BruteSharkCli
             {
                 try
                 {
-                Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_sniffer.SelectedInterface} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_sniffer.SelectedInterface} device- Press any key to stop");
+                Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device- Press any key to stop");
                 _sniffer.StartSniffing();
                 Console.SetCursorPosition(0, Console.CursorTop + 6);
                 }

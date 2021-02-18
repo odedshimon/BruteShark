@@ -61,7 +61,7 @@ namespace BruteSharkCli
                 SetupRun();
                 if (_cliFlags.CaptureDevice != null)
                 {
-                    _sniffer.SelectedInterface = _cliFlags.CaptureDevice;
+                    _sniffer.SelectedDeviceName = _cliFlags.CaptureDevice;
                     if (_cliFlags.PromisciousMode)
                     {
                         _sniffer.PromisciousMode = true; 

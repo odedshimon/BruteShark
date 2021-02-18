@@ -13,6 +13,8 @@ namespace PcapProcessor
 {
     public class Sniffer
     {
+        private const int ReadTimeoutMilliseconds = 1000;
+
         public delegate void UdpPacketArivedEventHandler(object sender, UdpPacketArivedEventArgs e);
         public event UdpPacketArivedEventHandler UdpPacketArived;
         public delegate void UdpSessionArrivedEventHandler(object sender, UdpSessionArrivedEventArgs e);
@@ -22,11 +24,10 @@ namespace PcapProcessor
         public delegate void TcpSessionArivedEventHandler(object sender, TcpSessionArivedEventArgs e);
         public event TcpSessionArivedEventHandler TcpSessionArrived;
 
+        private object _packetsQueueLock;
         private TcpSessionsBuilder _tcpSessionsBuilder;
         private UdpStreamBuilder _udpStreamBuilder;
-
-        private Queue<PacketDotNet.Packet> _packets { get; set; }
-        private object _packetsQueueLock { get; set; }
+        private Queue<PacketDotNet.Packet> _packets;
         private Task _packetProcessingTask;
         private CancellationTokenSource _cts;
 
@@ -34,7 +35,7 @@ namespace PcapProcessor
         public bool BuildUdpSessions { get; set; }
         public bool PromisciousMode { get; set; }
         public string Filter { get; set; }
-        public string SelectedInterface { get; set; }
+        public string SelectedDeviceName { get; set; }
 
         public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
 
@@ -54,26 +55,15 @@ namespace PcapProcessor
 
         public void StartSniffing(CancellationToken ct)
         {
-            var readTimeoutMilliseconds = 1000;
-            _udpStreamBuilder.Clear();
-            _tcpSessionsBuilder.Clear();
-            _packets.Clear();
-            
-            var availiableDevices = CaptureDeviceList.Instance;
-
-            if (!AvailiableDevicesNames.Contains(SelectedInterface))
-            {
-                throw new Exception($"No such device {SelectedInterface}");
-            }
-
-            ICaptureDevice selectedDevice = availiableDevices[AvailiableDevicesNames.IndexOf(SelectedInterface)];
+            ClearOldSniffingsData();
+            ICaptureDevice selectedDevice = GetSelectedDevice();
 
             if (selectedDevice is NpcapDevice)
             {
-                var nPcap = selectedDevice as NpcapDevice;
+                var nPcap = selectedDevice as SharpPcap.Npcap.NpcapDevice;
                 if (PromisciousMode)
                 {
-                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, readTimeoutMilliseconds);
+                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, ReadTimeoutMilliseconds);
                 }
                 else
                 {
@@ -82,18 +72,18 @@ namespace PcapProcessor
 
                 nPcap.Mode = CaptureMode.Packets;
             }
-            else if (selectedDevice is LibPcapLiveDevice)
+            else if (selectedDevice is SharpPcap.LibPcap.LibPcapLiveDevice)
             {
-                var livePcapDevice = selectedDevice as LibPcapLiveDevice;
+                var livePcapDevice = selectedDevice as SharpPcap.LibPcap.LibPcapLiveDevice;
                 livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
             }
             else
             {
-                throw new InvalidOperationException("Unknown device type of " + SelectedInterface.GetType().ToString());
+                throw new InvalidOperationException("Unknown device type of " + SelectedDeviceName.GetType().ToString());
             }
 
             // Setup capture filter.
-            if (Filter != string.Empty)
+            if (this.Filter != null && this.Filter != string.Empty)
             {
                 selectedDevice.Filter = this.Filter;
             }
@@ -130,6 +120,25 @@ namespace PcapProcessor
                 UdpSession = session
             }));
             */
+        }
+
+        private void ClearOldSniffingsData()
+        {
+            _udpStreamBuilder.Clear();
+            _tcpSessionsBuilder.Clear();
+            _packets.Clear();
+        }
+
+        private SharpPcap.ICaptureDevice GetSelectedDevice()
+        {
+            var availiableDevices = CaptureDeviceList.Instance;
+
+            if (!AvailiableDevicesNames.Contains(this.SelectedDeviceName))
+            {
+                throw new Exception($"No such device {SelectedDeviceName}");
+            }
+
+            return availiableDevices[AvailiableDevicesNames.IndexOf(this.SelectedDeviceName)];
         }
 
         private void StartPacketProcessingThread()
