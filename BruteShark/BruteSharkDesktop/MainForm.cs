@@ -322,12 +322,14 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             if (buildTcpSessionsCheckBox.CheckState == CheckState.Checked)
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: ON";
-                this._processor.BuildTcpSessions = true;
+                _processor.BuildTcpSessions = true;
+                _sniffer.BuildTcpSessions = true;
             }
             else if (buildTcpSessionsCheckBox.CheckState == CheckState.Unchecked)
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
-                this._processor.BuildTcpSessions = false;
+                _processor.BuildTcpSessions = false;
+                _sniffer.BuildTcpSessions = false;
                 MessageOnBuildSessionsConfigurationChanged();
             }
         }
@@ -394,6 +396,17 @@ This means a faster processing but also that some obects may not be extracted.")
                 options: MessageBoxOptions.DefaultDesktopOnly);
         }
 
+        private void promiscuousCheckBox_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (promiscuousCheckBox.CheckState == CheckState.Checked)
+            {
+                _sniffer.PromisciousMode = true;
+            }
+            else if (promiscuousCheckBox.CheckState == CheckState.Unchecked)
+            {
+                _sniffer.PromisciousMode = false;
+            }
+        }
     }
 }
     

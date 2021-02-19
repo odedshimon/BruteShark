@@ -34,7 +34,7 @@
             treeNode1,
             treeNode2});
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Network Map");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Tcp Sessions");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Sessions");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DNS");
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
             treeNode4,
@@ -65,6 +65,7 @@
             this.modulesSplitContainer = new System.Windows.Forms.SplitContainer();
             this.modulesTreeView = new System.Windows.Forms.TreeView();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.promiscuousCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
             this.mainSplitContainer.Panel2.SuspendLayout();
@@ -109,6 +110,7 @@
             // 
             // liveCaptureGroupBox
             // 
+            this.liveCaptureGroupBox.Controls.Add(this.promiscuousCheckBox);
             this.liveCaptureGroupBox.Controls.Add(this.stopCaptureButton);
             this.liveCaptureGroupBox.Controls.Add(this.interfacesComboBox);
             this.liveCaptureGroupBox.Controls.Add(this.liveCaptureButton);
@@ -312,7 +314,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 458;
+            this.secondaryLowerSplitContainer.SplitterDistance = 456;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -327,7 +329,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 458);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 456);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -349,7 +351,7 @@
             treeNode4.Name = "NetworkMapNode";
             treeNode4.Text = "Network Map";
             treeNode5.Name = "SessionsNode";
-            treeNode5.Text = "Tcp Sessions";
+            treeNode5.Text = "Sessions";
             treeNode6.Name = "DnsResponsesNode";
             treeNode6.Text = "DNS";
             treeNode7.Name = "NetworkNode";
@@ -362,18 +364,29 @@
             treeNode3,
             treeNode7,
             treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 458);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 456);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
             // progressBar
             // 
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(0, -19);
+            this.progressBar.Location = new System.Drawing.Point(0, -17);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1463, 53);
             this.progressBar.TabIndex = 0;
+            // 
+            // promiscuousCheckBox
+            // 
+            this.promiscuousCheckBox.AutoSize = true;
+            this.promiscuousCheckBox.Location = new System.Drawing.Point(11, 109);
+            this.promiscuousCheckBox.Name = "promiscuousCheckBox";
+            this.promiscuousCheckBox.Size = new System.Drawing.Size(129, 19);
+            this.promiscuousCheckBox.TabIndex = 2;
+            this.promiscuousCheckBox.Text = "Promiscuous Mode";
+            this.promiscuousCheckBox.UseVisualStyleBackColor = true;
+            this.promiscuousCheckBox.CheckStateChanged += new System.EventHandler(this.promiscuousCheckBox_CheckStateChanged);
             // 
             // MainForm
             // 
@@ -389,6 +402,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);
             this.liveCaptureGroupBox.ResumeLayout(false);
+            this.liveCaptureGroupBox.PerformLayout();
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.filesAnalyzingGroupBox.ResumeLayout(false);
@@ -428,6 +442,7 @@
         private System.Windows.Forms.Button liveCaptureButton;
         private System.Windows.Forms.ComboBox interfacesComboBox;
         private System.Windows.Forms.Button stopCaptureButton;
+        private System.Windows.Forms.CheckBox promiscuousCheckBox;
     }
 }
 

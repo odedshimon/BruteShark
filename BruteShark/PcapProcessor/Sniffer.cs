@@ -42,9 +42,10 @@ namespace PcapProcessor
 
         public Sniffer()
         {
-            Filter = string.Empty;
-            BuildTcpSessions = false;
-            BuildUdpSessions = false;
+            this.Filter = string.Empty;
+            this.BuildTcpSessions = true;
+            this.BuildUdpSessions = true;
+            this.PromisciousMode = false;
             _tcpSessionsBuilder = new TcpSessionsBuilder();
             _tcpSessionsBuilder.IsLiveCapture = true;
             _udpStreamBuilder = new UdpStreamBuilder();
