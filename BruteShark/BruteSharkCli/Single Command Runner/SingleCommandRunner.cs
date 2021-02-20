@@ -18,6 +18,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private List<VoipCallPresentation> _voipCalls;
 
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
@@ -25,7 +26,8 @@ namespace BruteSharkCli
         private readonly Dictionary<string, string> CliModulesNamesToAnalyzerNames = new Dictionary<string, string> {
             { "FileExtracting" , "File Extracting"},
             { "NetworkMap", "Network Map" },
-            { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"}
+            { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"},
+            { "Voip" ,"Voip Calls"}
         };
 
         public SingleCommandRunner(Analyzer analyzer, Processor processor, string[] args)
@@ -38,6 +40,7 @@ namespace BruteSharkCli
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
+            _voipCalls = new List<VoipCallPresentation>();
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
@@ -219,6 +222,13 @@ namespace BruteSharkCli
             {
                 var networkConnection = e.ParsedItem as NetworkConnection;
                 _connections.Add(networkConnection);
+            }
+            else if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = e.ParsedItem as VoipCall;
+                VoipCallPresentation callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(voipCall);
+                PrintDetectedItem(callPresentation);
+                _voipCalls.Add(callPresentation);
             }
         }
 

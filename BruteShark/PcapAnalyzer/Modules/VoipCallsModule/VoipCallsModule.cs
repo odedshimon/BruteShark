@@ -6,9 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-
 namespace PcapAnalyzer
-
 {
     class VoipCallsModule : IModule
     {
@@ -45,14 +43,10 @@ namespace PcapAnalyzer
                 SIPResponse sipResponse = tryDecodeSipResponse(udpPacket);
                 HandleResponse(sipResponse, udpPacket.SourceIp, udpPacket.DestinationIp);
             }
-
         }
-
         public void Analyze(TcpPacket tcpPacket) {}
-
         public void Analyze(TcpSession tcpSession) {}
         public void Analyze(UdpStream udpStream) {}
-
         private SIPRequest tryDecodeSipRequest(UdpPacket udpPacket)
         {
             return SIPRequest.ParseSIPRequest(Encoding.UTF8.GetString(udpPacket.Data));
@@ -63,7 +57,7 @@ namespace PcapAnalyzer
         }
         private void HandleInitiationRequest(SIPRequest sipRequest, byte[] rawData, string sourceIP, string destinationIP)
         {
-            var call = createVoipCallFromRequest(sipRequest, sourceIP, destinationIP);
+            var call = createVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
 
             // check if the voip calls set already contains this call
             if (VoipCalls.Contains(call))
@@ -74,21 +68,14 @@ namespace PcapAnalyzer
                         getCall(call).CallState = CallState.InCall;
                         break;
                     case SIPMethodsEnum.CANCEL:
+                        // the call is being cancelled and finished
                         getCall(call).CallState = CallState.Cancelled;
-                        this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                        {
-                            ParsedItem = getCall(call)
-                        });
-                        VoipCalls.Remove(call);
+                        handleFinishedCall(call);
                         break;
                     // the call is being completed propertly
                     case SIPMethodsEnum.BYE:
                         getCall(call).CallState = CallState.Completed;
-                        this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                        {
-                            ParsedItem = getCall(call)
-                        });
-                        VoipCalls.Remove(call);
+                        handleFinishedCall(call);
                         break;
                 }
             }
@@ -103,7 +90,7 @@ namespace PcapAnalyzer
         }
         private void HandleDuringCallRequest(SIPRequest sipRequest, byte[] rawData, string sourceIP, string destinationIP)
         {
-            var call = createVoipCallFromRequest(sipRequest, sourceIP, destinationIP);
+            var call = createVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
            
             // check if the voip calls set already contains this call
             if (VoipCalls.Contains(call))
@@ -115,19 +102,13 @@ namespace PcapAnalyzer
                         break;
                     case SIPMethodsEnum.CANCEL:
                         getCall(call).CallState = CallState.Cancelled;
-                        this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                        {
-                            ParsedItem = getCall(call)
-                        });
-                        VoipCalls.Remove(call);
+                        // call is being cancelled and finished
+                        handleFinishedCall(call);
                         break;
                     case SIPMethodsEnum.BYE:
+                        // call is being cancelled and finished
                         getCall(call).CallState = CallState.Completed;
-                        this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                        {
-                            ParsedItem = getCall(call)
-                        });
-                        VoipCalls.Remove(call);
+                        handleFinishedCall(call);
                         break;
                 }
             }
@@ -135,13 +116,7 @@ namespace PcapAnalyzer
             
         private void HandleResponse(SIPResponse response, string sourceIP, string destinationIP)
         {
-            var call = new VoipCall();
-            call.From = response.Header.From.FromURI.User;
-            call.To = response.Header.To.ToURI.User;
-            call.ToHost = response.Header.To.ToURI.Host;
-            call.FromHost = response.Header.From.FromURI.Host;
-            call.FromIP = sourceIP;
-            call.ToIP = destinationIP;
+            VoipCall call = createVoipCallFromSipMessage(response, sourceIP, destinationIP);
 
             // check if the voip calls set already contains this call
             if (VoipCalls.Contains(call))
@@ -159,11 +134,7 @@ namespace PcapAnalyzer
                 else if(response.StatusCode >= 400 && response.StatusCode < 500)
                 {
                     getCall(call).CallState = CallState.Rejected;
-                    this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                    {
-                        ParsedItem = getCall(call)
-                    });
-                    VoipCalls.Remove(call);
+                    handleFinishedCall(call);
                 }
                     
             }
@@ -181,13 +152,13 @@ namespace PcapAnalyzer
                 }
             }
         }
-        private VoipCall createVoipCallFromRequest(SIPRequest sipRequest, string sourceIP, string destinationIP)
+        private VoipCall createVoipCallFromSipMessage(SIPMessageBase sipMessage, string sourceIP, string destinationIP)
         {
             var call = new VoipCall();
-            call.From = sipRequest.Header.From.FromURI.User;
-            call.To = sipRequest.Header.To.ToURI.User;
-            call.ToHost = sipRequest.Header.To.ToURI.Host;
-            call.FromHost = sipRequest.Header.From.FromURI.Host;
+            call.From = sipMessage.Header.From.FromURI.User;
+            call.To = sipMessage.Header.To.ToURI.User;
+            call.ToHost = sipMessage.Header.To.ToURI.Host;
+            call.FromHost = sipMessage.Header.From.FromURI.Host;
             call.FromIP = sourceIP;
             call.ToIP = destinationIP;
             return call;
@@ -198,5 +169,16 @@ namespace PcapAnalyzer
             return VoipCalls.Where(c => c.Equals(call)).First();
         }
         
+        private void handleFinishedCall(VoipCall call)
+        {
+            if (VoipCalls.Contains(call))
+            {
+                this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                {
+                    ParsedItem = getCall(call)
+                });
+                VoipCalls.Remove(call);
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
-        private List<PcapAnalyzer.VoipCall> _voipCalls;
+        private List<VoipCallPresentation> _voipCalls;
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
@@ -53,7 +53,7 @@ namespace BruteSharkCli
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
-            _voipCalls = new List<VoipCall>();
+            _voipCalls = new List<VoipCallPresentation>();
             
             this._commands = new List<CliShellCommand>();
             AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
@@ -256,7 +256,7 @@ namespace BruteSharkCli
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
                 var voipCall = e.ParsedItem as VoipCall;
-                _voipCalls.Add(voipCall);
+                _voipCalls.Add(VoipCallPresentation.FromAnalyzerVoipCall(voipCall));
             }
 
                 UpdateAnalyzingStatus();
