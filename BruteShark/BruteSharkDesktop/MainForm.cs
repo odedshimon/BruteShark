@@ -369,6 +369,18 @@ This means a faster processing but also that some obects may not be extracted.")
 
         private async void StartLiveCaptureAsync()
         {
+            if (filterTextBox.Text != string.Empty && filterTextBox.Text != "<INSERT BPF FILTER HERE>")
+            {
+                if (Sniffer.CheckCaptureFilter(filterTextBox.Text))
+                {
+                    _sniffer.Filter = filterTextBox.Text;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid BPF filter! please fix filter");
+                }
+            }
+
             _cts.Dispose();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
@@ -407,6 +419,19 @@ This means a faster processing but also that some obects may not be extracted.")
                 _sniffer.PromisciousMode = false;
             }
         }
+
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (Sniffer.CheckCaptureFilter(filterTextBox.Text))
+            {
+                filterTextBox.BackColor = Color.LightBlue;
+            }
+            else
+            {
+                filterTextBox.BackColor = Color.LightCoral;
+            }
+        }
+
     }
 }
     

@@ -84,10 +84,7 @@ namespace PcapProcessor
             }
 
             // Setup capture filter.
-            if (this.Filter != null && this.Filter != string.Empty)
-            {
-                selectedDevice.Filter = this.Filter;
-            }
+            SetupBpfFilter(selectedDevice);
 
             // Register our handler function to the 'packet arrival' event.
             selectedDevice.OnPacketArrival += InsertPacketToQueue;
@@ -110,7 +107,27 @@ namespace PcapProcessor
             // Close the pcap device
             selectedDevice.Close();
 
-            /*
+            // Raise events for unfinished sessions.
+            HandleUnfinishedSessions();
+        }
+
+        private void SetupBpfFilter(ICaptureDevice selectedDevice)
+        {
+            if (this.Filter != null && this.Filter != string.Empty)
+            {
+                if (CheckCaptureFilter(this.Filter))
+                {
+                    selectedDevice.Filter = this.Filter;
+                }
+                else
+                {
+                    throw new Exception("Invalid BPF filter");
+                }
+            }
+        }
+
+        private void HandleUnfinishedSessions()
+        {
             _tcpSessionsBuilder.Sessions.AsParallel().ForAll(session => TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
             {
                 TcpSession = session
@@ -120,7 +137,6 @@ namespace PcapProcessor
             {
                 UdpSession = session
             }));
-            */
         }
 
         private void ClearOldSniffingsData()

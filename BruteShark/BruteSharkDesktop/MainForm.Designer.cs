@@ -28,23 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Passwords");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Hashes");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Network Map");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Sessions");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DNS");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
-            treeNode4,
-            treeNode5,
-            treeNode6});
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Files");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
-            treeNode8});
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Passwords");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Hashes");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Credentials", new System.Windows.Forms.TreeNode[] {
+            treeNode10,
+            treeNode11});
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Network Map");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Sessions");
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("DNS");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Network", new System.Windows.Forms.TreeNode[] {
+            treeNode13,
+            treeNode14,
+            treeNode15});
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Files");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Data", new System.Windows.Forms.TreeNode[] {
+            treeNode17});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.liveCaptureGroupBox = new System.Windows.Forms.GroupBox();
+            this.promiscuousCheckBox = new System.Windows.Forms.CheckBox();
             this.stopCaptureButton = new System.Windows.Forms.Button();
             this.interfacesComboBox = new System.Windows.Forms.ComboBox();
             this.liveCaptureButton = new System.Windows.Forms.Button();
@@ -65,7 +66,7 @@
             this.modulesSplitContainer = new System.Windows.Forms.SplitContainer();
             this.modulesTreeView = new System.Windows.Forms.TreeView();
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.promiscuousCheckBox = new System.Windows.Forms.CheckBox();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
             this.mainSplitContainer.Panel2.SuspendLayout();
@@ -110,6 +111,7 @@
             // 
             // liveCaptureGroupBox
             // 
+            this.liveCaptureGroupBox.Controls.Add(this.filterTextBox);
             this.liveCaptureGroupBox.Controls.Add(this.promiscuousCheckBox);
             this.liveCaptureGroupBox.Controls.Add(this.stopCaptureButton);
             this.liveCaptureGroupBox.Controls.Add(this.interfacesComboBox);
@@ -120,6 +122,17 @@
             this.liveCaptureGroupBox.TabIndex = 2;
             this.liveCaptureGroupBox.TabStop = false;
             this.liveCaptureGroupBox.Text = "Live Capture";
+            // 
+            // promiscuousCheckBox
+            // 
+            this.promiscuousCheckBox.AutoSize = true;
+            this.promiscuousCheckBox.Location = new System.Drawing.Point(6, 136);
+            this.promiscuousCheckBox.Name = "promiscuousCheckBox";
+            this.promiscuousCheckBox.Size = new System.Drawing.Size(129, 19);
+            this.promiscuousCheckBox.TabIndex = 2;
+            this.promiscuousCheckBox.Text = "Promiscuous Mode";
+            this.promiscuousCheckBox.UseVisualStyleBackColor = true;
+            this.promiscuousCheckBox.CheckStateChanged += new System.EventHandler(this.promiscuousCheckBox_CheckStateChanged);
             // 
             // stopCaptureButton
             // 
@@ -314,7 +327,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 456;
+            this.secondaryLowerSplitContainer.SplitterDistance = 455;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -329,7 +342,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 456);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 455);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -342,51 +355,49 @@
             this.modulesTreeView.Location = new System.Drawing.Point(0, 0);
             this.modulesTreeView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.modulesTreeView.Name = "modulesTreeView";
-            treeNode1.Name = "PasswordsNode";
-            treeNode1.Text = "Passwords";
-            treeNode2.Name = "HashesNode";
-            treeNode2.Text = "Hashes";
-            treeNode3.Name = "CredentialsNode";
-            treeNode3.Text = "Credentials";
-            treeNode4.Name = "NetworkMapNode";
-            treeNode4.Text = "Network Map";
-            treeNode5.Name = "SessionsNode";
-            treeNode5.Text = "Sessions";
-            treeNode6.Name = "DnsResponsesNode";
-            treeNode6.Text = "DNS";
-            treeNode7.Name = "NetworkNode";
-            treeNode7.Text = "Network";
-            treeNode8.Name = "FilesNode";
-            treeNode8.Text = "Files";
-            treeNode9.Name = "DataNode";
-            treeNode9.Text = "Data";
+            treeNode10.Name = "PasswordsNode";
+            treeNode10.Text = "Passwords";
+            treeNode11.Name = "HashesNode";
+            treeNode11.Text = "Hashes";
+            treeNode12.Name = "CredentialsNode";
+            treeNode12.Text = "Credentials";
+            treeNode13.Name = "NetworkMapNode";
+            treeNode13.Text = "Network Map";
+            treeNode14.Name = "SessionsNode";
+            treeNode14.Text = "Sessions";
+            treeNode15.Name = "DnsResponsesNode";
+            treeNode15.Text = "DNS";
+            treeNode16.Name = "NetworkNode";
+            treeNode16.Text = "Network";
+            treeNode17.Name = "FilesNode";
+            treeNode17.Text = "Files";
+            treeNode18.Name = "DataNode";
+            treeNode18.Text = "Data";
             this.modulesTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode7,
-            treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 456);
+            treeNode12,
+            treeNode16,
+            treeNode18});
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 455);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
             // progressBar
             // 
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(0, -17);
+            this.progressBar.Location = new System.Drawing.Point(0, -16);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(1463, 53);
             this.progressBar.TabIndex = 0;
             // 
-            // promiscuousCheckBox
+            // filterTextBox
             // 
-            this.promiscuousCheckBox.AutoSize = true;
-            this.promiscuousCheckBox.Location = new System.Drawing.Point(11, 109);
-            this.promiscuousCheckBox.Name = "promiscuousCheckBox";
-            this.promiscuousCheckBox.Size = new System.Drawing.Size(129, 19);
-            this.promiscuousCheckBox.TabIndex = 2;
-            this.promiscuousCheckBox.Text = "Promiscuous Mode";
-            this.promiscuousCheckBox.UseVisualStyleBackColor = true;
-            this.promiscuousCheckBox.CheckStateChanged += new System.EventHandler(this.promiscuousCheckBox_CheckStateChanged);
+            this.filterTextBox.Location = new System.Drawing.Point(6, 107);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(182, 23);
+            this.filterTextBox.TabIndex = 3;
+            this.filterTextBox.Text = "<INSERT BPF FILTER HERE>";
+            this.filterTextBox.TextChanged += new System.EventHandler(this.filterTextBox_TextChanged);
             // 
             // MainForm
             // 
@@ -443,6 +454,7 @@
         private System.Windows.Forms.ComboBox interfacesComboBox;
         private System.Windows.Forms.Button stopCaptureButton;
         private System.Windows.Forms.CheckBox promiscuousCheckBox;
+        private System.Windows.Forms.TextBox filterTextBox;
     }
 }
 
