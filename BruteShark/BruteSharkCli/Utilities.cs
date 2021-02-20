@@ -36,8 +36,8 @@ namespace BruteSharkCli
 
                     values[i] = cellData;
                 }
-
-                dataTable.Rows.Add(values);
+                
+                dataTable.Rows.Add(values);                 
             }
 
             return dataTable;
