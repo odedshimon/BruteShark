@@ -22,6 +22,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private List<PcapAnalyzer.VoipCall> _voipCalls;
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
@@ -52,6 +53,7 @@ namespace BruteSharkCli
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _voipCalls = new List<VoipCall>();
             
             this._commands = new List<CliShellCommand>();
             AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
@@ -62,6 +64,7 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
+            AddCommand(new CliShellCommand("show-voip-calls", p => PrintVoipCalls(), "Prints the detected VoIP calls"));
 
             // Add the help command
             this.AddCommand(new CliShellCommand(
@@ -76,6 +79,11 @@ namespace BruteSharkCli
                  "Exit CLI"));
 
             LoadModules(_analyzer.AvailableModulesNames);
+        }
+
+        private void PrintVoipCalls()
+        {
+            this._voipCalls.ToDataTable().Print();
         }
 
         private void LoadModules(List<string> modules)
@@ -245,8 +253,13 @@ namespace BruteSharkCli
                 var networkConnection = e.ParsedItem as NetworkConnection;
                 _connections.Add(networkConnection);
             }
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = e.ParsedItem as VoipCall;
+                _voipCalls.Add(voipCall);
+            }
 
-            UpdateAnalyzingStatus();
+                UpdateAnalyzingStatus();
         }
        
     } 
