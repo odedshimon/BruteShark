@@ -6,6 +6,7 @@ using PcapAnalyzer;
 using System.IO;
 using System.Linq;
 using CommandLine;
+using CommonUi;
 
 namespace BruteSharkCli
 {
@@ -18,7 +19,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
-        private List<VoipCallPresentation> _voipCalls;
+        private HashSet<VoipCallPresentation> _voipCalls;
 
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
@@ -40,7 +41,7 @@ namespace BruteSharkCli
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
-            _voipCalls = new List<VoipCallPresentation>();
+            _voipCalls = new HashSet<VoipCallPresentation>();
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
@@ -175,6 +176,10 @@ namespace BruteSharkCli
                     {
                         var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
                         Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
+                    }
+                    else if(moduleName.Contains("Voip"))
+                    {
+
                     }
                     // Todo - add exporting of dns module results
                 }

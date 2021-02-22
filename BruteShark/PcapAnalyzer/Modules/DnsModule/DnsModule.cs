@@ -14,6 +14,7 @@ namespace PcapAnalyzer
         public string Name => "DNS";
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
         private HashSet<DnsNameMapping> _mappings;
 

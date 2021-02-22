@@ -9,6 +9,7 @@ namespace PcapAnalyzer
         public string Name => "Network Map";
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
         private HashSet<NetworkConnection> _connections;
 

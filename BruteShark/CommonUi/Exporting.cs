@@ -49,6 +49,20 @@ namespace CommonUi
 
             return extractedFilesDir;
         }
+        public static string ExportVoipCalls(string dirPath, HashSet<VoipCallPresentation> voipCalls )
+        {
+            var VoipCallsDir = Path.Combine(dirPath, "Voip Calls");
+            foreach(var call in voipCalls)
+            {
+                if (call.GetRTPStream().Length > 0)
+                {
+                    var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call}.media"));
+                    File.WriteAllBytes(filepath, call.GetRTPStream());
+                }
+            }
+
+            return VoipCallsDir;
+        }
 
     }
 }

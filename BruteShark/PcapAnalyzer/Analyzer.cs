@@ -10,6 +10,7 @@ namespace PcapAnalyzer
         private List<IModule> _availbleModules;
 
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
         public List<string> AvailableModulesNames => _availbleModules.Select(m => m.Name).ToList();
         public List<string> LoadedModulesNames => _loadedModules.Select(m => m.Name).ToList();
@@ -55,6 +56,7 @@ namespace PcapAnalyzer
             foreach(var m in _availbleModules)
             {
                 m.ParsedItemDetected += (s, e) => this.ParsedItemDetected(s, e);
+                m.UpdatedItemProprertyDetected += (s, e) => this.UpdatedItemProprertyDetected(s, e);
             }
             
         }

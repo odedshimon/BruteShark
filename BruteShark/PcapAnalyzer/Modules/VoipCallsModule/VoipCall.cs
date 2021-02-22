@@ -25,6 +25,7 @@ namespace PcapAnalyzer
         public string FromIP { get; set; }
         public int RTPPort { get; set; }
         public CallState CallState { get; set; }
+        public Guid callGuid { get; set; }
         internal List<string> RTPMediaTypes { get; set; }
         private List<RTPPacket> _rtpPackets { get; set; }
         internal VoipCall()

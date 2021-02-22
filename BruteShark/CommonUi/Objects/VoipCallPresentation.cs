@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using PcapAnalyzer;
 
-namespace BruteSharkCli
+
+namespace CommonUi
 {
-    internal class VoipCallPresentation
+    public class VoipCallPresentation
     {
         public string To { get; set; }
         public string ToHost { get; set; }
@@ -14,7 +15,10 @@ namespace BruteSharkCli
         public string FromHost { get; set; }
         public string FromIP { get; set; }
         public int RTPPort { get; set; }
-        internal string CallState { get; set; }
+        public string CallState { get; set; }
+        internal Guid callGuid;
+
+        private byte[] _rtpStream { get; set; }
 
         public VoipCallPresentation() {}
         public static VoipCallPresentation FromAnalyzerVoipCall(VoipCall call)
@@ -27,13 +31,28 @@ namespace BruteSharkCli
             _call.ToIP = call.FromIP;
             _call.FromIP = call.FromIP;
             _call.RTPPort = call.RTPPort;
+            _call.callGuid = call.callGuid;
             _call.CallState = call.CallState.ToString();
+            _call._rtpStream = call.RTPStream();
             return _call;
         }
 
         public override string ToString()
         {
-            return $"{From}@{FromHost}({FromIP}) -> {To}@{ToHost}({ToIP}) | RTP port: {RTPPort}| state: {CallState} ";
+            return $"{From}@{FromHost}({FromIP})->{To}@{ToHost}({ToIP}) - RTP port: {RTPPort} - state: {CallState} ";
+        }
+        public override bool Equals(object obj)
+        {
+            var other = obj as VoipCallPresentation;
+            return this.callGuid.Equals(other.callGuid);
+        }
+        public override int GetHashCode()
+        {
+            return callGuid.GetHashCode();
+        }
+        public byte[] GetRTPStream()
+        {
+            return this._rtpStream;
         }
     }
 }

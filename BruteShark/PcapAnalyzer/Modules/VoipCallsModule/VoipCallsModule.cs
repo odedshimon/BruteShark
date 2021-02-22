@@ -12,6 +12,8 @@ namespace PcapAnalyzer
     {
         public string Name => "Voip Calls";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
+
         public HashSet<VoipCall> VoipCalls = new HashSet<VoipCall>();
         public void Analyze(UdpPacket udpPacket) 
         {
@@ -84,7 +86,12 @@ namespace PcapAnalyzer
                 if (sipRequest.Method == SIPMethodsEnum.INVITE)
                 {
                     call.CallState = CallState.Invited;
+                    call.callGuid = Guid.NewGuid();                    
                     VoipCalls.Add(call);
+                    this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
+                    {
+                        ParsedItem = getCall(call)
+                    });
                 }
             }
         }
@@ -99,15 +106,18 @@ namespace PcapAnalyzer
                 {
                     case SIPMethodsEnum.ACK:
                         getCall(call).CallState = CallState.InCall;
+                        handleCallStateUpdate(call, CallState.InCall);
                         break;
                     case SIPMethodsEnum.CANCEL:
                         getCall(call).CallState = CallState.Cancelled;
+                        handleCallStateUpdate(call, CallState.Cancelled);
                         // call is being cancelled and finished
                         handleFinishedCall(call);
                         break;
                     case SIPMethodsEnum.BYE:
                         // call is being cancelled and finished
                         getCall(call).CallState = CallState.Completed;
+                        handleCallStateUpdate(call, CallState.Completed);
                         handleFinishedCall(call);
                         break;
                 }
@@ -134,6 +144,7 @@ namespace PcapAnalyzer
                 else if(response.StatusCode >= 400 && response.StatusCode < 500)
                 {
                     getCall(call).CallState = CallState.Rejected;
+                    handleCallStateUpdate(call, CallState.Rejected);
                     handleFinishedCall(call);
                 }
                     
@@ -173,12 +184,17 @@ namespace PcapAnalyzer
         {
             if (VoipCalls.Contains(call))
             {
-                this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
-                {
-                    ParsedItem = getCall(call)
-                });
                 VoipCalls.Remove(call);
             }
+        }
+        private void handleCallStateUpdate(VoipCall call, CallState newState)
+        {
+            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
+            {
+                ParsedItem = getCall(call),
+                PropertyChanged = typeof(VoipCall).GetProperty("CallState"),
+                NewPropertyValue = newState
+            });
         }
     }
 }
