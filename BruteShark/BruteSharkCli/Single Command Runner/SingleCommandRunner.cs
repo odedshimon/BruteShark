@@ -28,7 +28,7 @@ namespace BruteSharkCli
             { "FileExtracting" , "File Extracting"},
             { "NetworkMap", "Network Map" },
             { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"},
-            { "Voip" ,"Voip Calls"}
+            { "Voip" ,"Voip Calls"},
             { "DNS", "DNS"}
 
         };
