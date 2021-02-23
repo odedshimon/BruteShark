@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -63,6 +64,17 @@ namespace CommonUi
             }
 
             return VoipCallsDir;
+        }
+
+        public static string ExportDnsMappings(string dirPath, HashSet<PcapAnalyzer.DnsNameMapping> dnsMappings)
+        {
+            var filePath = GetUniqueFilePath(Path.Combine(dirPath, "BruteShark DNS Mappings.json"));
+
+            File.WriteAllLines(
+                filePath, 
+                dnsMappings.Select(d => d.ToString()));
+            
+            return filePath;
         }
 
     }

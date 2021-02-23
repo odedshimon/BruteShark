@@ -15,13 +15,12 @@ namespace BruteSharkCli
     {
         private SingleCommandFlags _cliFlags;
         private List<string> _files;
-
         private HashSet<PcapAnalyzer.NetworkFile> _extractedFiles;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private HashSet<VoipCallPresentation> _voipCalls;
-
+        private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
@@ -30,6 +29,8 @@ namespace BruteSharkCli
             { "NetworkMap", "Network Map" },
             { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"},
             { "Voip" ,"Voip Calls"}
+            { "DNS", "DNS"}
+
         };
 
         public SingleCommandRunner(Analyzer analyzer, Processor processor, string[] args)
@@ -38,11 +39,13 @@ namespace BruteSharkCli
             _processor = processor;
             _files = new List<string>();
 
-            _hashes = new HashSet<NetworkHash>();
+            _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
             _voipCalls = new HashSet<VoipCallPresentation>();
+            _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
+
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
@@ -164,30 +167,31 @@ namespace BruteSharkCli
         {
             if (_cliFlags.OutputDir != null)
             { 
-                foreach (string moduleName in _cliFlags.Modules)
+                if (_connections.Any())
                 {
-                    if (moduleName.Contains("NetworkMap"))
-                    {
-                        var filePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _connections);
-                        Console.WriteLine($"Successfully exported network map to json file: {filePath}");
-                    }
-                    else if (moduleName.Contains("Credentials"))
-                    {
-                        Utilities.ExportHashes(_cliFlags.OutputDir, _hashes);
-                    }
-                    else if (moduleName.Contains("FileExtracting"))
-                    {
-                        var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
-                        Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
-                    }
-                    else if(moduleName.Contains("Voip"))
-                    {
-                        var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
-                        Console.WriteLine($"Successfully exported voip calss extracted to: {dirPath}");
-                    }
-                    // Todo - add exporting of dns module results
+                    var filePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _connections);
+                    Console.WriteLine($"Successfully exported network map to json file: {filePath}");
                 }
-           }
+                if (_hashes.Any())
+                {
+                    Utilities.ExportHashes(_cliFlags.OutputDir, _hashes);
+                }
+                if (_files.Any())
+                {
+                    var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
+                    Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
+                }
+                if (_dnsMappings.Any())
+                {
+                    var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _dnsMappings);
+                    Console.WriteLine($"Successfully exported DNS mappings to file: {dnsFilePath}");
+                }
+				if(_voipCalls.Any())
+                {
+                   var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
+                   Console.WriteLine($"Successfully exported voip calss extracted to: {dirPath}");
+                }
+            }
 
             Console.WriteLine("[X] Bruteshark finished processing");
         }
@@ -250,6 +254,14 @@ namespace BruteSharkCli
                 VoipCallPresentation callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(voipCall);
                 PrintDetectedItem(callPresentation);
                 _voipCalls.Add(callPresentation);
+			}
+            else if (e.ParsedItem is PcapAnalyzer.DnsNameMapping)
+            {
+                if (_dnsMappings.Add(e.ParsedItem as DnsNameMapping))
+                {
+                    PrintDetectedItem(e.ParsedItem);
+                }
+
             }
         }
 
