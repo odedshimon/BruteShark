@@ -138,7 +138,11 @@ namespace PcapAnalyzer
                     SDP SDPmessage = SDP.ParseSDPDescription(response.Body);
                     getCall(call).RTPPort = SDPmessage.Media[0].Port;
                     handleRTPPortAdded(call);
-                    getCall(call).RTPMediaType =(SDPmessage.Media[0].MediaFormats[0].Rtpmap);
+                    foreach (var m in SDPmessage.Media[0].MediaFormats)
+                    {
+                        getCall(call).RTPMediaType += $"{m.Value.Kind}:{m.Value.Rtpmap} ";
+                    }
+                    handleRTPMediaTypeAdded(call);
                 }
                 else if(response.StatusCode >= 400 && response.StatusCode < 500)
                 {
