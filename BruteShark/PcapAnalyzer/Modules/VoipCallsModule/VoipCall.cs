@@ -26,12 +26,11 @@ namespace PcapAnalyzer
         public int RTPPort { get; set; }
         public CallState CallState { get; set; }
         public Guid callGuid { get; set; }
-        internal List<string> RTPMediaTypes { get; set; }
-        private List<RTPPacket> _rtpPackets { get; set; }
+        public string RTPMediaType { get; set; }
+        public List<RTPPacket> _rtpPackets { get; set; }
         internal VoipCall()
         {
             _rtpPackets = new List<RTPPacket>();
-            RTPMediaTypes = new List<string>();
         }
 
         public override bool Equals(object other)

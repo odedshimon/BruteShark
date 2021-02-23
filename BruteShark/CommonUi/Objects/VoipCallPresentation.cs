@@ -16,9 +16,9 @@ namespace CommonUi
         public string FromIP { get; set; }
         public int RTPPort { get; set; }
         public string CallState { get; set; }
+        public string RTPMediaType { get; set; }
         internal Guid callGuid;
-
-        private byte[] _rtpStream { get; set; }
+        private byte[] _rtpPackets { get; set; }
 
         public VoipCallPresentation() {}
         public static VoipCallPresentation FromAnalyzerVoipCall(VoipCall call)
@@ -31,15 +31,21 @@ namespace CommonUi
             _call.ToIP = call.FromIP;
             _call.FromIP = call.FromIP;
             _call.RTPPort = call.RTPPort;
+            _call.RTPMediaType = call.RTPMediaType;
             _call.callGuid = call.callGuid;
             _call.CallState = call.CallState.ToString();
-            _call._rtpStream = call.RTPStream();
+            _call._rtpPackets = call.RTPStream();
             return _call;
         }
 
         public override string ToString()
         {
-            return $"{From}@{FromHost}({FromIP})->{To}@{ToHost}({ToIP}) - RTP port: {RTPPort} - state: {CallState} ";
+            return $"{From}@{FromHost}({FromIP})->{To}@{ToHost}({ToIP}) - RTP port: {RTPPort}, Media type: {RTPMediaType} - state: {CallState}";
+        }
+
+        public string ToFilename()
+        {
+            return $"from_{From}_{FromHost}_{FromIP}_to_{To}_{ToHost}_{ToIP}_RTP_port_{RTPPort}_{RTPMediaType}_state_{CallState}".Replace(':', '_');
         }
         public override bool Equals(object obj)
         {
@@ -52,7 +58,7 @@ namespace CommonUi
         }
         public byte[] GetRTPStream()
         {
-            return this._rtpStream;
+            return this._rtpPackets;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using CommonUi;
+using System.Reflection;
 
 namespace BruteSharkCli
 {
@@ -44,6 +45,8 @@ namespace BruteSharkCli
             _voipCalls = new HashSet<VoipCallPresentation>();
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
+            _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
+
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
@@ -179,7 +182,8 @@ namespace BruteSharkCli
                     }
                     else if(moduleName.Contains("Voip"))
                     {
-
+                        var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
+                        Console.WriteLine($"Successfully exported voip calss extracted to: {dirPath}");
                     }
                     // Todo - add exporting of dns module results
                 }
@@ -197,6 +201,18 @@ namespace BruteSharkCli
             else
             {
                 Console.WriteLine($"ERROR: File does not exist - {filePath}");
+            }
+        }
+        private void UpdatedPropertyInItemDetected(object sender, UpdatedPropertyInItemeventArgs e)
+        {
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                VoipCall call = e.ParsedItem as VoipCall;
+                var callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(call);
+                if (_voipCalls.Contains(callPresentation))
+                {
+                    callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
+                }
             }
         }
 

@@ -51,12 +51,13 @@ namespace CommonUi
         }
         public static string ExportVoipCalls(string dirPath, HashSet<VoipCallPresentation> voipCalls )
         {
-            var VoipCallsDir = Path.Combine(dirPath, "Voip Calls");
-            foreach(var call in voipCalls)
+            var VoipCallsDir = Path.Combine(dirPath, "VoipCalls");
+            Directory.CreateDirectory(VoipCallsDir);
+            foreach (var call in voipCalls)
             {
                 if (call.GetRTPStream().Length > 0)
                 {
-                    var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call}.media"));
+                    var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call.ToFilename()}.media"));
                     File.WriteAllBytes(filepath, call.GetRTPStream());
                 }
             }

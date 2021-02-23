@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
 using CommonUi;
 
@@ -93,11 +94,10 @@ namespace BruteSharkCli
                 var callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(call);
                 if (_voipCalls.Contains(callPresentation))
                 {
-                    callPresentation.GetType().GetProperty(e.PropertyChanged.Name).SetValue(_voipCalls.Where(call => call.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue.ToString());
+                    callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
                 }
             }
         }
-
         private void PrintVoipCalls()
         {
             this._voipCalls.ToDataTable().Print();

@@ -21,7 +21,7 @@ namespace PcapAnalyzer
             {   
                 // try Decode as RTP
                 RTPPacket packet = new RTPPacket(udpPacket.Data);
-                HandleRTPPAcket(packet, udpPacket.DestinationPort, udpPacket.SourceIp, udpPacket.DestinationIp);
+                HandleRTPPAcket(packet, udpPacket.DestinationPort, udpPacket.SourcePort, udpPacket.SourceIp, udpPacket.DestinationIp);
             } 
             catch (Exception ex) { }
             
@@ -88,6 +88,7 @@ namespace PcapAnalyzer
                     call.CallState = CallState.Invited;
                     call.callGuid = Guid.NewGuid();                    
                     VoipCalls.Add(call);
+                    // invoke on new call
                     this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
                     {
                         ParsedItem = getCall(call)
@@ -136,10 +137,8 @@ namespace PcapAnalyzer
                 {
                     SDP SDPmessage = SDP.ParseSDPDescription(response.Body);
                     getCall(call).RTPPort = SDPmessage.Media[0].Port;
-                    foreach(var mediaFormat in SDPmessage.Media[0].MediaFormats)
-                    {
-                        getCall(call).RTPMediaTypes.Add(mediaFormat.Value.Rtpmap);
-                    }
+                    handleRTPPortAdded(call);
+                    getCall(call).RTPMediaType =(SDPmessage.Media[0].MediaFormats[0].Rtpmap);
                 }
                 else if(response.StatusCode >= 400 && response.StatusCode < 500)
                 {
@@ -150,15 +149,16 @@ namespace PcapAnalyzer
                     
             }
         }
-        private void HandleRTPPAcket(RTPPacket packet, int packetPort, string sourceAddress, string DestinationAddress)
+        private void HandleRTPPAcket(RTPPacket packet, int destinationPort, int sourcePort, string sourceAddress, string DestinationAddress)
         {
             foreach(VoipCall call in VoipCalls)
             {
-                if (call.RTPPort == packetPort)
+                if (call.RTPPort == destinationPort || call.RTPPort == sourcePort)
                 {
                     if ((call.FromIP == sourceAddress || call.FromIP == DestinationAddress) || (call.ToIP == sourceAddress || call.ToIP == DestinationAddress))
                     {
-                        call.addrtpPacket(packet);
+                        getCall(call).addrtpPacket(packet);
+                        handleRTPPacketAdded(call);
                     }
                 }
             }
@@ -193,7 +193,35 @@ namespace PcapAnalyzer
             {
                 ParsedItem = getCall(call),
                 PropertyChanged = typeof(VoipCall).GetProperty("CallState"),
-                NewPropertyValue = newState
+                NewPropertyValue = newState.ToString()
+            });
+        }
+
+        private void handleRTPPacketAdded(VoipCall call)
+        {
+            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
+            {
+                ParsedItem = getCall(call),
+                PropertyChanged = typeof(VoipCall).GetProperty("_rtpPackets"),
+                NewPropertyValue = getCall(call).RTPStream()
+            });;
+        }
+        private void handleRTPPortAdded(VoipCall call)
+        {
+            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
+            {
+                ParsedItem = getCall(call),
+                PropertyChanged = typeof(VoipCall).GetProperty("RTPPort"),
+                NewPropertyValue = getCall(call).RTPPort
+            });
+        }
+        private void handleRTPMediaTypeAdded(VoipCall call)
+        {
+            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
+            {
+                ParsedItem = getCall(call),
+                PropertyChanged = typeof(VoipCall).GetProperty("RTPMediaType"),
+                NewPropertyValue = getCall(call).RTPMediaType
             });
         }
     }
