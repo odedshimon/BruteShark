@@ -47,11 +47,13 @@ namespace PcapProcessor
 
         public void HandlePacket(PacketDotNet.TcpPacket tcpPacket)
         {
+            var ipPacket = (PacketDotNet.IPPacket)tcpPacket.ParentPacket;
+
             var session = new TcpSession()
             {
-                SourceIp = ((PacketDotNet.IPPacket)tcpPacket.ParentPacket).SourceAddress.ToString(),
+                SourceIp = ipPacket.SourceAddress.ToString(),
                 SourcePort = tcpPacket.SourcePort,
-                DestinationIp = ((PacketDotNet.IPPacket)tcpPacket.ParentPacket).DestinationAddress.ToString(),
+                DestinationIp = ipPacket.DestinationAddress.ToString(),
                 DestinationPort = tcpPacket.DestinationPort
             };
 
@@ -62,13 +64,29 @@ namespace PcapProcessor
             }
 
             _sessions[session].ReassemblePacket(tcpPacket);
-            // if the tcp packet contains FIN,ACK flags or just the FIN flag then we can determine 
-            // that the session is terminated and that no more data is about to be sen  t
+
+            // If the tcp packet contains FIN or ACK flags we can determine that the session 
+            // is terminated by means that no more data is about to be sent.
             if (IsLiveCapture)
             { 
                 if (tcpPacket.Flags == 17 || tcpPacket.Flags == 1)
                 {
                     session.Data = _sessions[session].Data;
+
+                    foreach (var currentTcpPacket in _sessions[session].packets)
+                    {
+                        var currentIpPacket = (PacketDotNet.IPPacket)currentTcpPacket.ParentPacket;
+
+                        session.Packets.Add(new TcpPacket()
+                        {
+                            SourceIp = currentIpPacket.SourceAddress.ToString(),
+                            SourcePort = currentTcpPacket.SourcePort,
+                            DestinationIp = currentIpPacket.DestinationAddress.ToString(),
+                            DestinationPort = currentTcpPacket.DestinationPort,
+                            Data = currentTcpPacket.PayloadData
+                        });
+                    }
+
                     completedSessions.Add(session);
                     _sessions.Remove(session);
                 }
