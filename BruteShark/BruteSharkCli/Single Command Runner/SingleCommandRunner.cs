@@ -30,7 +30,7 @@ namespace BruteSharkCli
             { "DNS", "DNS"}
         };
 
-        public SingleCommandRunner(Analyzer analyzer, Processor processor, Sniffer sniffer,string[] args)
+        public SingleCommandRunner(Analyzer analyzer, Processor processor, Sniffer sniffer, string[] args)
         {
             _sniffer = sniffer;
             _analyzer = analyzer;
@@ -45,10 +45,10 @@ namespace BruteSharkCli
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
-            _sniffer.SniffingStoped += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
-
+            // This is done to catch Ctrl + C key press by the user.
+            Console.CancelKeyPress += (s, e) => {this.ExportResults(); Environment.Exit(0);};
 
             // Parse user arguments.
             CommandLine.Parser.Default.ParseArguments<SingleCommandFlags>(args).WithParsed<SingleCommandFlags>((cliFlags) => _cliFlags = cliFlags);
@@ -59,33 +59,21 @@ namespace BruteSharkCli
             try
             {
                 SetupRun();
+
                 if (_cliFlags.CaptureDevice != null)
                 {
-                    _sniffer.SelectedDeviceName = _cliFlags.CaptureDevice;
-                    if (_cliFlags.PromisciousMode)
-                    {
-                        _sniffer.PromisciousMode = true; 
-                    }
+                    SetupSniffer();
+
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(_sniffer.PromisciousMode ? $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device(Promiscious mode) - Press any key to stop" : $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press any key to stop");
+                    Console.WriteLine(_sniffer.PromisciousMode ?
+                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press any Ctrl + C to stop" :
+                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press Ctrl + C to stop");
                     Console.ForegroundColor = ConsoleColor.White;
-                    // Setup capture filter
-                    if (_cliFlags.CaptrueFilter != null)
-                    {
-                        if (Sniffer.CheckCaptureFilter(_cliFlags.CaptrueFilter))
-                        { 
-                            _sniffer.Filter = _cliFlags.CaptrueFilter; 
-                        }    
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
-                            return;
-                        }
-                    }
-                    _sniffer.StartSniffing();
+                    
+                    _sniffer.StartSniffing(new System.Threading.CancellationToken());
                 }
-                else {
+                else 
+                {
                     _processor.ProcessPcaps(_files);
                 }
                 
@@ -93,6 +81,35 @@ namespace BruteSharkCli
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        private void SetupSniffer()
+        {
+            if (!_sniffer.AvailiableDevicesNames.Contains(_cliFlags.CaptureDevice))
+            {
+                Console.WriteLine($"No such device: {_cliFlags.CaptureDevice}");
+                Environment.Exit(0);
+            }
+
+            _sniffer.SelectedDeviceName = _cliFlags.CaptureDevice;
+
+            if (_cliFlags.PromisciousMode)
+            {
+                _sniffer.PromisciousMode = true;
+            }
+
+            if (_cliFlags.CaptrueFilter != null)
+            {
+                if (!Sniffer.CheckCaptureFilter(_cliFlags.CaptrueFilter))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
+                    Environment.Exit(0);
+                    
+                }
+
+                _sniffer.Filter = _cliFlags.CaptrueFilter;
             }
         }
 
