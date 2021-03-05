@@ -363,6 +363,8 @@ This means a faster processing but also that some obects may not be extracted.")
                 return;
             }
 
+            this.progressBar.CustomText = "Live capture is ON...";
+            this.progressBar.Refresh();
             _sniffer.SelectedDeviceName = this.interfacesComboBox.SelectedItem.ToString();
             StartLiveCaptureAsync();
         }

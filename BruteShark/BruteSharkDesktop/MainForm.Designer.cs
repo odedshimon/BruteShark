@@ -65,7 +65,7 @@
             this.secondaryLowerSplitContainer = new System.Windows.Forms.SplitContainer();
             this.modulesSplitContainer = new System.Windows.Forms.SplitContainer();
             this.modulesTreeView = new System.Windows.Forms.TreeView();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new TextProgressBar();
             this.filterTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
@@ -433,7 +433,7 @@
 
         private System.Windows.Forms.SplitContainer mainSplitContainer;
         private System.Windows.Forms.SplitContainer secondaryLowerSplitContainer;
-        private System.Windows.Forms.ProgressBar progressBar;
+        private TextProgressBar progressBar;
         private System.Windows.Forms.SplitContainer modulesSplitContainer;
         private System.Windows.Forms.TreeView modulesTreeView;
         private System.Windows.Forms.GroupBox filesAnalyzingGroupBox;
