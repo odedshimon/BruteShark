@@ -228,6 +228,7 @@ namespace PcapProcessor
                     {
                         this._udpStreamBuilder.HandlePacket(udpPacket);
                     }
+
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
                 else if (tcpPacket != null)
@@ -250,14 +251,6 @@ namespace PcapProcessor
                     if (this.BuildTcpSessions)
                     {
                         this._tcpSessionsBuilder.HandlePacket(tcpPacket);
-                        _tcpSessionsBuilder.completedSessions.AsParallel().ForAll((session) =>
-                        {
-                            TcpSessionArrived?.Invoke(this, new TcpSessionArivedEventArgs()
-                            {
-                                TcpSession = session
-                            });
-                            _tcpSessionsBuilder.completedSessions.Remove(session);
-                        });
                     }
 
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
