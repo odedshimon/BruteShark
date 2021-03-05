@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace BruteSharkDesktop
 {
-    public enum ProgressBarDisplayText
+    public enum ProgressBarDisplayMode
     {
         Percentage,
         CustomText
@@ -14,18 +14,15 @@ namespace BruteSharkDesktop
 
     public partial class TextProgressBar : ProgressBar
     {
-        //Property to set to decide whether to print a % or Text
-        public ProgressBarDisplayText DisplayStyle { get; set; }
-
-        //Property to hold the custom text
+        public ProgressBarDisplayMode DisplayStyle { get; set; }
         public String CustomText { get; set; }
 
         public TextProgressBar()
         {
-            // Modify the ControlStyles flags
+            // Modify the ControlStyles flags.
             // http://msdn.microsoft.com/en-us/library/system.windows.forms.controlstyles.aspx
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-            this.DisplayStyle = ProgressBarDisplayText.CustomText;
+            this.DisplayStyle = ProgressBarDisplayMode.CustomText;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -43,7 +40,7 @@ namespace BruteSharkDesktop
             }
 
             // Set the Display text (Either a % amount or our custom text
-            string text = DisplayStyle == ProgressBarDisplayText.Percentage ? Value.ToString() + '%' : CustomText;
+            string text = DisplayStyle == ProgressBarDisplayMode.Percentage ? Value.ToString() + '%' : CustomText;
 
             using (Font f = new Font(FontFamily.GenericSerif, 10))
             {

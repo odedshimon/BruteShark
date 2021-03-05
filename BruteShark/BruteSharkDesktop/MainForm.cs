@@ -363,14 +363,6 @@ This means a faster processing but also that some obects may not be extracted.")
                 return;
             }
 
-            this.progressBar.CustomText = "Live capture is ON...";
-            this.progressBar.Refresh();
-            _sniffer.SelectedDeviceName = this.interfacesComboBox.SelectedItem.ToString();
-            StartLiveCaptureAsync();
-        }
-
-        private async void StartLiveCaptureAsync()
-        {
             if (filterTextBox.Text != string.Empty && filterTextBox.Text != "<INSERT BPF FILTER HERE>")
             {
                 if (Sniffer.CheckCaptureFilter(filterTextBox.Text))
@@ -380,15 +372,26 @@ This means a faster processing but also that some obects may not be extracted.")
                 else
                 {
                     MessageBox.Show("Invalid BPF filter! please fix filter");
+                    return;
                 }
             }
 
+            _sniffer.SelectedDeviceName = this.interfacesComboBox.SelectedItem.ToString();
+            StartLiveCaptureAsync();
+        }
+
+        private async void StartLiveCaptureAsync()
+        {
+            this.progressBar.CustomText = "Live capture is ON...";
+            this.progressBar.Refresh();
             _cts.Dispose();
             _cts = new CancellationTokenSource();
             var ct = _cts.Token;
             await Task.Run(() => _sniffer.StartSniffing(ct));
 
             // We wait here until the sniffing will be stoped (by the stop button).
+            this.progressBar.CustomText = string.Empty;
+            this.progressBar.Refresh();
             ShowInfoMessageBox("Capture Stoped");
         }
 
