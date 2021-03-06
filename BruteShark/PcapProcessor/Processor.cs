@@ -41,7 +41,6 @@ namespace PcapProcessor
         private UdpStreamBuilder _udpStreamBuilder;
         private ProcessingPrecentsPredicator _processingPrecentsPredicator;
 
-
         public Processor()
         {
             this.BuildTcpSessions = false;
@@ -63,8 +62,8 @@ namespace PcapProcessor
                 Precents = e.Precents
             });
         }
-        
-        public void ProcessPcaps(IEnumerable<string> filesPaths)
+
+        public void ProcessPcaps(IEnumerable<string> filesPaths, string liveCaptureDevice = null)
         {
             _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
 
@@ -72,7 +71,6 @@ namespace PcapProcessor
             {
                 this.ProcessPcap(filePath);
             }
-
             ProcessingFinished?.Invoke(this, new EventArgs());
         }
 
@@ -160,6 +158,7 @@ namespace PcapProcessor
             device.Open();
             device.Capture();
         }
+
         private void ConvertPacket(object sender, IPacket packet)
         {
             var _packet_ether = PacketDotNet.Packet.ParsePacket(PacketDotNet.LinkLayers.Ethernet, packet.Data);
@@ -201,6 +200,7 @@ namespace PcapProcessor
             var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
             ProcessPacket(packet);
         }
+
         void ProcessPacket(PacketDotNet.Packet packet)
         {
             try
@@ -228,6 +228,7 @@ namespace PcapProcessor
                     {
                         this._udpStreamBuilder.HandlePacket(udpPacket);
                     }
+
                     _processingPrecentsPredicator.NotifyAboutProcessedData(packet.Bytes.Length);
                 }
                 else if (tcpPacket != null)
@@ -264,3 +265,4 @@ namespace PcapProcessor
 
     }
 }
+

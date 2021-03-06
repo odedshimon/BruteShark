@@ -22,5 +22,14 @@ namespace BruteSharkCli
 
         [Option('o', "output", Required = false, HelpText = "Output direcorty for the results files.")]
         public string OutputDir { get; set; }
+
+        [Option('p', "promiscious", Required = false, HelpText = "Configures whether to start live capture on normal or promiscious mode (sometimes needs super user privileges to to do so),use along with -l for live catpure.")]
+        public bool PromisciousMode { get; set; }
+
+        [Option('l', "live-capture", Required = false, Default = null, HelpText = "Caputre and process packets live from a network interface.")]
+        public string CaptureDevice { get; set; }
+        
+        [Option('f', "filter", Required = false, Default = null, HelpText = "add a capture bpf filter to the live traffic processing.")]
+        public string CaptrueFilter { get; set; }
     }
 }
