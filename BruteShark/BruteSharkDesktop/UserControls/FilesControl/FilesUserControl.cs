@@ -15,7 +15,7 @@ namespace BruteSharkDesktop
         private GenericTableUserControl _filesTableUserControl;
         private FilePreviewUserControl _filePreviewUserControl;
         public int FilesCount => _filesTableUserControl.ItemsCount;
-
+        public HashSet<PcapAnalyzer.NetworkFile> Files => _filesTableUserControl.ItemsHashSet.Cast<PcapAnalyzer.NetworkFile>().ToHashSet();
 
         public FilesUserControl()
         {

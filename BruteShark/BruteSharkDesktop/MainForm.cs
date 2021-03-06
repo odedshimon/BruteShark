@@ -18,6 +18,7 @@ namespace BruteSharkDesktop
     {
         private CancellationTokenSource _cts;
         private HashSet<string> _files;
+        private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
@@ -36,6 +37,7 @@ namespace BruteSharkDesktop
 
             _files = new HashSet<string>();
             _cts = new CancellationTokenSource();
+            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
@@ -210,6 +212,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var connection = e.ParsedItem as PcapAnalyzer.NetworkConnection;
+                _connections.Add(connection);
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
@@ -437,6 +440,31 @@ This means a faster processing but also that some obects may not be extracted.")
             }
         }
 
+        private void exportResutlsButton_Click(object sender, EventArgs e)
+        {
+            var selecetDirectoryDialog = new FolderBrowserDialog();
+
+            if (selecetDirectoryDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var outputDirectoryPath = selecetDirectoryDialog.SelectedPath;
+
+                    this.progressBar.CustomText = $"Exporting results to output folder: {outputDirectoryPath}...";
+                    this.progressBar.Refresh();
+                    CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
+                    CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _connections);
+                    this.progressBar.CustomText = string.Empty;
+
+                    MessageBox.Show($"Successfully exported results");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to export results: {ex.Message}");
+                }
+                
+            }
+        }
     }
 }
     

@@ -21,6 +21,15 @@ namespace BruteSharkDesktop
         private HashSet<object> _dataHashSet;
         private BindingSource _dataGridViewBindingSource;
 
+        public HashSet<object> ItemsHashSet
+        {
+            get
+            {
+                return _dataHashSet;
+            }
+            private set { }
+        }
+
         public IEnumerable<object> Items
         {
             get
@@ -29,13 +38,15 @@ namespace BruteSharkDesktop
             }
             private set { }
         }
+
         public object SelectedRowBoundItem
         {
-            get 
+            get
             {
                 return this.mainDataGridView.SelectedRows.Count > 0 ? this.mainDataGridView.SelectedRows[0].DataBoundItem : null;
             }
         }
+
         public int ItemsCount => _dataHashSet.Count;
 
 

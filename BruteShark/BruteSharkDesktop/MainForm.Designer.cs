@@ -51,6 +51,7 @@
             this.interfacesComboBox = new System.Windows.Forms.ComboBox();
             this.liveCaptureButton = new System.Windows.Forms.Button();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.exportResutlsButton = new System.Windows.Forms.Button();
             this.buildUdpSessionsCheckBox = new System.Windows.Forms.CheckBox();
             this.buildTcpSessionsCheckBox = new System.Windows.Forms.CheckBox();
             this.filesAnalyzingGroupBox = new System.Windows.Forms.GroupBox();
@@ -96,6 +97,7 @@
             // 
             // mainSplitContainer.Panel1
             // 
+            this.mainSplitContainer.Panel1.Controls.Add(this.exportResutlsButton);
             this.mainSplitContainer.Panel1.Controls.Add(this.liveCaptureGroupBox);
             this.mainSplitContainer.Panel1.Controls.Add(this.optionsGroupBox);
             this.mainSplitContainer.Panel1.Controls.Add(this.filesAnalyzingGroupBox);
@@ -116,7 +118,7 @@
             this.liveCaptureGroupBox.Controls.Add(this.stopCaptureButton);
             this.liveCaptureGroupBox.Controls.Add(this.interfacesComboBox);
             this.liveCaptureGroupBox.Controls.Add(this.liveCaptureButton);
-            this.liveCaptureGroupBox.Location = new System.Drawing.Point(1109, 10);
+            this.liveCaptureGroupBox.Location = new System.Drawing.Point(1098, 10);
             this.liveCaptureGroupBox.Name = "liveCaptureGroupBox";
             this.liveCaptureGroupBox.Size = new System.Drawing.Size(194, 158);
             this.liveCaptureGroupBox.TabIndex = 2;
@@ -177,10 +179,21 @@
             this.optionsGroupBox.Controls.Add(this.buildTcpSessionsCheckBox);
             this.optionsGroupBox.Location = new System.Drawing.Point(924, 10);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(179, 158);
+            this.optionsGroupBox.Size = new System.Drawing.Size(168, 101);
             this.optionsGroupBox.TabIndex = 1;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
+            // 
+            // exportResutlsButton
+            // 
+            this.exportResutlsButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.exportResutlsButton.Location = new System.Drawing.Point(924, 117);
+            this.exportResutlsButton.Name = "exportResutlsButton";
+            this.exportResutlsButton.Size = new System.Drawing.Size(168, 48);
+            this.exportResutlsButton.TabIndex = 3;
+            this.exportResutlsButton.Text = "Export Results";
+            this.exportResutlsButton.UseVisualStyleBackColor = true;
+            this.exportResutlsButton.Click += new System.EventHandler(this.exportResutlsButton_Click);
             // 
             // buildUdpSessionsCheckBox
             // 
@@ -336,7 +349,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 451;
+            this.secondaryLowerSplitContainer.SplitterDistance = 447;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -351,7 +364,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 451);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 447);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -386,7 +399,7 @@
             treeNode3,
             treeNode7,
             treeNode9});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 451);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 447);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
@@ -398,7 +411,7 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1463, 41);
+            this.progressBar.Size = new System.Drawing.Size(1463, 45);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
@@ -457,6 +470,7 @@
         private System.Windows.Forms.Button stopCaptureButton;
         private System.Windows.Forms.CheckBox promiscuousCheckBox;
         private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.Button exportResutlsButton;
     }
 }
 
