@@ -100,7 +100,7 @@ namespace BruteSharkCli
             LoadModules(_analyzer.AvailableModulesNames);
         }
 
-<<<<<<< HEAD
+
         private void UpdatedPropertyInItemDetected(object sender, UpdatedPropertyInItemeventArgs e)
         {
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
@@ -116,7 +116,8 @@ namespace BruteSharkCli
         private void PrintVoipCalls()
         {
             this._voipCalls.ToDataTable().Print();
-=======
+        }
+
         private void VerifyFilter(string filter)
         {
             if (Sniffer.CheckCaptureFilter(filter))
@@ -138,7 +139,7 @@ namespace BruteSharkCli
         private void PrintNetworkDevices()
         {
             _sniffer.AvailiableDevicesNames.Select(d => new NetworkDevice(d)) .ToList().ToDataTable().Print(); 
->>>>>>> bb214134a5b396ea9b512bd0b3fac148f8bff406
+
         }
 
         private void LoadModules(List<string> modules)
