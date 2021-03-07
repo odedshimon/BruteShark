@@ -5,9 +5,10 @@ namespace PcapProcessor
 {
     public class TcpSession
     {
+        internal bool isClosed {get; set;} 
         public string SourceIp { get; set; }
         public string DestinationIp { get; set; }
-        public int SourcePort { get; set; }
+        public int SourcePort{ get; set; }
         public int DestinationPort { get; set; }
         public byte[] Data { get; set; }
         public List<TcpPacket> Packets { get; set; }

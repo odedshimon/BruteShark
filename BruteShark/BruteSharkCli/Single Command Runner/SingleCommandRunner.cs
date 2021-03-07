@@ -21,6 +21,8 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private HashSet<VoipCallPresentation> _voipCalls;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
+
+        private Sniffer _sniffer; 
         private PcapProcessor.Processor _processor;
         private PcapAnalyzer.Analyzer _analyzer;
 
@@ -33,8 +35,9 @@ namespace BruteSharkCli
 
         };
 
-        public SingleCommandRunner(Analyzer analyzer, Processor processor, string[] args)
-        { 
+        public SingleCommandRunner(Analyzer analyzer, Processor processor, Sniffer sniffer, string[] args)
+        {
+            _sniffer = sniffer;
             _analyzer = analyzer;
             _processor = processor;
             _files = new List<string>();
@@ -53,6 +56,9 @@ namespace BruteSharkCli
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
+            // This is done to catch Ctrl + C key press by the user.
+            Console.CancelKeyPress += (s, e) => {this.ExportResults(); Environment.Exit(0);};
+
             // Parse user arguments.
             CommandLine.Parser.Default.ParseArguments<SingleCommandFlags>(args).WithParsed<SingleCommandFlags>((cliFlags) => _cliFlags = cliFlags);
         }
@@ -62,12 +68,57 @@ namespace BruteSharkCli
             try
             {
                 SetupRun();
-                Console.WriteLine($"[+] Started analyzing {_files.Count} files");
-                _processor.ProcessPcaps(_files);
+
+                if (_cliFlags.CaptureDevice != null)
+                {
+                    SetupSniffer();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(_sniffer.PromisciousMode ?
+                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press any Ctrl + C to stop" :
+                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press Ctrl + C to stop");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    
+                    _sniffer.StartSniffing(new System.Threading.CancellationToken());
+                }
+                else 
+                {
+                    _processor.ProcessPcaps(_files);
+                }
+                
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        private void SetupSniffer()
+        {
+            if (!_sniffer.AvailiableDevicesNames.Contains(_cliFlags.CaptureDevice))
+            {
+                Console.WriteLine($"No such device: {_cliFlags.CaptureDevice}");
+                Environment.Exit(0);
+            }
+
+            _sniffer.SelectedDeviceName = _cliFlags.CaptureDevice;
+
+            if (_cliFlags.PromisciousMode)
+            {
+                _sniffer.PromisciousMode = true;
+            }
+
+            if (_cliFlags.CaptrueFilter != null)
+            {
+                if (!Sniffer.CheckCaptureFilter(_cliFlags.CaptrueFilter))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
+                    Environment.Exit(0);
+                    
+                }
+
+                _sniffer.Filter = _cliFlags.CaptrueFilter;
             }
         }
 
@@ -115,7 +166,7 @@ namespace BruteSharkCli
                     AddFile(filePath);
                 }
             }
-            else
+            else if (_cliFlags.InputDir != null)
             {
                 VerifyDir(_cliFlags.InputDir);
             }
@@ -193,7 +244,7 @@ namespace BruteSharkCli
                 }
             }
 
-            Console.WriteLine("[X] Bruteshark finished processing");
+            Console.WriteLine("[+] Bruteshark finished processing");
         }
 
         private void AddFile(string filePath)

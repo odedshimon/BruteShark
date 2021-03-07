@@ -1,4 +1,5 @@
 ﻿using PcapAnalyzer;
+using PcapProcessor;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,7 @@ namespace BruteSharkCli
         private bool _exit;
 
         private List<string> _files;
+        private string _networkDevice;
         private List<CliShellCommand> _commands;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
@@ -28,21 +30,24 @@ namespace BruteSharkCli
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
+        private Sniffer _sniffer;
+        private bool liveCapture;
 
         public string Seperator { get; set; }
 
 
-        public CliShell(PcapAnalyzer.Analyzer analyzer, PcapProcessor.Processor processor, string seperator = ">")
+        public CliShell(PcapAnalyzer.Analyzer analyzer, PcapProcessor.Processor processor,Sniffer sniffer, string seperator = ">")
         {
+            _sniffer = sniffer;
             _tcpPacketsCount = 0;
             _udpPacketsCount = 0;
             _udpStreamsCount = 0;
             _tcpSessionsCount = 0;
-
+            liveCapture = false;
             this.Seperator = seperator;
             _printingLock = new object();
             _files = new List<string>();
-
+            _networkDevice = null;
             _processor = processor;
             _analyzer = analyzer;
 
@@ -53,6 +58,11 @@ namespace BruteSharkCli
             _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
             _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
             _processor.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
+            
+            sniffer.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
+            sniffer.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
+            sniffer.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
+            sniffer.UdpSessionArrived += (s, e) => this.UpdateUdpStreamsCount();
 
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
@@ -67,6 +77,10 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
             AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
+            AddCommand(new CliShellCommand("capture-from-device", p => InitLiveCapture(p), "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
+            AddCommand(new CliShellCommand("capture-promiscious-mode", p => sniffer.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode (requires superuser privileges, default is normal mode)"));
+            AddCommand(new CliShellCommand("set-captrue-filter", p => VerifyFilter(p), "Set a capture filter to the live traffic capture(filters must be bpf syntax filters)"));
+            AddCommand(new CliShellCommand("show-network-devices", p => PrintNetworkDevices(), "Show the available network devices for live capture"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
             AddCommand(new CliShellCommand("export-voip-calls", p => CommonUi.Exporting.ExportVoipCalls(p, _voipCalls), "Export the VoIP calls media to files. Usage: export-networkmap <OUTPUT-DIR>"));
             AddCommand(new CliShellCommand("show-voip-calls", p => PrintVoipCalls(), "Prints the detected VoIP calls"));
@@ -86,6 +100,7 @@ namespace BruteSharkCli
             LoadModules(_analyzer.AvailableModulesNames);
         }
 
+<<<<<<< HEAD
         private void UpdatedPropertyInItemDetected(object sender, UpdatedPropertyInItemeventArgs e)
         {
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
@@ -101,6 +116,29 @@ namespace BruteSharkCli
         private void PrintVoipCalls()
         {
             this._voipCalls.ToDataTable().Print();
+=======
+        private void VerifyFilter(string filter)
+        {
+            if (Sniffer.CheckCaptureFilter(filter))
+            {
+                _sniffer.Filter = filter;
+            }
+            else
+            {
+                Console.WriteLine($"Capture filter: {filter} is not a valid filter, filters must be in bpf format");
+            }
+        }
+
+        private void InitLiveCapture(string networkDevice)
+        {
+            _sniffer.SelectedDeviceName = networkDevice;
+            liveCapture = true;
+        }
+
+        private void PrintNetworkDevices()
+        {
+            _sniffer.AvailiableDevicesNames.Select(d => new NetworkDevice(d)) .ToList().ToDataTable().Print(); 
+>>>>>>> bb214134a5b396ea9b512bd0b3fac148f8bff406
         }
 
         private void LoadModules(List<string> modules)
@@ -195,8 +233,28 @@ namespace BruteSharkCli
 
         private void StartAnalyzing()
         {
-            _processor.ProcessPcaps(this._files);
-            Console.SetCursorPosition(0, Console.CursorTop + 5);
+            if (liveCapture)
+            {
+                try
+                {
+                    Console.WriteLine(_sniffer.PromisciousMode ? 
+                        $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device (Promiscious mode) - Press Ctrl + C to stop" : 
+                        $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device- Press Ctrl + C to stop");
+
+                    _sniffer.StartSniffing(new System.Threading.CancellationToken());
+                    Console.SetCursorPosition(0, Console.CursorTop + 6);
+                }
+                catch (SharpPcap.PcapException e)
+                {
+                    Console.WriteLine($"Capture Filter: {_sniffer.Filter} is invalid");
+                }
+            }
+            else 
+            { 
+               _processor.ProcessPcaps(this._files, liveCaptureDevice: _networkDevice);
+                Console.SetCursorPosition(0, Console.CursorTop + 5);
+            }
+            
         }
 
         private void UpdateTcpSessionsCount()
@@ -237,7 +295,7 @@ namespace BruteSharkCli
                 Console.WriteLine($"\r[+] Passwords Found: {_passwords.Count}");
                 Console.WriteLine($"\r[+] Hashes Found: {_hashes.Count}");
                 Console.WriteLine($"\r[+] Network Connections Found: {_connections.Count}");
-                Console.SetCursorPosition(0, Console.CursorTop - 5);
+                Console.SetCursorPosition(0, liveCapture ? Console.CursorTop - 6 : Console.CursorTop - 5);
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }

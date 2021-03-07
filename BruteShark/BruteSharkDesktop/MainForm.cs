@@ -16,8 +16,11 @@ namespace BruteSharkDesktop
 {
     public partial class MainForm : Form
     {
+        private CancellationTokenSource _cts;
         private HashSet<string> _files;
+        private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private PcapProcessor.Processor _processor;
+        private PcapProcessor.Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
 
         private GenericTableUserControl _passwordsUserControl;
@@ -33,9 +36,12 @@ namespace BruteSharkDesktop
             InitializeComponent();
 
             _files = new HashSet<string>();
+            _cts = new CancellationTokenSource();
+            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
+            _sniffer = new PcapProcessor.Sniffer();
             _analyzer = new PcapAnalyzer.Analyzer();
             _processor.BuildTcpSessions = true;
             _processor.BuildUdpSessions = true;
@@ -55,19 +61,33 @@ namespace BruteSharkDesktop
             _dnsResponseUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
+            _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
+            _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
+            _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
+            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
+            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
-            _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
-            _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
             _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
             _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
+            _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
+            _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
+            InitilizeInterfacesComboBox();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeInterfacesComboBox()
+        {
+            foreach (string interfaceName in _sniffer.AvailiableDevicesNames)
+            {
+                this.interfacesComboBox.Items.Add(interfaceName);
+            }
         }
 
         private void InitilizeModulesCheckedListBox()
@@ -88,7 +108,7 @@ namespace BruteSharkDesktop
         {
             // The tag holds the full file path.
             var failedFilesString = string.Join(
-                Environment.NewLine, 
+                Environment.NewLine,
                 filesListView.Items
                     .Cast<ListViewItem>()
                     .Where(x => x.SubItems[2].Text == "Failed")
@@ -97,7 +117,7 @@ namespace BruteSharkDesktop
 
             if (failedFilesString.Length > 0)
             {
-                var failedFilesMessage = 
+                var failedFilesMessage =
 @$"BruteShark failed to analyze to following files:
 {Environment.NewLine}{failedFilesString}
  Note: if your files are in PCAPNG format it possible to convert them to a PCAP format using Tshark: 
@@ -126,7 +146,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 Invoke(func);
                 return;
-            } 
+            }
 
             Invoke(func);
         }
@@ -192,6 +212,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var connection = e.ParsedItem as PcapAnalyzer.NetworkConnection;
+                _connections.Add(connection);
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
@@ -282,7 +303,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 _files.Remove(item.Tag.ToString());
                 item.Remove();
-            } 
+            }
         }
 
         private void ModulesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -304,12 +325,14 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             if (buildTcpSessionsCheckBox.CheckState == CheckState.Checked)
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: ON";
-                this._processor.BuildTcpSessions = true;
+                _processor.BuildTcpSessions = true;
+                _sniffer.BuildTcpSessions = true;
             }
             else if (buildTcpSessionsCheckBox.CheckState == CheckState.Unchecked)
             {
                 buildTcpSessionsCheckBox.Text = "Build TCP Sessions: OFF";
-                this._processor.BuildTcpSessions = false;
+                _processor.BuildTcpSessions = false;
+                _sniffer.BuildTcpSessions = false;
                 MessageOnBuildSessionsConfigurationChanged();
             }
         }
@@ -331,10 +354,117 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void MessageOnBuildSessionsConfigurationChanged()
         {
-            MessageBox.Show(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+            ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
 This means a faster processing but also that some obects may not be extracted.");
         }
 
+        private void LiveCaptureButton_Click(object sender, EventArgs e)
+        {
+            if (this.interfacesComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("No interface selected");
+                return;
+            }
+
+            if (filterTextBox.Text != string.Empty && filterTextBox.Text != "<INSERT BPF FILTER HERE>")
+            {
+                if (Sniffer.CheckCaptureFilter(filterTextBox.Text))
+                {
+                    _sniffer.Filter = filterTextBox.Text;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid BPF filter! please fix filter");
+                    return;
+                }
+            }
+
+            _sniffer.SelectedDeviceName = this.interfacesComboBox.SelectedItem.ToString();
+            StartLiveCaptureAsync();
+        }
+
+        private async void StartLiveCaptureAsync()
+        {
+            this.progressBar.CustomText = "Live capture is ON...";
+            this.progressBar.Refresh();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            await Task.Run(() => _sniffer.StartSniffing(ct));
+
+            // We wait here until the sniffing will be stoped (by the stop button).
+            this.progressBar.CustomText = string.Empty;
+            this.progressBar.Refresh();
+            ShowInfoMessageBox("Capture Stoped");
+        }
+
+        private void StopCaptureButton_Click(object sender, EventArgs e)
+        {
+            _cts.Cancel();
+        }
+
+        private void ShowInfoMessageBox(string text)
+        {
+            // NOTE: Info message box is also set up at front of the form, it solves the 
+            // problem of message box that is hidden under the form.
+            MessageBox.Show(
+                text: text, 
+                caption: "Info", 
+                buttons: MessageBoxButtons.OK, 
+                icon: MessageBoxIcon.Information,
+                defaultButton: MessageBoxDefaultButton.Button1, 
+                options: MessageBoxOptions.DefaultDesktopOnly);
+        }
+
+        private void promiscuousCheckBox_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (promiscuousCheckBox.CheckState == CheckState.Checked)
+            {
+                _sniffer.PromisciousMode = true;
+            }
+            else if (promiscuousCheckBox.CheckState == CheckState.Unchecked)
+            {
+                _sniffer.PromisciousMode = false;
+            }
+        }
+
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (Sniffer.CheckCaptureFilter(filterTextBox.Text))
+            {
+                filterTextBox.BackColor = Color.LightBlue;
+            }
+            else
+            {
+                filterTextBox.BackColor = Color.LightCoral;
+            }
+        }
+
+        private void exportResutlsButton_Click(object sender, EventArgs e)
+        {
+            var selecetDirectoryDialog = new FolderBrowserDialog();
+
+            if (selecetDirectoryDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var outputDirectoryPath = selecetDirectoryDialog.SelectedPath;
+
+                    this.progressBar.CustomText = $"Exporting results to output folder: {outputDirectoryPath}...";
+                    this.progressBar.Refresh();
+                    CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
+                    CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _connections);
+                    this.progressBar.CustomText = string.Empty;
+
+                    MessageBox.Show($"Successfully exported results");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to export results: {ex.Message}");
+                }
+                
+            }
+        }
     }
 }
     
