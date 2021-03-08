@@ -105,7 +105,7 @@ The shell mode allows to perform each step individually.
 ##### Single Command Mode
 Print the help menu:  
 
-    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe --help
+    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli --help
     BruteSharkCli 1.0.0.0
     Copyright c  2018
     
@@ -132,7 +132,7 @@ Print the help menu:
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
-     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
+     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
      [+] Started analyzing 5 files
      File : Ftp.pcap Processing Started
      Found: Network Credential: 192.168.0.114=>192.168.0.193(FTP) => csanders:echo
