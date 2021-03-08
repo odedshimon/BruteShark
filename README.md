@@ -15,7 +15,7 @@
 <!--te-->
 # About
 
-BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
+BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files, but it also capable of directly live capturing from a network interface). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
 
 The main goal of the project is to provide solution to security researchers and network administrators with the task of network traffic analysis while they try to identify weaknesses that can be used by a potential attacker to gain access to critical points on the network.
 
@@ -109,17 +109,26 @@ Print the help menu:
     BruteSharkCli 1.0.0.0
     Copyright c  2018
     
-      -d, --input-dir    The input directory containing the files to be processed.
+      -d, --input-dir       The input directory containing the files to be processed.
     
-      -i, --input        The files to be processed seperated by comma
+      -i, --input           The files to be processed seperated by comma
     
-      -m, --modules      The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
+      -m, --modules         The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
     
-      -o, --output       Output direcorty for the results files.
+      -o, --output          Output direcorty for the results files.
     
-      --help             Display this help screen.
+      --help                Display this help screen.
+      
+      -p, --promiscious     Configures whether to start live capture on normal or promiscious mode (sometimes needs super
+                            user privileges to to do so),use along with -l for live catpure.
+
+      -l, --live-capture    Caputre and process packets live from a network interface.
+
+      -f, --filter          add a capture bpf filter to the live traffic processing.
+
+      --help                Display this help screen.
     
-      --version          Display version information.
+      --version             Display version information.
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
@@ -147,30 +156,15 @@ Get credentials from all files in a directory (passwords and hashes will be prin
 
 Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
     
-     BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+     BruteSharkCli -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
     
 Run multiple modules on all files in a directory and also export all the results.  
     
-     BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+     BruteSharkCli -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+     
+Sniff an interface named Wi-Fi, run multiple modules and also export all the results to a directory (the results will be exported only when stoping the sniffer by hitting CTRL + C).
 
-##### Shell Mode
-Just type  
-    
-     BruteSharkCli.exe
-
-And then navigate using the following commands.
-| Keyword           | Description                                                                             |
-|-------------------|-----------------------------------------------------------------------------------------|
-| help              | Print help menu                                                                         |
-| exit              | Exit CLI                                                                                |
-| add-file          | Add file to analyze. Usage: add-file FILE-PATH                                          |
-| start             | Start analyzing                                                                         |
-| show-passwords    | Print passwords.                                                                        |
-| show-modules      | Print modules.                                                                          |
-| show-hashes       | Print Hashes                                                                            |
-| show-networkmap   | Prints the network map as a json string. Usage: show-networkmap                         |
-| export-hashes     | Export all Hashes to Hascat format input files. Usage: export-hashes OUTPUT-DIRECTORY   |
-| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-FILE      |
+    BruteSharkCli -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\Users\King\Desktop\Test Export
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
