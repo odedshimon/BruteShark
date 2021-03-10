@@ -37,8 +37,11 @@ namespace PcapProcessor
         public string Filter { get; set; }
         public string SelectedDeviceName { get; set; }
 
-        public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance.Select(d => (PcapDevice)d).Select(d => d.Interface.FriendlyName).ToList();
-
+        public List<string> AvailiableDevicesNames => CaptureDeviceList.Instance
+                                                      .Select(d => (PcapDevice)d)
+                                                      .Select(d => d.Interface.FriendlyName)
+                                                      .Where(d => d != null)
+                                                      .ToList();
 
         public Sniffer()
         {
