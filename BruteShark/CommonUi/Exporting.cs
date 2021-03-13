@@ -77,5 +77,10 @@ namespace CommonUi
             return filePath;
         }
 
+        public static string ReplaceInvalidFileNameChars(string filename, char newChar)
+        {
+            return string.Join(newChar.ToString(), filename.Split(Path.GetInvalidFileNameChars()));
+        }
+
     }
 }

@@ -20,7 +20,8 @@ namespace CommonUi
         internal Guid callGuid;
         private byte[] _rtpPackets { get; set; }
 
-        public VoipCallPresentation() {}
+        public VoipCallPresentation() { }
+
         public static VoipCallPresentation FromAnalyzerVoipCall(VoipCall call)
         {
             VoipCallPresentation _call = new VoipCallPresentation();
@@ -45,17 +46,21 @@ namespace CommonUi
 
         public string ToFilename()
         {
-            return $"from_{From}_{FromHost}_{FromIP}_to_{To}_{ToHost}_{ToIP}_RTP_port_{RTPPort}_{RTPMediaType}_state_{CallState}".Replace(':', '_');
+            var fileName = $"{From}_{FromHost}_{FromIP}_To_{To}_{ToHost}_{ToIP}_RTP_Port_{RTPPort}_{RTPMediaType}_{CallState}";
+            return CommonUi.Exporting.ReplaceInvalidFileNameChars(fileName, '_');
         }
+
         public override bool Equals(object obj)
         {
             var other = obj as VoipCallPresentation;
             return this.callGuid.Equals(other.callGuid);
         }
+
         public override int GetHashCode()
         {
             return callGuid.GetHashCode();
         }
+
         public byte[] GetRTPStream()
         {
             return this._rtpPackets;
