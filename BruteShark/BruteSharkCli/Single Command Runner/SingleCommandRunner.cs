@@ -267,7 +267,12 @@ namespace BruteSharkCli
                 if (_voipCalls.Contains(callPresentation))
                 {
                     callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
+                    if(e.PropertyChanged.Name == "CallState" || e.PropertyChanged.Name == "RTPPort")
+                    {
+                        PrintUpdatedItem(_voipCalls.Where(c => c.Equals(callPresentation)).First(), e.PropertyChanged.Name);
+                    }
                 }
+                
             }
         }
 
@@ -319,6 +324,11 @@ namespace BruteSharkCli
         private void PrintDetectedItem(object item)
         {
             Console.WriteLine($"Found: {item}");
+        }
+
+        private void PrintUpdatedItem(object item, string propertyUpdatedName)
+        {
+            Console.WriteLine($"Updated {propertyUpdatedName} for: {item}");
         }
     }
 
