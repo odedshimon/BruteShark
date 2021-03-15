@@ -29,6 +29,7 @@ namespace BruteSharkDesktop
         private SessionsExplorerUserControl _sessionsExplorerUserControl;
         private FilesUserControl _filesUserControl;
         private DnsResponseUserControl _dnsResponseUserControl;
+        private VoipCallsUserControl _voipCallsUserControl;
 
 
         public MainForm()
@@ -59,6 +60,8 @@ namespace BruteSharkDesktop
             _filesUserControl.Dock = DockStyle.Fill;
             _dnsResponseUserControl = new DnsResponseUserControl();
             _dnsResponseUserControl.Dock = DockStyle.Fill;
+            _voipCallsUserControl = new VoipCallsUserControl();
+            _voipCallsUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
             _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
@@ -290,6 +293,9 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                     this.modulesSplitContainer.Panel2.Controls.Add(_filesUserControl);
                     break;
                 case "DnsResponsesNode":
+                    this.modulesSplitContainer.Panel2.Controls.Add(_dnsResponseUserControl);
+                    break;
+                case "VoipCallsNode":
                     this.modulesSplitContainer.Panel2.Controls.Add(_dnsResponseUserControl);
                     break;
                 default:
