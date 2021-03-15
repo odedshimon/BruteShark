@@ -8,6 +8,8 @@ namespace CommonUi
 {
     public class VoipCallPresentation
     {
+        public byte[] RtpStream { get; set; }
+        public Guid CallGuid { get; set; }
         public string To { get; set; }
         public string ToHost { get; set; }
         public string ToIP { get; set; }
@@ -17,26 +19,26 @@ namespace CommonUi
         public int RTPPort { get; set; }
         public string CallState { get; set; }
         public string RTPMediaType { get; set; }
-        internal Guid callGuid;
-        private byte[] _rtpPackets { get; set; }
+        
 
         public VoipCallPresentation() { }
 
         public static VoipCallPresentation FromAnalyzerVoipCall(VoipCall call)
         {
-            VoipCallPresentation _call = new VoipCallPresentation();
-            _call.To = call.To;
-            _call.From = call.From;
-            _call.ToHost = call.ToHost;
-            _call.FromHost = call.FromHost;
-            _call.ToIP = call.FromIP;
-            _call.FromIP = call.FromIP;
-            _call.RTPPort = call.RTPPort;
-            _call.RTPMediaType = call.RTPMediaType;
-            _call.callGuid = call.callGuid;
-            _call.CallState = call.CallState.ToString();
-            _call._rtpPackets = call.RTPStream();
-            return _call;
+            return new VoipCallPresentation
+            {
+                To = call.To,
+                From = call.From,
+                ToHost = call.ToHost,
+                FromHost = call.FromHost,
+                ToIP = call.FromIP,
+                FromIP = call.FromIP,
+                RTPPort = call.RTPPort,
+                RTPMediaType = call.RTPMediaType,
+                CallGuid = call.callGuid,
+                CallState = call.CallState.ToString(),
+                RtpStream = call.RTPStream()
+            };
         }
 
         public override string ToString()
@@ -46,24 +48,24 @@ namespace CommonUi
 
         public string ToFilename()
         {
-            var fileName = $"{From}_{FromHost}_{FromIP}_To_{To}_{ToHost}_{ToIP}_RTP_Port_{RTPPort}_{RTPMediaType}_{CallState}";
+            var fileName = $"({From}-{FromHost}-{FromIP}) To ({To}-{ToHost}-{ToIP}) (Media Type {RTPMediaType})_{CallState}";
             return CommonUi.Exporting.ReplaceInvalidFileNameChars(fileName, '_');
         }
 
         public override bool Equals(object obj)
         {
             var other = obj as VoipCallPresentation;
-            return this.callGuid.Equals(other.callGuid);
+            return this.CallGuid.Equals(other.CallGuid);
         }
 
         public override int GetHashCode()
         {
-            return callGuid.GetHashCode();
+            return CallGuid.GetHashCode();
         }
 
-        public byte[] GetRTPStream()
+        public byte[] GetRtpStream()
         {
-            return this._rtpPackets;
+            return this.RtpStream;
         }
     }
 }

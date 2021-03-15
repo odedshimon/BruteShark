@@ -56,10 +56,10 @@ namespace CommonUi
             Directory.CreateDirectory(VoipCallsDir);
             foreach (var call in voipCalls)
             {
-                if (call.GetRTPStream().Length > 0)
+                if (call.GetRtpStream().Length > 0)
                 {
                     var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call.ToFilename()}.media"));
-                    File.WriteAllBytes(filepath, call.GetRTPStream());
+                    File.WriteAllBytes(filepath, call.GetRtpStream());
                 }
             }
 
