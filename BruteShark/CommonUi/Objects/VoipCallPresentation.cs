@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using PcapAnalyzer;
 
@@ -8,14 +9,16 @@ namespace CommonUi
 {
     public class VoipCallPresentation
     {
+        [Browsable(false)]
         public byte[] RtpStream { get; set; }
+        [Browsable(false)]
         public Guid CallGuid { get; set; }
-        public string To { get; set; }
-        public string ToHost { get; set; }
-        public string ToIP { get; set; }
         public string From { get; set; }
         public string FromHost { get; set; }
         public string FromIP { get; set; }
+        public string To { get; set; }
+        public string ToHost { get; set; }
+        public string ToIP { get; set; }
         public int RTPPort { get; set; }
         public string CallState { get; set; }
         public string RTPMediaType { get; set; }

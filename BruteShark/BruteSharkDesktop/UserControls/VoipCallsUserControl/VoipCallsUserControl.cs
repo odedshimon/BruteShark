@@ -13,14 +13,24 @@ namespace BruteSharkDesktop
 {
     public partial class VoipCallsUserControl : UserControl
     {
-        private GenericTableUserControl _voipCallsTableUserControl;
+        private readonly GenericTableUserControl _voipCallsTableUserControl;
+
+        public int VoipCallsCount => _voipCallsTableUserControl.ItemsCount;
 
         public VoipCallsUserControl()
         {
             InitializeComponent();
 
-            this._voipCallsTableUserControl = new GenericTableUserControl();
+            _voipCallsTableUserControl = new GenericTableUserControl();
             _voipCallsTableUserControl.Dock = DockStyle.Fill;
+            _voipCallsTableUserControl.SetTableDataType(typeof(CommonUi.VoipCallPresentation));
+            this.Controls.Clear();
+            this.Controls.Add(_voipCallsTableUserControl);
+        }
+
+        public void AddVoipCall(CommonUi.VoipCallPresentation voipCall)
+        {
+            _voipCallsTableUserControl.AddDataToTable(voipCall);
         }
 
     }

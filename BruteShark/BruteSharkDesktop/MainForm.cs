@@ -232,6 +232,12 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["DnsResponsesNode"].Text = $"DNS Responses ({_dnsResponseUserControl.AnswerCount})";
                 _networkMapUserControl.HandleDnsNameMapping(dnsResponse);
             }
+            else if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = CommonUi.VoipCallPresentation.FromAnalyzerVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+                _voipCallsUserControl.AddVoipCall(voipCall);
+                this.modulesTreeView.Nodes["DataNode"].Nodes["VoipCallsNode"].Text = $"Voip Calls ({_voipCallsUserControl.VoipCallsCount})";
+            }
         }
 
         private void addFilesButton_Click(object sender, EventArgs e)
@@ -296,7 +302,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                     this.modulesSplitContainer.Panel2.Controls.Add(_dnsResponseUserControl);
                     break;
                 case "VoipCallsNode":
-                    this.modulesSplitContainer.Panel2.Controls.Add(_dnsResponseUserControl);
+                    this.modulesSplitContainer.Panel2.Controls.Add(_voipCallsUserControl);
                     break;
                 default:
                     break;
