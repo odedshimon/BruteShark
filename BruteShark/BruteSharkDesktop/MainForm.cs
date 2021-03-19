@@ -234,7 +234,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             }
             else if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                var voipCall = CommonUi.VoipCallPresentation.FromAnalyzerVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+                var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
                 _voipCallsUserControl.AddVoipCall(voipCall);
                 this.modulesTreeView.Nodes["DataNode"].Nodes["VoipCallsNode"].Text = $"Voip Calls ({_voipCallsUserControl.VoipCallsCount})";
             }

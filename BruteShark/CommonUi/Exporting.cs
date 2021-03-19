@@ -50,7 +50,7 @@ namespace CommonUi
 
             return extractedFilesDir;
         }
-        public static string ExportVoipCalls(string dirPath, HashSet<VoipCallPresentation> voipCalls )
+        public static string ExportVoipCalls(string dirPath, HashSet<VoipCall> voipCalls )
         {
             var VoipCallsDir = Path.Combine(dirPath, "VoipCalls");
             Directory.CreateDirectory(VoipCallsDir);

@@ -23,12 +23,12 @@ namespace BruteSharkDesktop
 
             _voipCallsTableUserControl = new GenericTableUserControl();
             _voipCallsTableUserControl.Dock = DockStyle.Fill;
-            _voipCallsTableUserControl.SetTableDataType(typeof(CommonUi.VoipCallPresentation));
+            _voipCallsTableUserControl.SetTableDataType(typeof(CommonUi.VoipCall));
             this.Controls.Clear();
             this.Controls.Add(_voipCallsTableUserControl);
         }
 
-        public void AddVoipCall(CommonUi.VoipCallPresentation voipCall)
+        public void AddVoipCall(CommonUi.VoipCall voipCall)
         {
             _voipCallsTableUserControl.AddDataToTable(voipCall);
         }

@@ -7,42 +7,33 @@ using PcapAnalyzer;
 
 namespace CommonUi
 {
-    public class VoipCallPresentation
+    public class VoipCall
     {
         [Browsable(false)]
         public byte[] RtpStream { get; set; }
         [Browsable(false)]
         public Guid CallGuid { get; set; }
+
         public string From { get; set; }
+        [DisplayName("From Host")]
         public string FromHost { get; set; }
+        [DisplayName("From Ip")]
         public string FromIP { get; set; }
         public string To { get; set; }
+        [DisplayName("To Host")]
         public string ToHost { get; set; }
+        [DisplayName("To Ip")]
         public string ToIP { get; set; }
+        [DisplayName("RTP Port")]
         public int RTPPort { get; set; }
+        [DisplayName("Call State")]
         public string CallState { get; set; }
+        [DisplayName("RTP Media Type")]
         public string RTPMediaType { get; set; }
         
 
-        public VoipCallPresentation() { }
+        public VoipCall() { }
 
-        public static VoipCallPresentation FromAnalyzerVoipCall(VoipCall call)
-        {
-            return new VoipCallPresentation
-            {
-                To = call.To,
-                From = call.From,
-                ToHost = call.ToHost,
-                FromHost = call.FromHost,
-                ToIP = call.FromIP,
-                FromIP = call.FromIP,
-                RTPPort = call.RTPPort,
-                RTPMediaType = call.RTPMediaType,
-                CallGuid = call.callGuid,
-                CallState = call.CallState.ToString(),
-                RtpStream = call.RTPStream()
-            };
-        }
 
         public override string ToString()
         {
@@ -57,7 +48,7 @@ namespace CommonUi
 
         public override bool Equals(object obj)
         {
-            var other = obj as VoipCallPresentation;
+            var other = obj as VoipCall;
             return this.CallGuid.Equals(other.CallGuid);
         }
 

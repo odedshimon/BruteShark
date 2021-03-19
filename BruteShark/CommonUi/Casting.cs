@@ -162,5 +162,23 @@ namespace CommonUi
             };
         }
 
+        public static VoipCall CastAnalyzerVoipCallToPresentationVoipCall(PcapAnalyzer.VoipCall voipCall)
+        {
+            return new VoipCall
+            {
+                To = voipCall.To,
+                From = voipCall.From,
+                ToHost = voipCall.ToHost,
+                FromHost = voipCall.FromHost,
+                ToIP = voipCall.FromIP,
+                FromIP = voipCall.FromIP,
+                RTPPort = voipCall.RTPPort,
+                RTPMediaType = voipCall.RTPMediaType,
+                CallGuid = voipCall.callGuid,
+                CallState = voipCall.CallState.ToString(),
+                RtpStream = voipCall.RTPStream()
+            };
+        }
+
     }
 }

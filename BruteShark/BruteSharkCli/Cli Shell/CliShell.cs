@@ -26,7 +26,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
-        private HashSet<VoipCallPresentation> _voipCalls;
+        private HashSet<CommonUi.VoipCall> _voipCalls;
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
@@ -67,7 +67,7 @@ namespace BruteSharkCli
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
-            _voipCalls = new HashSet<VoipCallPresentation>();
+            _voipCalls = new HashSet<CommonUi.VoipCall>();
             
             this._commands = new List<CliShellCommand>();
             AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
@@ -105,8 +105,8 @@ namespace BruteSharkCli
         {
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                VoipCall call = e.ParsedItem as VoipCall;
-                var callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(call);
+                PcapAnalyzer.VoipCall call = e.ParsedItem as PcapAnalyzer.VoipCall;
+                var callPresentation = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(call);
                 if (_voipCalls.Contains(callPresentation))
                 {
                     callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
@@ -331,8 +331,8 @@ namespace BruteSharkCli
             }
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                var voipCall = e.ParsedItem as VoipCall;
-                _voipCalls.Add(VoipCallPresentation.FromAnalyzerVoipCall(voipCall));
+                var voipCall = e.ParsedItem as PcapAnalyzer.VoipCall;
+                _voipCalls.Add(CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(voipCall));
             }
 
                 UpdateAnalyzingStatus();

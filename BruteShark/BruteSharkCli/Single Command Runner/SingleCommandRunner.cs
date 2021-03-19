@@ -19,7 +19,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
-        private HashSet<VoipCallPresentation> _voipCalls;
+        private HashSet<CommonUi.VoipCall> _voipCalls;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
 
         private Sniffer _sniffer; 
@@ -46,7 +46,7 @@ namespace BruteSharkCli
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
-            _voipCalls = new HashSet<VoipCallPresentation>();
+            _voipCalls = new HashSet<CommonUi.VoipCall>();
             _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
 
 
@@ -262,8 +262,8 @@ namespace BruteSharkCli
         {
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                VoipCall call = e.ParsedItem as VoipCall;
-                var callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(call);
+                PcapAnalyzer.VoipCall call = e.ParsedItem as PcapAnalyzer.VoipCall;
+                var callPresentation = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(call);
                 if (_voipCalls.Contains(callPresentation))
                 {
                     callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
@@ -306,8 +306,8 @@ namespace BruteSharkCli
             }
             else if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                var voipCall = e.ParsedItem as VoipCall;
-                VoipCallPresentation callPresentation = VoipCallPresentation.FromAnalyzerVoipCall(voipCall);
+                var voipCall = e.ParsedItem as PcapAnalyzer.VoipCall;
+                CommonUi.VoipCall callPresentation = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(voipCall);
                 PrintDetectedItem(callPresentation);
                 _voipCalls.Add(callPresentation);
 			}
