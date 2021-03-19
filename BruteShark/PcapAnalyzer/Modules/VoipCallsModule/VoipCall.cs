@@ -15,6 +15,7 @@ namespace PcapAnalyzer
         Rejected,
         Completed
     }
+
     public class VoipCall
     {
         public string To { get; set; }
@@ -41,6 +42,7 @@ namespace PcapAnalyzer
                 (this.ToIP == call.ToIP || this.ToIP == call.FromIP) &&
                 (this.FromIP == call.FromIP || this.FromIP == call.ToIP);
         }
+
         public override int GetHashCode()
         {
             return this.From.GetHashCode() ^

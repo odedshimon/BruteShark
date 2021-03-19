@@ -10,16 +10,30 @@ namespace PcapAnalyzer
 {
     class VoipCallsModule : IModule
     {
+        private enum SipResponses
+        {
+            OK = 200,
+            BadRequest = 400,
+            InternalServerError = 500
+        }
+        
+        private HashSet<VoipCall> _voipCalls = new HashSet<VoipCall>();
         public string Name => "Voip Calls";
+
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
         public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
-        public HashSet<VoipCall> VoipCalls = new HashSet<VoipCall>();
+        public void Analyze(TcpPacket tcpPacket) { }
+
+        public void Analyze(TcpSession tcpSession) { }
+
+        public void Analyze(UdpStream udpStream) { }
+
         public void Analyze(UdpPacket udpPacket) 
         {
             try 
             {   
-                // try Decode as RTP
+                // Try to decode as RTP packet.
                 RTPPacket packet = new RTPPacket(udpPacket.Data);
                 HandleRTPPAcket(packet, udpPacket.DestinationPort, udpPacket.SourcePort, udpPacket.SourceIp, udpPacket.DestinationIp);
             } 
@@ -27,57 +41,57 @@ namespace PcapAnalyzer
             
             try
             {   
-                SIPRequest sipRequest = tryDecodeSipRequest(udpPacket);
+                SIPRequest sipRequest = TryDecodeSipRequest(udpPacket);
                 
                 if(sipRequest.Method == SIPMethodsEnum.INVITE)
                 {
-                    HandleInitiationRequest(sipRequest ,udpPacket.Data, udpPacket.SourceIp, udpPacket.DestinationIp);
+                    HandleInitiationRequest(sipRequest, udpPacket.SourceIp, udpPacket.DestinationIp);
                 }
-                // it's a request that's being sent after the invatation message was answered
+                // It is a request thats being sent after the invatation message was answered.
                 else
                 {
-                    HandleDuringCallRequest(sipRequest ,udpPacket.Data, udpPacket.SourceIp, udpPacket.DestinationIp);
+                    HandleDuringCallRequest(sipRequest, udpPacket.SourceIp, udpPacket.DestinationIp);
                 }
             }
             catch (Exception ex) 
             {    
-                // try Decode as SIP response
-                SIPResponse sipResponse = tryDecodeSipResponse(udpPacket);
+                // Try to decode as SIP response.
+                SIPResponse sipResponse = TryDecodeSipResponse(udpPacket);
                 HandleResponse(sipResponse, udpPacket.SourceIp, udpPacket.DestinationIp);
             }
         }
-        public void Analyze(TcpPacket tcpPacket) {}
-        public void Analyze(TcpSession tcpSession) {}
-        public void Analyze(UdpStream udpStream) {}
-        private SIPRequest tryDecodeSipRequest(UdpPacket udpPacket)
+
+        private SIPRequest TryDecodeSipRequest(UdpPacket udpPacket)
         {
             return SIPRequest.ParseSIPRequest(Encoding.UTF8.GetString(udpPacket.Data));
         }
-        private SIPResponse tryDecodeSipResponse(UdpPacket udpPacket)
+
+        private SIPResponse TryDecodeSipResponse(UdpPacket udpPacket)
         {
             return SIPResponse.ParseSIPResponse(Encoding.UTF8.GetString(udpPacket.Data));
         }
-        private void HandleInitiationRequest(SIPRequest sipRequest, byte[] rawData, string sourceIP, string destinationIP)
-        {
-            var call = createVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
 
-            // check if the voip calls set already contains this call
-            if (VoipCalls.Contains(call))
+        private void HandleInitiationRequest(SIPRequest sipRequest, string sourceIP, string destinationIP)
+        {
+            var call = CreateVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
+
+            // Check if the voip calls set already contains this call.
+            if (_voipCalls.Contains(call))
             {
                 switch (sipRequest.Method)
                 {
                     case SIPMethodsEnum.ACK:
-                        getCall(call).CallState = CallState.InCall;
+                        GetCall(call).CallState = CallState.InCall;
                         break;
+                    // Call is being cancelled and finished.
                     case SIPMethodsEnum.CANCEL:
-                        // the call is being cancelled and finished
-                        getCall(call).CallState = CallState.Cancelled;
-                        handleFinishedCall(call);
+                        GetCall(call).CallState = CallState.Cancelled;
+                        HandleFinishedCall(call);
                         break;
-                    // the call is being completed propertly
+                    // Call has been completed properly.
                     case SIPMethodsEnum.BYE:
-                        getCall(call).CallState = CallState.Completed;
-                        handleFinishedCall(call);
+                        GetCall(call).CallState = CallState.Completed;
+                        HandleFinishedCall(call);
                         break;
                 }
             }
@@ -86,146 +100,154 @@ namespace PcapAnalyzer
                 if (sipRequest.Method == SIPMethodsEnum.INVITE)
                 {
                     call.CallState = CallState.Invited;
-                    call.callGuid = Guid.NewGuid();                    
-                    VoipCalls.Add(call);
-                    // invoke on new call
+                    call.callGuid = Guid.NewGuid();
+                    _voipCalls.Add(call);
+
+                    // Raise new call event.
                     this.ParsedItemDetected(this, new ParsedItemDetectedEventArgs()
                     {
-                        ParsedItem = getCall(call)
+                        ParsedItem = GetCall(call)
                     });
                 }
             }
         }
-        private void HandleDuringCallRequest(SIPRequest sipRequest, byte[] rawData, string sourceIP, string destinationIP)
+
+        private void HandleDuringCallRequest(SIPRequest sipRequest, string sourceIP, string destinationIP)
         {
-            var call = createVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
+            var call = CreateVoipCallFromSipMessage(sipRequest, sourceIP, destinationIP);
            
-            // check if the voip calls set already contains this call
-            if (VoipCalls.Contains(call))
+            // Check if the voip calls hash set already contains this call.
+            if (_voipCalls.Contains(call))
             {
                 switch (sipRequest.Method)
                 {
                     case SIPMethodsEnum.ACK:
-                        getCall(call).CallState = CallState.InCall;
-                        handleCallStateUpdate(call, CallState.InCall);
+                        GetCall(call).CallState = CallState.InCall;
+                        HandleCallStateUpdate(call, CallState.InCall);
                         break;
+                    // Call is being cancelled and finished.
                     case SIPMethodsEnum.CANCEL:
-                        getCall(call).CallState = CallState.Cancelled;
-                        handleCallStateUpdate(call, CallState.Cancelled);
-                        // call is being cancelled and finished
-                        handleFinishedCall(call);
+                        GetCall(call).CallState = CallState.Cancelled;
+                        HandleCallStateUpdate(call, CallState.Cancelled);
+                        HandleFinishedCall(call);
                         break;
+                    // Call is being cancelled and finished.
                     case SIPMethodsEnum.BYE:
-                        // call is being cancelled and finished
-                        getCall(call).CallState = CallState.Completed;
-                        handleCallStateUpdate(call, CallState.Completed);
-                        handleFinishedCall(call);
+                        GetCall(call).CallState = CallState.Completed;
+                        HandleCallStateUpdate(call, CallState.Completed);
+                        HandleFinishedCall(call);
                         break;
                 }
             }
         }
-            
+
         private void HandleResponse(SIPResponse response, string sourceIP, string destinationIP)
         {
-            VoipCall call = createVoipCallFromSipMessage(response, sourceIP, destinationIP);
+            VoipCall call = CreateVoipCallFromSipMessage(response, sourceIP, destinationIP);
 
-            // check if the voip calls set already contains this call
-            if (VoipCalls.Contains(call))
+            // Check if the voip calls hash set already contains this call.
+            if (_voipCalls.Contains(call))
             {
-                // parse status
-                if (response.StatusCode == 200)
+                if (response.StatusCode == (int)SipResponses.OK)
                 {
                     SDP SDPmessage = SDP.ParseSDPDescription(response.Body);
-                    getCall(call).RTPPort = SDPmessage.Media[0].Port;
-                    handleRTPPortAdded(call);
+                    GetCall(call).RTPPort = SDPmessage.Media[0].Port;
+                    HandleRTPPortAdded(call);
+
                     foreach (var m in SDPmessage.Media[0].MediaFormats)
                     {
-                        getCall(call).RTPMediaType += $"{m.Value.Kind}:{m.Value.Rtpmap} ";
+                        GetCall(call).RTPMediaType += $"{m.Value.Kind}:{m.Value.Rtpmap} ";
                     }
-                    handleRTPMediaTypeAdded(call);
+
+                    HandleRTPMediaTypeAdded(call);
                 }
-                else if(response.StatusCode >= 400 && response.StatusCode < 500)
+                else if (response.StatusCode >= (int)SipResponses.BadRequest && response.StatusCode < (int)SipResponses.InternalServerError)
                 {
-                    getCall(call).CallState = CallState.Rejected;
-                    handleCallStateUpdate(call, CallState.Rejected);
-                    handleFinishedCall(call);
+                    GetCall(call).CallState = CallState.Rejected;
+                    HandleCallStateUpdate(call, CallState.Rejected);
+                    HandleFinishedCall(call);
                 }
-                    
             }
         }
+
         private void HandleRTPPAcket(RTPPacket packet, int destinationPort, int sourcePort, string sourceAddress, string DestinationAddress)
         {
-            foreach(VoipCall call in VoipCalls)
+            foreach (VoipCall call in _voipCalls)
             {
                 if (call.RTPPort == destinationPort || call.RTPPort == sourcePort)
                 {
                     if ((call.FromIP == sourceAddress || call.FromIP == DestinationAddress) || (call.ToIP == sourceAddress || call.ToIP == DestinationAddress))
                     {
-                        getCall(call).addrtpPacket(packet);
-                        handleRTPPacketAdded(call);
+                        GetCall(call).addrtpPacket(packet);
+                        HandleRTPPacketAdded(call);
                     }
                 }
             }
         }
-        private VoipCall createVoipCallFromSipMessage(SIPMessageBase sipMessage, string sourceIP, string destinationIP)
+
+        private VoipCall CreateVoipCallFromSipMessage(SIPMessageBase sipMessage, string sourceIP, string destinationIP)
         {
-            var call = new VoipCall();
-            call.From = sipMessage.Header.From.FromURI.User;
-            call.To = sipMessage.Header.To.ToURI.User;
-            call.ToHost = sipMessage.Header.To.ToURI.Host;
-            call.FromHost = sipMessage.Header.From.FromURI.Host;
-            call.FromIP = sourceIP;
-            call.ToIP = destinationIP;
-            return call;
+            return new VoipCall
+            {
+                From = sipMessage.Header.From.FromURI.User,
+                To = sipMessage.Header.To.ToURI.User,
+                ToHost = sipMessage.Header.To.ToURI.Host,
+                FromHost = sipMessage.Header.From.FromURI.Host,
+                FromIP = sourceIP,
+                ToIP = destinationIP
+            };
         }
 
-        private VoipCall getCall(VoipCall call)
+        private VoipCall GetCall(VoipCall call)
         {
-            return VoipCalls.Where(c => c.Equals(call)).First();
+            return _voipCalls.Where(c => c.Equals(call)).First();
         }
-        
-        private void handleFinishedCall(VoipCall call)
+
+        private void HandleFinishedCall(VoipCall call)
         {
-            if (VoipCalls.Contains(call))
+            if (_voipCalls.Contains(call))
             {
-                VoipCalls.Remove(call);
+                _voipCalls.Remove(call);
             }
         }
-        private void handleCallStateUpdate(VoipCall call, CallState newState)
+
+        private void HandleCallStateUpdate(VoipCall call, CallState newState)
         {
             this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
             {
-                ParsedItem = getCall(call),
+                ParsedItem = GetCall(call),
                 PropertyChanged = typeof(VoipCall).GetProperty("CallState"),
                 NewPropertyValue = newState.ToString()
             });
         }
 
-        private void handleRTPPacketAdded(VoipCall call)
+        private void HandleRTPPacketAdded(VoipCall call)
         {
             this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
             {
-                ParsedItem = getCall(call),
+                ParsedItem = GetCall(call),
                 PropertyChanged = typeof(VoipCall).GetProperty("_rtpPackets"),
-                NewPropertyValue = getCall(call).RTPStream()
-            });;
-        }
-        private void handleRTPPortAdded(VoipCall call)
-        {
-            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
-            {
-                ParsedItem = getCall(call),
-                PropertyChanged = typeof(VoipCall).GetProperty("RTPPort"),
-                NewPropertyValue = getCall(call).RTPPort
+                NewPropertyValue = GetCall(call).RTPStream()
             });
         }
-        private void handleRTPMediaTypeAdded(VoipCall call)
+
+        private void HandleRTPPortAdded(VoipCall call)
         {
             this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
             {
-                ParsedItem = getCall(call),
+                ParsedItem = GetCall(call),
+                PropertyChanged = typeof(VoipCall).GetProperty("RTPPort"),
+                NewPropertyValue = GetCall(call).RTPPort
+            });
+        }
+
+        private void HandleRTPMediaTypeAdded(VoipCall call)
+        {
+            this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
+            {
+                ParsedItem = GetCall(call),
                 PropertyChanged = typeof(VoipCall).GetProperty("RTPMediaType"),
-                NewPropertyValue = getCall(call).RTPMediaType
+                NewPropertyValue = GetCall(call).RTPMediaType
             });
         }
     }
