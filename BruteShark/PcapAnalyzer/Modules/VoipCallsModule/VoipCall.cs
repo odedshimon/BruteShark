@@ -53,7 +53,7 @@ namespace PcapAnalyzer
                 this.ToHost.GetHashCode(); 
         }
 
-        public void addrtpPacket(RTPPacket packet)
+        public void AddRtpPacket(RTPPacket packet)
         {
             _rtpPackets.Add(packet);
         }

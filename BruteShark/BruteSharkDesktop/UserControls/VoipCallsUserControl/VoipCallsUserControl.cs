@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Reflection;
 
 namespace BruteSharkDesktop
 {
@@ -31,6 +31,16 @@ namespace BruteSharkDesktop
         public void AddVoipCall(CommonUi.VoipCall voipCall)
         {
             _voipCallsTableUserControl.AddDataToTable(voipCall);
+        }
+
+        public void UpdateVoipCall(CommonUi.VoipCall voipCall, PropertyInfo propertyInfo, object newValue)
+        {
+            var existingVoipCall = _voipCallsTableUserControl.ItemsHashSet.Where(c => c.Equals(voipCall)).First();
+
+            if (existingVoipCall != null)
+            {
+                typeof(CommonUi.VoipCall).GetProperty(propertyInfo.Name).SetValue(existingVoipCall, newValue);
+            }
         }
 
     }

@@ -32,7 +32,6 @@ namespace BruteSharkCli
             { "Credentials" ,"Credentials Extractor (Passwords, Hashes)"},
             { "Voip" ,"Voip Calls"},
             { "DNS", "DNS"}
-
         };
 
         public SingleCommandRunner(Analyzer analyzer, Processor processor, Sniffer sniffer, string[] args)
@@ -115,7 +114,6 @@ namespace BruteSharkCli
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
                     Environment.Exit(0);
-                    
                 }
 
                 _sniffer.Filter = _cliFlags.CaptrueFilter;
@@ -258,21 +256,26 @@ namespace BruteSharkCli
                 Console.WriteLine($"ERROR: File does not exist - {filePath}");
             }
         }
+
         private void UpdatedPropertyInItemDetected(object sender, UpdatedPropertyInItemeventArgs e)
         {
             if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
-                PcapAnalyzer.VoipCall call = e.ParsedItem as PcapAnalyzer.VoipCall;
-                var callPresentation = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(call);
-                if (_voipCalls.Contains(callPresentation))
+                var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+
+                if (_voipCalls.Contains(voipCall))
                 {
-                    callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
-                    if(e.PropertyChanged.Name == "CallState" || e.PropertyChanged.Name == "RTPPort")
+                    voipCall.GetType()
+                        .GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                        .SetValue(_voipCalls
+                            .Where(c => c.Equals(voipCall))
+                            .FirstOrDefault(), e.NewPropertyValue);
+
+                    if (e.PropertyChanged.Name == "CallState" || e.PropertyChanged.Name == "RTPPort")
                     {
-                        PrintUpdatedItem(_voipCalls.Where(c => c.Equals(callPresentation)).First(), e.PropertyChanged.Name);
+                        PrintUpdatedItem(_voipCalls.Where(c => c.Equals(voipCall)).First(), e.PropertyChanged.Name);
                     }
                 }
-                
             }
         }
 
@@ -330,6 +333,6 @@ namespace BruteSharkCli
         {
             Console.WriteLine($"Updated {propertyUpdatedName} for: {item}");
         }
-    }
 
+    }
 }

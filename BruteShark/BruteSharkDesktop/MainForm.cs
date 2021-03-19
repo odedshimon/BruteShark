@@ -78,6 +78,7 @@ namespace BruteSharkDesktop
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
             _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
+            _analyzer.UpdatedItemProprertyDetected += (s, e) => SwitchToMainThreadContext(() => OnUpdatedItemProprertyDetected(s, e));
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
@@ -237,6 +238,15 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                 var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
                 _voipCallsUserControl.AddVoipCall(voipCall);
                 this.modulesTreeView.Nodes["DataNode"].Nodes["VoipCallsNode"].Text = $"Voip Calls ({_voipCallsUserControl.VoipCallsCount})";
+            }
+        }
+
+        private void OnUpdatedItemProprertyDetected(object sender, PcapAnalyzer.UpdatedPropertyInItemeventArgs e)
+        {
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+                _voipCallsUserControl.UpdateVoipCall(voipCall, e.PropertyChanged, e.NewPropertyValue);
             }
         }
 
@@ -474,9 +484,10 @@ This means a faster processing but also that some obects may not be extracted.")
                 {
                     MessageBox.Show($"Failed to export results: {ex.Message}");
                 }
-                
+
             }
         }
+
     }
 }
     
