@@ -10,7 +10,7 @@ namespace CommonUi
     public class VoipCall
     {
         [Browsable(false)]
-        public byte[] RtpStream { get; set; }
+        public byte[] RTPStream { get; set; }
         [Browsable(false)]
         public Guid CallGuid { get; set; }
 
@@ -30,7 +30,9 @@ namespace CommonUi
         public string CallState { get; set; }
         [DisplayName("RTP Media Type")]
         public string RTPMediaType { get; set; }
-        
+        [DisplayName("Data Size (Bytes)")]
+        public int DataSize => RTPStream.Length;
+
 
         public VoipCall() { }
 
@@ -59,7 +61,7 @@ namespace CommonUi
 
         public byte[] GetRtpStream()
         {
-            return this.RtpStream;
+            return this.RTPStream;
         }
     }
 }

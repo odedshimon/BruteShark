@@ -476,6 +476,7 @@ This means a faster processing but also that some obects may not be extracted.")
                     this.progressBar.Refresh();
                     CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
                     CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _connections);
+                    CommonUi.Exporting.ExportVoipCalls(outputDirectoryPath, _voipCallsUserControl.VoipCalls);
                     this.progressBar.CustomText = string.Empty;
 
                     MessageBox.Show($"Successfully exported results");

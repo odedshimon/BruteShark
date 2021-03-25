@@ -15,6 +15,7 @@ namespace BruteSharkDesktop
     {
         private readonly GenericTableUserControl _voipCallsTableUserControl;
 
+        public HashSet<CommonUi.VoipCall> VoipCalls => _voipCallsTableUserControl.ItemsHashSet.Cast<CommonUi.VoipCall>().ToHashSet();
         public int VoipCallsCount => _voipCallsTableUserControl.ItemsCount;
 
         public VoipCallsUserControl()

@@ -29,6 +29,8 @@ namespace PcapAnalyzer
         public Guid callGuid { get; set; }
         public string RTPMediaType { get; set; }
         public List<RTPPacket> _rtpPackets { get; set; }
+        public byte[] RTPStream => _rtpPackets.SelectMany(p => p.Payload).ToArray();
+
         internal VoipCall()
         {
             _rtpPackets = new List<RTPPacket>();
@@ -58,9 +60,5 @@ namespace PcapAnalyzer
             _rtpPackets.Add(packet);
         }
 
-        public byte[] RTPStream()
-        {
-            return _rtpPackets.SelectMany(p => p.Payload).ToArray();
-        }
     }
 }

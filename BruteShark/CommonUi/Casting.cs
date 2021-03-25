@@ -176,7 +176,7 @@ namespace CommonUi
                 RTPMediaType = voipCall.RTPMediaType,
                 CallGuid = voipCall.callGuid,
                 CallState = voipCall.CallState.ToString(),
-                RtpStream = voipCall.RTPStream()
+                RTPStream = voipCall.RTPStream
             };
         }
 

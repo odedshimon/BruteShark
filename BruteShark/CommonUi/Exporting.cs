@@ -54,6 +54,7 @@ namespace CommonUi
         {
             var VoipCallsDir = Path.Combine(dirPath, "VoipCalls");
             Directory.CreateDirectory(VoipCallsDir);
+
             foreach (var call in voipCalls)
             {
                 if (call.GetRtpStream().Length > 0)

@@ -180,7 +180,7 @@ namespace PcapAnalyzer
                     {
                         GetCall(call).AddRtpPacket(packet);
                         // TODO: check if this usefull, if not delete function.
-                        // HandleRTPPacketAdded(call);
+                        HandleRTPPacketAdded(call);
                     }
                 }
             }
@@ -227,8 +227,8 @@ namespace PcapAnalyzer
             this.UpdatedItemProprertyDetected(this, new UpdatedPropertyInItemeventArgs()
             {
                 ParsedItem = GetCall(call),
-                PropertyChanged = typeof(VoipCall).GetProperty("_rtpPackets"),
-                NewPropertyValue = GetCall(call).RTPStream()
+                PropertyChanged = typeof(VoipCall).GetProperty("RTPStream"),
+                NewPropertyValue = GetCall(call).RTPStream
             });
         }
 
