@@ -179,7 +179,6 @@ namespace PcapAnalyzer
                     if ((call.FromIP == sourceAddress || call.FromIP == DestinationAddress) || (call.ToIP == sourceAddress || call.ToIP == DestinationAddress))
                     {
                         GetCall(call).AddRtpPacket(packet);
-                        // TODO: check if this usefull, if not delete function.
                         HandleRTPPacketAdded(call);
                     }
                 }

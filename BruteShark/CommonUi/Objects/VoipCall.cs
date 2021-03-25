@@ -36,7 +36,6 @@ namespace CommonUi
 
         public VoipCall() { }
 
-
         public override string ToString()
         {
             return $"{From}@{FromHost}({FromIP})->{To}@{ToHost}({ToIP}) - RTP port: {RTPPort}, Media type: {RTPMediaType} - state: {CallState}";
@@ -59,9 +58,5 @@ namespace CommonUi
             return CallGuid.GetHashCode();
         }
 
-        public byte[] GetRtpStream()
-        {
-            return this.RTPStream;
-        }
     }
 }

@@ -57,10 +57,10 @@ namespace CommonUi
 
             foreach (var call in voipCalls)
             {
-                if (call.GetRtpStream().Length > 0)
+                if (call.RTPStream.Length > 0)
                 {
                     var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call.ToFilename()}.media"));
-                    File.WriteAllBytes(filepath, call.GetRtpStream());
+                    File.WriteAllBytes(filepath, call.RTPStream);
                 }
             }
 

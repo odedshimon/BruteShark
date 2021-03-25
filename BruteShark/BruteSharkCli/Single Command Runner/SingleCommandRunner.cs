@@ -72,23 +72,21 @@ namespace BruteSharkCli
                 {
                     SetupSniffer();
 
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(_sniffer.PromisciousMode ?
-                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press any Ctrl + C to stop" :
-                        $"[+] Started analyzing packets from {_cliFlags.CaptureDevice} device- Press Ctrl + C to stop");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    CliPrinter.Info(_sniffer.PromisciousMode ?
+                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press Ctrl + C to stop" :
+                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device - Press Ctrl + C to stop");
                     
                     _sniffer.StartSniffing(new System.Threading.CancellationToken());
                 }
                 else 
                 {
+                    CliPrinter.Info($"Start analyzing {_files.Count} files");
                     _processor.ProcessPcaps(_files);
                 }
-                
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                CliPrinter.Error(ex);
             }
         }
 
@@ -96,7 +94,7 @@ namespace BruteSharkCli
         {
             if (!_sniffer.AvailiableDevicesNames.Contains(_cliFlags.CaptureDevice))
             {
-                Console.WriteLine($"No such device: {_cliFlags.CaptureDevice}");
+                CliPrinter.Error($"No such device: {_cliFlags.CaptureDevice}");
                 Environment.Exit(0);
             }
 
@@ -111,8 +109,7 @@ namespace BruteSharkCli
             {
                 if (!Sniffer.CheckCaptureFilter(_cliFlags.CaptrueFilter))
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
+                    CliPrinter.Error($"The capture filter: {_cliFlags.CaptrueFilter} is not a valid filter - filters must be in a bpf format");
                     Environment.Exit(0);
                 }
 
@@ -122,17 +119,18 @@ namespace BruteSharkCli
 
         private void PrintFileStatusUpdate(object sender, FileProcessingStatusChangedEventArgs e)
         {
-            if (e.Status == FileProcessingStatus.Started || e.Status == FileProcessingStatus.Finished)
+            if (e.Status == FileProcessingStatus.Started)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
+                CliPrinter.Info($"Start processing file : {Path.GetFileName(e.FilePath)}");
             }
-            else
+            else if (e.Status == FileProcessingStatus.Finished)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
+                CliPrinter.Info($"Finished processing file : {Path.GetFileName(e.FilePath)}");
             }
-
-            Console.WriteLine($"File : {Path.GetFileName(e.FilePath)} Processing {e.Status}");
-            Console.ForegroundColor = ConsoleColor.White;
+            else if (e.Status == FileProcessingStatus.Faild)
+            {
+                CliPrinter.Error($"Failed to process file : {Path.GetFileName(e.FilePath)}");
+            }
         }
 
         private void SetupRun()
@@ -219,30 +217,31 @@ namespace BruteSharkCli
                 if (_connections.Any())
                 {
                     var filePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _connections);
-                    Console.WriteLine($"Successfully exported network map to json file: {filePath}");
+                    CliPrinter.Info($"Successfully exported network map to json file: {filePath}");
                 }
                 if (_hashes.Any())
                 {
                     Utilities.ExportHashes(_cliFlags.OutputDir, _hashes);
+                    CliPrinter.Info($"Successfully exported hashes");
                 }
                 if (_files.Any())
                 {
                     var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
-                    Console.WriteLine($"Successfully exported extracted files to: {dirPath}");
+                    CliPrinter.Info($"Successfully exported extracted files to: {dirPath}");
                 }
                 if (_dnsMappings.Any())
                 {
                     var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _dnsMappings);
-                    Console.WriteLine($"Successfully exported DNS mappings to file: {dnsFilePath}");
+                    CliPrinter.Info($"Successfully exported DNS mappings to file: {dnsFilePath}");
                 }
 				if(_voipCalls.Any())
                 {
                    var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
-                   Console.WriteLine($"Successfully exported voip calss extracted to: {dirPath}");
+                    CliPrinter.Info($"Successfully exported voip calss extracted to: {dirPath}");
                 }
             }
 
-            Console.WriteLine("[+] Bruteshark finished processing");
+            CliPrinter.Info("Bruteshark finished processing");
         }
 
         private void AddFile(string filePath)
@@ -253,7 +252,7 @@ namespace BruteSharkCli
             }
             else
             {
-                Console.WriteLine($"ERROR: File does not exist - {filePath}");
+                CliPrinter.Error($"File does not exist - {filePath}");
             }
         }
 
@@ -320,18 +319,17 @@ namespace BruteSharkCli
                 {
                     PrintDetectedItem(e.ParsedItem);
                 }
-
             }
         }
 
         private void PrintDetectedItem(object item)
         {
-            Console.WriteLine($"Found: {item}");
+            CliPrinter.WriteLine(ConsoleColor.Blue, $"Found: {item}");
         }
 
         private void PrintUpdatedItem(object item, string propertyUpdatedName)
         {
-            Console.WriteLine($"Updated {propertyUpdatedName} for: {item}");
+            CliPrinter.WriteLine(ConsoleColor.Blue, $"Updated {propertyUpdatedName} for: {item}");
         }
 
     }
