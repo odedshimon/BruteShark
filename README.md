@@ -41,6 +41,7 @@ Please ⭐️ this repository if this project helped you!
 * Extract DNS queries
 * Reconstruct all TCP & UDP Sessions
 * File Carving
+* Extract Voip calls (SIP, RTP)
 
 ## Download
 ##### Windows 
@@ -62,7 +63,6 @@ Please ⭐️ this repository if this project helped you!
 # Examples
 ##### Videos
 [**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
-[**Run Brute Shark CLI on Ubuntu with Mono**](https://youtu.be/am1xU_kAxiI)  
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
@@ -93,84 +93,52 @@ This module is responsible for extracting and encoding usernames and passwords a
 | Kerberos        | AS-REP etype 23  |      18200       |
 ##### Network Map Module 
 This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
-![](readme_media/Neo4jMap.png)
-##### Files Extracting Module 
+![](readme_media/Neo4jMap.png)  
+##### Files Extracting Module  
 This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
+##### Files Extracting Module  
+This module extracts Voip calls from SIP & RTP protocols. The extracted calls can be exported as raw audio files and can be played using a proper audio player (like [Audacity](https://www.audacityteam.org/))  
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
-BruteSharkCli has two modes: single command and shell mode.
-The single command mode works by geting all the relevant parameters for the processing and then printing the results to stdout or files.
-The shell mode allows to perform each step individually.
-##### Single Command Mode
+BruteSharkCli is the cli version of BruteShark for Linux users (It can also compiled for Windows operating systems). It has all the features of BruteSharkDesktop and designed to operate from a shell.
+As a classic cli tool it works by geting all the relevant parameters for the processing and then printing the results to stdout or files.
+
 Print the help menu:  
 
-    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe --help
+    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli --help
     BruteSharkCli 1.0.0.0
     Copyright c  2018
     
-      -d, --input-dir    The input directory containing the files to be processed.
-    
-      -i, --input        The files to be processed seperated by comma
-    
-      -m, --modules      The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
-    
-      -o, --output       Output direcorty for the results files.
-    
-      --help             Display this help screen.
-    
-      --version          Display version information.
+      -d, --input-dir       The input directory containing the files to be processed.
+
+      -i, --input           The files to be processed seperated by comma
+
+      -m, --modules         The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap, DNS
+
+      -o, --output          Output direcorty for the results files.
+
+      -p, --promiscious     Configures whether to start live capture on normal or promiscious mode (sometimes needs super user privileges to to do so),use along with -l for live catpure.
+
+      -l, --live-capture    Caputre and process packets live from a network interface.
+
+      -f, --filter          add a capture bpf filter to the live traffic processing.
+
+      --help                Display this help screen.
+
+      --version             Display version information.
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
-     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli.exe -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
-     [+] Started analyzing 5 files
-     File : Ftp.pcap Processing Started
-     Found: Network Credential: 192.168.0.114=>192.168.0.193(FTP) => csanders:echo
-     File : Ftp.pcap Processing Finished
-     File : HTTP - Basic Authentication.pcap Processing Started
-     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail
-     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail2
-     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:fail3
-     Found: Network Credential: 192.168.0.4=>192.254.189.169(HTTP Basic Authentication) => test:test
-     File : HTTP - Basic Authentication.pcap Processing Finished
-     File : IMAP - Authenticate CRAM-MD5.cap Processing Started
-     Found: Hash: 10.0.2.101=>10.0.1.102:10.0.1.102(IMAP) CRAM-MD5 => aGVtbWluZ3dheSAyOWYyMGI2NjkzNDdhYTA4MTc0OTA2NWQ5MDNhNDllNA==
-     File : IMAP - Authenticate CRAM-MD5.cap Processing Finished
-     File : SMB - NTLMSSP (smb3 aes 128 ccm).pcap Processing Started
-     Found: Hash: 10.160.64.139=>10.160.65.202:10.160.65.202(NTLMSSP) NTLMv2 => 39dbdbeb1bdd29b07a5d20c8f82f2cb701010000000000008a8ce7a9f4ced201e7969a04872c16890000000002000800530055005300450001000c0057005300320030003100360004000e0073007500730065002e006400650003001c005700530032003000310036002e0073007500730065002e006400650005000e0073007500730065002e0064006500070008008a8ce7a9f4ced20100000000
-     File : SMB - NTLMSSP (smb3 aes 128 ccm).pcap Processing Finished
-     File : SMTP - Auth Login.pcap Processing Started
-     Found: Network Credential: 10.10.1.4=>74.53.140.153(SMTP (Auth Login)) => gurpartap@patriots.in:punjab@123
-     File : SMTP - Auth Login.pcap Processing Finished
-     [X] Bruteshark finished processing
+     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
 
 Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
     
-     BruteSharkCli.exe -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+     BruteSharkCli -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
     
 Run multiple modules on all files in a directory and also export all the results.  
     
-     BruteSharkCli.exe -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
-
-##### Shell Mode
-Just type  
-    
-     BruteSharkCli.exe
-
-And then navigate using the following commands.
-| Keyword           | Description                                                                             |
-|-------------------|-----------------------------------------------------------------------------------------|
-| help              | Print help menu                                                                         |
-| exit              | Exit CLI                                                                                |
-| add-file          | Add file to analyze. Usage: add-file FILE-PATH                                          |
-| start             | Start analyzing                                                                         |
-| show-passwords    | Print passwords.                                                                        |
-| show-modules      | Print modules.                                                                          |
-| show-hashes       | Print Hashes                                                                            |
-| show-networkmap   | Prints the network map as a json string. Usage: show-networkmap                         |
-| export-hashes     | Export all Hashes to Hascat format input files. Usage: export-hashes OUTPUT-DIRECTORY   |
-| export-networkmap | Export network map to a json file for neo4j. Usage: export-networkmap  OUTPUT-FILE      |
+     BruteSharkCli -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
