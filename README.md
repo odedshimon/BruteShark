@@ -47,7 +47,7 @@ Please ⭐️ this repository if this project helped you!
 ##### Windows 
 * Prerequisites: 
     * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
-    * [.NET Core SDK](https://dotnet.microsoft.com/download)  
+    * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime)  
 * Download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
 ##### Linux
 * Prerequisites: libpcap driver  
@@ -96,7 +96,7 @@ This module is responsible for building the network map by identifying component
 ![](readme_media/Neo4jMap.png)  
 ##### Files Extracting Module  
 This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
-##### Files Extracting Module  
+##### Voip Calls Module  
 This module extracts Voip calls from SIP & RTP protocols. The extracted calls can be exported as raw audio files and can be played using a proper audio player (like [Audacity](https://www.audacityteam.org/))  
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
