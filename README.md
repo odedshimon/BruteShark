@@ -15,7 +15,7 @@
 <!--te-->
 # About
 
-BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
+BruteShark is a Network Forensic Analysis Tool (NFAT) that performs deep processing and inspection of network traffic (mainly PCAP files, but it also capable of directly live capturing from a network interface). It includes: password extracting, building a network map, reconstruct TCP sessions, extract hashes of encrypted passwords and even convert them to a Hashcat format in order to perform an offline Brute Force attack.
 
 The main goal of the project is to provide solution to security researchers and network administrators with the task of network traffic analysis while they try to identify weaknesses that can be used by a potential attacker to gain access to critical points on the network.
 
@@ -111,22 +111,21 @@ Print the help menu:
     Copyright c  2018
     
       -d, --input-dir       The input directory containing the files to be processed.
-
+    
       -i, --input           The files to be processed seperated by comma
-
-      -m, --modules         The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap, DNS
-
+    
+      -m, --modules         The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
+    
       -o, --output          Output direcorty for the results files.
-
-      -p, --promiscious     Configures whether to start live capture on normal or promiscious mode (sometimes needs super user privileges to to do so),use along with -l for live catpure.
+      
+      -p, --promiscious     Configures whether to start live capture on normal or promiscious mode (sometimes needs super
+                            user privileges to to do so),use along with -l for live catpure.
 
       -l, --live-capture    Caputre and process packets live from a network interface.
 
       -f, --filter          add a capture bpf filter to the live traffic processing.
 
       --help                Display this help screen.
-
-      --version             Display version information.
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
@@ -139,6 +138,10 @@ Get credentials from all files in a directory and also export extracted hashes (
 Run multiple modules on all files in a directory and also export all the results.  
     
      BruteSharkCli -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
+     
+Sniff an interface named "Wi-Fi", run multiple modules and also export all the results to a directory (the results will be exported only when stoping the sniffer by hitting CTRL + C).
+
+    BruteSharkCli -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\Users\King\Desktop\Test Export
 
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
