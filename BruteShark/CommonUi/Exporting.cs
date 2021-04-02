@@ -50,6 +50,22 @@ namespace CommonUi
 
             return extractedFilesDir;
         }
+        public static string ExportVoipCalls(string dirPath, HashSet<VoipCall> voipCalls )
+        {
+            var VoipCallsDir = Path.Combine(dirPath, "VoipCalls");
+            Directory.CreateDirectory(VoipCallsDir);
+
+            foreach (var call in voipCalls)
+            {
+                if (call.RTPStream.Length > 0)
+                {
+                    var filepath = GetUniqueFilePath(Path.Combine(VoipCallsDir, $"{call.ToFilename()}.media"));
+                    File.WriteAllBytes(filepath, call.RTPStream);
+                }
+            }
+
+            return VoipCallsDir;
+        }
 
         public static string ExportDnsMappings(string dirPath, HashSet<PcapAnalyzer.DnsNameMapping> dnsMappings)
         {
@@ -60,6 +76,11 @@ namespace CommonUi
                 dnsMappings.Select(d => d.ToString()));
             
             return filePath;
+        }
+
+        public static string ReplaceInvalidFileNameChars(string filename, char newChar)
+        {
+            return string.Join(newChar.ToString(), filename.Split(Path.GetInvalidFileNameChars()));
         }
 
     }

@@ -71,6 +71,7 @@ namespace PcapProcessor
             {
                 this.ProcessPcap(filePath);
             }
+
             ProcessingFinished?.Invoke(this, new EventArgs());
         }
 

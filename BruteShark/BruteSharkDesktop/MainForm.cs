@@ -29,6 +29,7 @@ namespace BruteSharkDesktop
         private SessionsExplorerUserControl _sessionsExplorerUserControl;
         private FilesUserControl _filesUserControl;
         private DnsResponseUserControl _dnsResponseUserControl;
+        private VoipCallsUserControl _voipCallsUserControl;
 
 
         public MainForm()
@@ -59,6 +60,8 @@ namespace BruteSharkDesktop
             _filesUserControl.Dock = DockStyle.Fill;
             _dnsResponseUserControl = new DnsResponseUserControl();
             _dnsResponseUserControl.Dock = DockStyle.Fill;
+            _voipCallsUserControl = new VoipCallsUserControl();
+            _voipCallsUserControl.Dock = DockStyle.Fill;
 
             // Contract the events.
             _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
@@ -75,6 +78,7 @@ namespace BruteSharkDesktop
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
             _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
+            _analyzer.UpdatedItemProprertyDetected += (s, e) => SwitchToMainThreadContext(() => OnUpdatedItemProprertyDetected(s, e));
 
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
@@ -229,6 +233,21 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["DnsResponsesNode"].Text = $"DNS Responses ({_dnsResponseUserControl.AnswerCount})";
                 _networkMapUserControl.HandleDnsNameMapping(dnsResponse);
             }
+            else if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+                _voipCallsUserControl.AddVoipCall(voipCall);
+                this.modulesTreeView.Nodes["DataNode"].Nodes["VoipCallsNode"].Text = $"Voip Calls ({_voipCallsUserControl.VoipCallsCount})";
+            }
+        }
+
+        private void OnUpdatedItemProprertyDetected(object sender, PcapAnalyzer.UpdatedPropertyInItemeventArgs e)
+        {
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(e.ParsedItem as PcapAnalyzer.VoipCall);
+                _voipCallsUserControl.UpdateVoipCall(voipCall, e.PropertyChanged, e.NewPropertyValue);
+            }
         }
 
         private void addFilesButton_Click(object sender, EventArgs e)
@@ -291,6 +310,9 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
                     break;
                 case "DnsResponsesNode":
                     this.modulesSplitContainer.Panel2.Controls.Add(_dnsResponseUserControl);
+                    break;
+                case "VoipCallsNode":
+                    this.modulesSplitContainer.Panel2.Controls.Add(_voipCallsUserControl);
                     break;
                 default:
                     break;
@@ -454,6 +476,7 @@ This means a faster processing but also that some obects may not be extracted.")
                     this.progressBar.Refresh();
                     CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
                     CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _connections);
+                    CommonUi.Exporting.ExportVoipCalls(outputDirectoryPath, _voipCallsUserControl.VoipCalls);
                     this.progressBar.CustomText = string.Empty;
 
                     MessageBox.Show($"Successfully exported results");
@@ -462,9 +485,10 @@ This means a faster processing but also that some obects may not be extracted.")
                 {
                     MessageBox.Show($"Failed to export results: {ex.Message}");
                 }
-                
+
             }
         }
+
     }
 }
     

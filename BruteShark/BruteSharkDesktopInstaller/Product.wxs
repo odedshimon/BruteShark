@@ -118,6 +118,10 @@
 			<Component Id="DNS.dll">
 				<File Id="DNS.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="DNS.dll" />
 			</Component>
+      
+      <Component Id="SipSIPSorcery.dll">
+        <File Id="SipSIPSorcery.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="DNS.dll" />
+      </Component>
 
 			<Component Id="PcapngUtils.dll">
 				<File Id="PcapngUtils.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PcapngUtils.dll" />

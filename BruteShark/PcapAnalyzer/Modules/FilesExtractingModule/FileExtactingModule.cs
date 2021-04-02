@@ -12,6 +12,7 @@ namespace PcapAnalyzer
     {
         public string Name => "File Extracting";
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
         // File signitures examples:
         // 1. Scalpel (https://github.com/machn1k/Scalpel-2.0/blob/master/conf/scalpel.conf)

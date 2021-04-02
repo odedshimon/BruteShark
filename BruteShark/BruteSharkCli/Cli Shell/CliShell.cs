@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
+using CommonUi;
 
 namespace BruteSharkCli
 {
@@ -24,6 +26,7 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private HashSet<CommonUi.VoipCall> _voipCalls;
 
         private PcapAnalyzer.Analyzer _analyzer;
         private PcapProcessor.Processor _processor;
@@ -49,6 +52,8 @@ namespace BruteSharkCli
             _analyzer = analyzer;
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
+            _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
+
             _processor.TcpPacketArived += (s, e) => this.UpdateTcpPacketsCount();
             _processor.UdpPacketArived += (s, e) => this.UpdateUdpPacketsCount();
             _processor.TcpSessionArrived += (s, e) => this.UpdateTcpSessionsCount();
@@ -62,6 +67,7 @@ namespace BruteSharkCli
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<PcapAnalyzer.NetworkPassword>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _voipCalls = new HashSet<CommonUi.VoipCall>();
             
             this._commands = new List<CliShellCommand>();
             AddCommand(new CliShellCommand("add-file", p => AddFile(p), "Add file to analyze. Usage: add-file <FILE-PATH>"));
@@ -76,6 +82,8 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("set-captrue-filter", p => VerifyFilter(p), "Set a capture filter to the live traffic capture(filters must be bpf syntax filters)"));
             AddCommand(new CliShellCommand("show-network-devices", p => PrintNetworkDevices(), "Show the available network devices for live capture"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
+            AddCommand(new CliShellCommand("export-voip-calls", p => CommonUi.Exporting.ExportVoipCalls(p, _voipCalls), "Export the VoIP calls media to files. Usage: export-networkmap <OUTPUT-DIR>"));
+            AddCommand(new CliShellCommand("show-voip-calls", p => PrintVoipCalls(), "Prints the detected VoIP calls"));
 
             // Add the help command
             this.AddCommand(new CliShellCommand(
@@ -90,6 +98,24 @@ namespace BruteSharkCli
                  "Exit CLI"));
 
             LoadModules(_analyzer.AvailableModulesNames);
+        }
+
+
+        private void UpdatedPropertyInItemDetected(object sender, UpdatedPropertyInItemeventArgs e)
+        {
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                PcapAnalyzer.VoipCall call = e.ParsedItem as PcapAnalyzer.VoipCall;
+                var callPresentation = CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(call);
+                if (_voipCalls.Contains(callPresentation))
+                {
+                    callPresentation.GetType().GetProperty(e.PropertyChanged.Name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).SetValue(_voipCalls.Where(c => c.Equals(callPresentation)).FirstOrDefault(), e.NewPropertyValue);
+                }
+            }
+        }
+        private void PrintVoipCalls()
+        {
+            this._voipCalls.ToDataTable().Print();
         }
 
         private void VerifyFilter(string filter)
@@ -113,6 +139,7 @@ namespace BruteSharkCli
         private void PrintNetworkDevices()
         {
             _sniffer.AvailiableDevicesNames.Select(d => new NetworkDevice(d)) .ToList().ToDataTable().Print(); 
+
         }
 
         private void LoadModules(List<string> modules)
@@ -302,8 +329,13 @@ namespace BruteSharkCli
                 var networkConnection = e.ParsedItem as NetworkConnection;
                 _connections.Add(networkConnection);
             }
+            if (e.ParsedItem is PcapAnalyzer.VoipCall)
+            {
+                var voipCall = e.ParsedItem as PcapAnalyzer.VoipCall;
+                _voipCalls.Add(CommonUi.Casting.CastAnalyzerVoipCallToPresentationVoipCall(voipCall));
+            }
 
-            UpdateAnalyzingStatus();
+                UpdateAnalyzingStatus();
         }
        
     } 

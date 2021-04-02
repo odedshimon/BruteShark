@@ -8,6 +8,7 @@ namespace PcapAnalyzer
     class PasswordsModule : IModule
     {
         public event EventHandler<ParsedItemDetectedEventArgs> ParsedItemDetected;
+        public event EventHandler<UpdatedPropertyInItemeventArgs> UpdatedItemProprertyDetected;
 
         private List<IPasswordParser> _passwordParsers;
         public string Name => "Credentials Extractor (Passwords, Hashes)";
