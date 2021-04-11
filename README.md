@@ -77,7 +77,10 @@ Please ⭐️ this repository if this project helped you!
 ![](readme_media/BruteSharkCli.PNG)
 
 # Usage
-In general, it is recommended to use the example PCAP files [folder](https://github.com/odedshimon/BruteShark/tree/master/Pcap_Examples), load, run and explore the results.  
+In general, it is recommended load, run and explore the results.  
+Example PCAP files containing scenarios that demonstrates all BruteShark capabilities can be downloaded from [here](https://github.com/odedshimon/BruteShark/tree/master/Pcap_Examples).  
+Note that analyzing network traffic is an operation that consumes time and resources, so it is recommended to select only the required modules when large files are loaded.  
+Particular attention should be paid to the "Build TCP Sessions" / "Build UDP Sessions" options.  
 ## Modules
 BruteShark is a modular tool, designed for expansion.
 ##### Credentials Module 
@@ -106,30 +109,11 @@ As a classic cli tool it works by geting all the relevant parameters for the pro
 
 Print the help menu:  
 
-    C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli --help
-    BruteSharkCli 1.0.0.0
-    Copyright c  2018
-    
-      -d, --input-dir       The input directory containing the files to be processed.
-    
-      -i, --input           The files to be processed seperated by comma
-    
-      -m, --modules         The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap
-    
-      -o, --output          Output direcorty for the results files.
-      
-      -p, --promiscious     Configures whether to start live capture on normal or promiscious mode (sometimes needs super
-                            user privileges to to do so),use along with -l for live catpure.
-
-      -l, --live-capture    Caputre and process packets live from a network interface.
-
-      -f, --filter          add a capture bpf filter to the live traffic processing.
-
-      --help                Display this help screen.
+    BruteSharkCli>BruteSharkCli --help
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
-     C:\Users\King\Desktop\BruteSharkCli>BruteSharkCli -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
+     BruteSharkCli -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
 
 Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
     
