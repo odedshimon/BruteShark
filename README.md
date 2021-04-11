@@ -109,7 +109,7 @@ As a classic cli tool it works by geting all the relevant parameters for the pro
 
 Print the help menu:  
 
-    BruteSharkCli>BruteSharkCli --help
+    BruteSharkCli --help
 
 Get credentials from all files in a directory (passwords and hashes will be printed to stdout): 
   
