@@ -119,9 +119,29 @@
 				<File Id="DNS.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="DNS.dll" />
 			</Component>
       
-      <Component Id="SipSIPSorcery.dll">
-        <File Id="SipSIPSorcery.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="DNS.dll" />
-      </Component>
+			<Component Id="SIPSorcery.dll">
+				<File Id="SIPSorcery.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="SIPSorcery.dll" />
+			</Component>
+
+			<Component Id="SIPSorceryMedia.Abstractions.dll">
+				<File Id="SIPSorceryMedia.Abstractions.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="SIPSorceryMedia.Abstractions.dll" />
+			</Component>
+
+			<Component Id="BouncyCastle.Crypto.dll">
+				<File Id="BouncyCastle.Crypto.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="BouncyCastle.Crypto.dll" />
+			</Component>
+
+			<Component Id="DnsClient.dll">
+				<File Id="DnsClient.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="DnsClient.dll" />
+			</Component>
+
+			<Component Id="websocket.sharp.dll">
+				<File Id="websocket.sharp.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="websocket-sharp.dll" />
+			</Component>
+
+			<Component Id="Microsoft.Extensions.Logging.Abstractions.dll">
+				<File Id="Microsoft.Extensions.Logging.Abstractions.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Microsoft.Extensions.Logging.Abstractions.dll" />
+			</Component>
 
 			<Component Id="PcapngUtils.dll">
 				<File Id="PcapngUtils.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PcapngUtils.dll" />
