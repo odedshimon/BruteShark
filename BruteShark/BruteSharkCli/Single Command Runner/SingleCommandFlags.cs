@@ -13,7 +13,7 @@ namespace BruteSharkCli
         [Option('i', "input", Required = false, SetName = "files_input", Separator = ',', HelpText = "The files to be processed seperated by comma")]
         public IEnumerable<string> InputFiles { get; set; }
 
-        [Option('m', "modules", Required = false , Separator = ',', HelpText = "The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap, DNS")]
+        [Option('m', "modules", Required = false , Separator = ',', HelpText = "The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap, DNS, Voip")]
         public IEnumerable<string> Modules { get; set; }
 
         // TODO - merge parallel processing feature branch to make this flag really work
