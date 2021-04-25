@@ -15,9 +15,23 @@ namespace PcapAnalyzer
             krb_tgs_rep = 13
         }
 
-        public static object GetKerberosPacket(byte[] kerberosBuffer)
+        public static object GetKerberosPacket(byte[] kerberosBuffer, string protocol)
         {
             object result = null;
+
+            if (protocol == "TCP")
+            {
+                var recordMarkLengthBuffer = kerberosBuffer.SubArray(0, 4);
+
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(recordMarkLengthBuffer);
+
+                var recordMarkLength = BitConverter.ToInt32(recordMarkLengthBuffer, 0);
+
+                if (recordMarkLength + 4 <= kerberosBuffer.Length)
+                    kerberosBuffer = kerberosBuffer.SubArray(4, recordMarkLength);
+            }
+
             byte[] asn_buffer = AsnIO.FindBER(kerberosBuffer);
 
             if (asn_buffer != null)

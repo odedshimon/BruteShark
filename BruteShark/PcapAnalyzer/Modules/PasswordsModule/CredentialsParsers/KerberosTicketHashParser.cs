@@ -16,7 +16,7 @@ namespace PcapAnalyzer
 
         private NetworkLayerObject GetKerberosTicketsHash(string source, string destination, string protocol, byte[] data)
         {
-            var kerberosPacket = KerberosPacketParser.GetKerberosPacket(data);
+            var kerberosPacket = KerberosPacketParser.GetKerberosPacket(data, protocol);
 
             if (kerberosPacket is null)
             {
@@ -48,19 +48,19 @@ namespace PcapAnalyzer
             {
                 var kerberosAsRepPacket = kerberosPacket as KerberosAsRepPacket;
 
-                if (kerberosAsRepPacket.Ticket.EncrytedPart.Etype == 23)
+                if (kerberosAsRepPacket.Ticket.EncrytedPart.Etype == 23 || kerberosAsRepPacket.Ticket.EncrytedPart.Etype == 18)
                 {
                     return new KerberosAsRepHash()
                     {
                         Source = source,
                         Destination = destination,
                         Realm = kerberosAsRepPacket.Ticket.Realm,
-                        Etype = 23,
+                        Etype = kerberosAsRepPacket.Ticket.EncrytedPart.Etype,
                         Username = kerberosAsRepPacket.Cname.Name,
                         ServiceName = kerberosAsRepPacket.Ticket.Sname.Name,
                         Hash = NtlmsspHashParser.ByteArrayToHexString(kerberosAsRepPacket.Ticket.EncrytedPart.Cipher),
                         Protocol = protocol,
-                        HashType = "Kerberos V5 AS-REP etype 23"
+                        HashType = $"Kerberos V5 AS-REP etype {kerberosAsRepPacket.Ticket.EncrytedPart.Etype}"
                     };
                 }
             }
