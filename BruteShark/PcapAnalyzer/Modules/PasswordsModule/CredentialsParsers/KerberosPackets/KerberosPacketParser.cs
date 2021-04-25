@@ -19,10 +19,13 @@ namespace PcapAnalyzer
         {
             object result = null;
 
+            // Consider the TCP Record Mark when parsing Kerberos over TCP packets.
             if (protocol == "TCP")
             {
                 var recordMarkLengthBuffer = kerberosBuffer.SubArray(0, 4);
 
+                // The return value of ToInt32 method depends on system architecture.
+                // Therfore we explicitly enforce BigEndian.
                 if (BitConverter.IsLittleEndian)
                     Array.Reverse(recordMarkLengthBuffer);
 
@@ -30,6 +33,8 @@ namespace PcapAnalyzer
 
                 if (recordMarkLength + 4 <= kerberosBuffer.Length)
                     kerberosBuffer = kerberosBuffer.SubArray(4, recordMarkLength);
+                else
+                    throw new Exception("Kerberos record mark length is out of range");
             }
 
             byte[] asn_buffer = AsnIO.FindBER(kerberosBuffer);
@@ -38,7 +43,7 @@ namespace PcapAnalyzer
             {
                 AsnElt asn_object = AsnElt.Decode(asn_buffer);
 
-                // Get the application number
+                // Get the application number.
                 switch (asn_object.TagValue)
                 {
                     case (int)MessageType.krb_tgs_rep:
