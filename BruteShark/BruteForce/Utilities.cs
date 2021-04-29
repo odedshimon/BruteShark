@@ -64,7 +64,19 @@ namespace BruteForce
                     kerberosHash.HashedData.Substring(0, 32),
                     kerberosHash.HashedData.Substring(32));
             }
-            // TODO: implement for Etype 17, 18
+            else if (kerberosHash.Etype == 18 || kerberosHash.Etype == 17)
+            {
+                var checksumStartPosition = kerberosHash.HashedData.Length - 24;
+
+                // $krb5tgs$18$user$realm$*spn*$checksum$edata2
+                return String.Format("$krb5tgs${0}${1}${2}$*{3}*${4}${5}",
+                    kerberosHash.Etype, 
+                    kerberosHash.Username, 
+                    kerberosHash.Realm, 
+                    kerberosHash.ServiceName, 
+                    kerberosHash.HashedData.Substring(checksumStartPosition),
+                    kerberosHash.HashedData.Substring(0, checksumStartPosition));
+            }
             else
             {
                 throw new NotSupportedHashcatHash($"Kerberos TGS-REP Etype {kerberosHash.Etype} is not supported by Hashcat");

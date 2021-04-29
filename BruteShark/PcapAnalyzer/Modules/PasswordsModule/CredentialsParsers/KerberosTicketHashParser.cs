@@ -23,7 +23,7 @@ namespace PcapAnalyzer
                 return null;
             }
 
-            // TODO: refactor this boilerplate code
+            // TODO: use enum for hashes types
             if (kerberosPacket is KerberosTgsRepPacket)
             {
                 var kerberosTgsRepPacket = kerberosPacket as KerberosTgsRepPacket;
