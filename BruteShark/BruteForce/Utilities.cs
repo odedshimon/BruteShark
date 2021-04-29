@@ -48,19 +48,13 @@ namespace BruteForce
         
         public static string ConvertToHashcatFormat(KerberosTgsRepHash kerberosHash)
         {
-            // Acording to Hashcat examples page this is the format:
-            // $krb5tgs$23$*user$realm$test/spn*$63386d22d359fe42230300d56852c9eb$891ad31d09ab89c6b3b8c5e5de6....
-            // return string.Format("$krb5tgs$23${0}${1}${2}${3}${4}",
-            //     kerberosHash.Username,
-            //     kerberosHash.Realm,
-            //     kerberosHash.ServiceName,
-            //     kerberosHash.HashedData.Substring(0, 32),
-            //     kerberosHash.HashedData.Substring(32));
-
-            // But at other places i saw this format, this is worked great with Hashcat 6.0.
             if (kerberosHash.Etype == 23)
             {
-                return string.Format("$krb5tgs$23${0}${1}",
+                return string.Format("$krb5tgs${0}$*{1}${2}${3}*${4}${5}",
+                    kerberosHash.Etype,
+                    kerberosHash.Username,
+                    kerberosHash.Realm,
+                    kerberosHash.ServiceName,
                     kerberosHash.HashedData.Substring(0, 32),
                     kerberosHash.HashedData.Substring(32));
             }
@@ -68,7 +62,6 @@ namespace BruteForce
             {
                 var checksumStartPosition = kerberosHash.HashedData.Length - 24;
 
-                // $krb5tgs$18$user$realm$*spn*$checksum$edata2
                 return String.Format("$krb5tgs${0}${1}${2}$*{3}*${4}${5}",
                     kerberosHash.Etype, 
                     kerberosHash.Username, 
