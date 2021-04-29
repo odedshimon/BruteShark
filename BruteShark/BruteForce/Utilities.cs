@@ -50,6 +50,8 @@ namespace BruteForce
         {
             if (kerberosHash.Etype == 23)
             {
+                // On Kerberos RC4 (Etype 23) the checksum part is the first 16 bytes of the cipher and the 
+                // hash is the data from the 16 byte.
                 return string.Format("$krb5tgs${0}$*{1}${2}${3}*${4}${5}",
                     kerberosHash.Etype,
                     kerberosHash.Username,
@@ -60,6 +62,8 @@ namespace BruteForce
             }
             else if (kerberosHash.Etype == 18 || kerberosHash.Etype == 17)
             {
+                // On Kerberos AES 128\256 (Etype 17\18) the checksum part is the last 12 bytes of the 
+                // cipher and the hash the cipher without the 12 bytes.
                 var checksumStartPosition = kerberosHash.HashedData.Length - 24;
 
                 return String.Format("$krb5tgs${0}${1}${2}$*{3}*${4}${5}",
