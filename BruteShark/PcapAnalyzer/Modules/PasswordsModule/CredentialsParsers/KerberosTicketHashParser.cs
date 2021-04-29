@@ -28,19 +28,19 @@ namespace PcapAnalyzer
             {
                 var kerberosTgsRepPacket = kerberosPacket as KerberosTgsRepPacket;
 
-                if (kerberosTgsRepPacket.Ticket.EncrytedPart.Etype == 23)
+                if (kerberosTgsRepPacket.Ticket.EncrytedPart.Etype == 23 || kerberosTgsRepPacket.Ticket.EncrytedPart.Etype == 18 || kerberosTgsRepPacket.Ticket.EncrytedPart.Etype == 17)
                 {
                     return new KerberosTgsRepHash()
                     {
                         Source = source,
                         Destination = destination,
                         Realm = kerberosTgsRepPacket.Ticket.Realm,
-                        Etype = 23,
+                        Etype = kerberosTgsRepPacket.Ticket.EncrytedPart.Etype,
                         Username = kerberosTgsRepPacket.Cname.Name,
                         ServiceName = kerberosTgsRepPacket.Ticket.Sname.Name,
                         Hash = NtlmsspHashParser.ByteArrayToHexString(kerberosTgsRepPacket.Ticket.EncrytedPart.Cipher),
                         Protocol = protocol,
-                        HashType = "Kerberos V5 TGS-REP etype 23"
+                        HashType = $"Kerberos V5 TGS-REP etype {kerberosTgsRepPacket.Ticket.EncrytedPart.Etype}"
                     };
                 }
             }

@@ -2,6 +2,12 @@
 
 namespace BruteForce
 {
+    [Serializable]
+    public class NotSupportedHashcatHash : Exception 
+    {
+        public NotSupportedHashcatHash(string message) : base(message) { }
+    }
+
     public static class Utilities
     {
         public static string ConvertToHashcatFormat(Hash hash)
@@ -34,7 +40,7 @@ namespace BruteForce
             }
             else
             {
-                throw new Exception("Hash type not supported");
+                throw new NotSupportedHashcatHash("Hash type not supported");
             }
 
             return res;
@@ -52,19 +58,34 @@ namespace BruteForce
             //     kerberosHash.HashedData.Substring(32));
 
             // But at other places i saw this format, this is worked great with Hashcat 6.0.
-            return string.Format("$krb5tgs$23${0}${1}",
-                kerberosHash.HashedData.Substring(0, 32),
-                kerberosHash.HashedData.Substring(32));
+            if (kerberosHash.Etype == 23)
+            {
+                return string.Format("$krb5tgs$23${0}${1}",
+                    kerberosHash.HashedData.Substring(0, 32),
+                    kerberosHash.HashedData.Substring(32));
+            }
+            // TODO: implement for Etype 17, 18
+            else
+            {
+                throw new NotSupportedHashcatHash($"Kerberos TGS-REP Etype {kerberosHash.Etype} is not supported by Hashcat");
+            }
         }
 
         public static string ConvertToHashcatFormat(KerberosAsRepHash kerberosHash)
         {
-            // $krb5asrep$23$user@domain.com:3e156ada591263b8aab0965f5aebd837$007497cb5....
-            return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
-                kerberosHash.Username,
-                kerberosHash.Realm,
-                kerberosHash.HashedData.Substring(0, 32),
-                kerberosHash.HashedData.Substring(32));
+            if (kerberosHash.Etype == 23)
+            {
+                // $krb5asrep$23$user@domain.com:3e156ada591263b8aab0965f5aebd837$007497cb5....
+                return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
+                    kerberosHash.Username,
+                    kerberosHash.Realm,
+                    kerberosHash.HashedData.Substring(0, 32),
+                    kerberosHash.HashedData.Substring(32));
+            }
+            else
+            {
+                throw new NotSupportedHashcatHash($"Kerberos AS-REP Etype {kerberosHash.Etype} is not supported by Hashcat");
+            }
         }
 
         public static string ConvertToHashcatFormat(KerberosHash kerberosHash)

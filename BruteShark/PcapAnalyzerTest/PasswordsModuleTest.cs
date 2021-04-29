@@ -303,7 +303,7 @@ Accept: text/html,application/xhtml+xml");
             };
 
             // Act.
-            var kerberosTgsRepPacket = KerberosPacketParser.GetKerberosPacket(kerberosTgsRepBuffer) as KerberosTgsRepPacket;
+            var kerberosTgsRepPacket = KerberosPacketParser.GetKerberosPacket(kerberosTgsRepBuffer, protocol:"UDP") as KerberosTgsRepPacket;
 
             // Assert.
             Assert.AreEqual(kerberosTgsRepPacket.Pvno, 5);
@@ -364,7 +364,7 @@ Accept: text/html,application/xhtml+xml");
             };
 
             // Act.
-            var kerberosTgsRepPacket = KerberosPacketParser.GetKerberosPacket(kerberosAsRepBuffer) as KerberosAsRepPacket;
+            var kerberosTgsRepPacket = KerberosPacketParser.GetKerberosPacket(kerberosAsRepBuffer, protocol:"UDP") as KerberosAsRepPacket;
 
             // Assert.
             Assert.AreEqual(kerberosTgsRepPacket.Pvno, 5);
