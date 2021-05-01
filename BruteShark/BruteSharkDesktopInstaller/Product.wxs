@@ -155,6 +155,10 @@
 				<File Id="CommonUi.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="CommonUi.dll" />
 			</Component>
 
+			<Component Id="System.Text.Encodings.Web.dll">
+				<File Id="System.Text.Encodings.Web.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="System.Text.Encodings.Web.dll" />
+			</Component>
+
 		</ComponentGroup>
 	</Fragment>
 </Wix>
