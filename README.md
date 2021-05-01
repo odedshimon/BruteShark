@@ -48,7 +48,8 @@ Please ⭐️ this repository if this project helped you!
 * Prerequisites: 
     * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
     * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime)  
-* Download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+* Download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+* For CLI version download [BruteSharkCli Windows 10 Executable](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.exe).  
 ##### Linux
 * Prerequisites: libpcap driver  
 * Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
