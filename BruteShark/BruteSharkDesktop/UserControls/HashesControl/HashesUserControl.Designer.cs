@@ -62,8 +62,8 @@
             // mainSplitContainer.Panel2
             // 
             this.mainSplitContainer.Panel2.Controls.Add(this.hashViewSplitContainer);
-            this.mainSplitContainer.Size = new System.Drawing.Size(694, 512);
-            this.mainSplitContainer.SplitterDistance = 324;
+            this.mainSplitContainer.Size = new System.Drawing.Size(794, 512);
+            this.mainSplitContainer.SplitterDistance = 323;
             this.mainSplitContainer.SplitterWidth = 5;
             this.mainSplitContainer.TabIndex = 0;
             // 
@@ -83,8 +83,8 @@
             // 
             this.hashViewSplitContainer.Panel2.Controls.Add(this.panel1);
             this.hashViewSplitContainer.Panel2.Controls.Add(this.label2);
-            this.hashViewSplitContainer.Size = new System.Drawing.Size(694, 183);
-            this.hashViewSplitContainer.SplitterDistance = 404;
+            this.hashViewSplitContainer.Size = new System.Drawing.Size(794, 184);
+            this.hashViewSplitContainer.SplitterDistance = 462;
             this.hashViewSplitContainer.SplitterWidth = 5;
             this.hashViewSplitContainer.TabIndex = 0;
             // 
@@ -106,7 +106,7 @@
             this.hashDataRichTextBox.Location = new System.Drawing.Point(4, 18);
             this.hashDataRichTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hashDataRichTextBox.Name = "hashDataRichTextBox";
-            this.hashDataRichTextBox.Size = new System.Drawing.Size(396, 161);
+            this.hashDataRichTextBox.Size = new System.Drawing.Size(454, 162);
             this.hashDataRichTextBox.TabIndex = 0;
             this.hashDataRichTextBox.Text = "";
             this.hashDataRichTextBox.WordWrap = false;
@@ -122,7 +122,7 @@
             this.panel1.Location = new System.Drawing.Point(7, 18);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(257, 124);
+            this.panel1.Size = new System.Drawing.Size(316, 124);
             this.panel1.TabIndex = 4;
             // 
             // selectedFolderTextBox
@@ -131,7 +131,7 @@
             this.selectedFolderTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.selectedFolderTextBox.Name = "selectedFolderTextBox";
             this.selectedFolderTextBox.ReadOnly = true;
-            this.selectedFolderTextBox.Size = new System.Drawing.Size(79, 23);
+            this.selectedFolderTextBox.Size = new System.Drawing.Size(144, 23);
             this.selectedFolderTextBox.TabIndex = 7;
             // 
             // label4
@@ -157,7 +157,7 @@
             // 
             // createHashcatFileButton
             // 
-            this.createHashcatFileButton.Location = new System.Drawing.Point(19, 83);
+            this.createHashcatFileButton.Location = new System.Drawing.Point(15, 81);
             this.createHashcatFileButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.createHashcatFileButton.Name = "createHashcatFileButton";
             this.createHashcatFileButton.Size = new System.Drawing.Size(220, 27);
@@ -182,7 +182,7 @@
             this.hashesComboBox.Location = new System.Drawing.Point(121, 13);
             this.hashesComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.hashesComboBox.Name = "hashesComboBox";
-            this.hashesComboBox.Size = new System.Drawing.Size(117, 23);
+            this.hashesComboBox.Size = new System.Drawing.Size(183, 23);
             this.hashesComboBox.TabIndex = 3;
             // 
             // label2
@@ -202,7 +202,7 @@
             this.Controls.Add(this.mainSplitContainer);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "HashesUserControl";
-            this.Size = new System.Drawing.Size(694, 512);
+            this.Size = new System.Drawing.Size(794, 512);
             this.mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);

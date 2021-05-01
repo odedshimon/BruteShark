@@ -2,6 +2,12 @@
 
 namespace BruteForce
 {
+    [Serializable]
+    public class NotSupportedHashcatHash : Exception 
+    {
+        public NotSupportedHashcatHash(string message) : base(message) { }
+    }
+
     public static class Utilities
     {
         public static string ConvertToHashcatFormat(Hash hash)
@@ -34,7 +40,7 @@ namespace BruteForce
             }
             else
             {
-                throw new Exception("Hash type not supported");
+                throw new NotSupportedHashcatHash("Hash type not supported");
             }
 
             return res;
@@ -42,29 +48,53 @@ namespace BruteForce
         
         public static string ConvertToHashcatFormat(KerberosTgsRepHash kerberosHash)
         {
-            // Acording to Hashcat examples page this is the format:
-            // $krb5tgs$23$*user$realm$test/spn*$63386d22d359fe42230300d56852c9eb$891ad31d09ab89c6b3b8c5e5de6....
-            // return string.Format("$krb5tgs$23${0}${1}${2}${3}${4}",
-            //     kerberosHash.Username,
-            //     kerberosHash.Realm,
-            //     kerberosHash.ServiceName,
-            //     kerberosHash.HashedData.Substring(0, 32),
-            //     kerberosHash.HashedData.Substring(32));
+            if (kerberosHash.Etype == 23)
+            {
+                // On Kerberos RC4 (Etype 23) the checksum part is the first 16 bytes of the cipher and the 
+                // hash is the data from the 16 byte.
+                return string.Format("$krb5tgs${0}$*{1}${2}${3}*${4}${5}",
+                    kerberosHash.Etype,
+                    kerberosHash.Username,
+                    kerberosHash.Realm,
+                    kerberosHash.ServiceName,
+                    kerberosHash.HashedData.Substring(0, 32),
+                    kerberosHash.HashedData.Substring(32));
+            }
+            else if (kerberosHash.Etype == 18 || kerberosHash.Etype == 17)
+            {
+                // On Kerberos AES 128\256 (Etype 17\18) the checksum part is the last 12 bytes of the 
+                // cipher and the hash the cipher without the 12 bytes.
+                var checksumStartPosition = kerberosHash.HashedData.Length - 24;
 
-            // But at other places i saw this format, this is worked great with Hashcat 6.0.
-            return string.Format("$krb5tgs$23${0}${1}",
-                kerberosHash.HashedData.Substring(0, 32),
-                kerberosHash.HashedData.Substring(32));
+                return String.Format("$krb5tgs${0}${1}${2}$*{3}*${4}${5}",
+                    kerberosHash.Etype, 
+                    kerberosHash.Username, 
+                    kerberosHash.Realm, 
+                    kerberosHash.ServiceName, 
+                    kerberosHash.HashedData.Substring(checksumStartPosition),
+                    kerberosHash.HashedData.Substring(0, checksumStartPosition));
+            }
+            else
+            {
+                throw new NotSupportedHashcatHash($"Kerberos TGS-REP Etype {kerberosHash.Etype} is not supported by Hashcat");
+            }
         }
 
         public static string ConvertToHashcatFormat(KerberosAsRepHash kerberosHash)
         {
-            // $krb5asrep$23$user@domain.com:3e156ada591263b8aab0965f5aebd837$007497cb5....
-            return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
-                kerberosHash.Username,
-                kerberosHash.Realm,
-                kerberosHash.HashedData.Substring(0, 32),
-                kerberosHash.HashedData.Substring(32));
+            if (kerberosHash.Etype == 23)
+            {
+                // $krb5asrep$23$user@domain.com:3e156ada591263b8aab0965f5aebd837$007497cb5....
+                return string.Format("$krb5asrep$23${0}@{1}:{2}${3}",
+                    kerberosHash.Username,
+                    kerberosHash.Realm,
+                    kerberosHash.HashedData.Substring(0, 32),
+                    kerberosHash.HashedData.Substring(32));
+            }
+            else
+            {
+                throw new NotSupportedHashcatHash($"Kerberos AS-REP Etype {kerberosHash.Etype} is not supported by Hashcat");
+            }
         }
 
         public static string ConvertToHashcatFormat(KerberosHash kerberosHash)

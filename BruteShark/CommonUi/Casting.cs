@@ -95,6 +95,7 @@ namespace CommonUi
         {
             return new BruteForce.KerberosTgsRepHash()
             {
+                Etype = kerberosTgsRepHash.Etype,
                 ServiceName = kerberosTgsRepHash.ServiceName,
                 Realm = kerberosTgsRepHash.Realm,
                 HashedData = kerberosTgsRepHash.Hash,
@@ -155,6 +156,7 @@ namespace CommonUi
         {
             return new BruteForce.KerberosAsRepHash()
             {
+                Etype = kerberosAsRepHash.Etype,
                 ServiceName = kerberosAsRepHash.ServiceName,
                 Realm = kerberosAsRepHash.Realm,
                 HashedData = kerberosAsRepHash.Hash,

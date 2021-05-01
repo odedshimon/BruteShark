@@ -6,6 +6,8 @@ namespace BruteForce
 {
     public class KerberosAsRepHash : Hash
     {
+        // TODO: use enum
+        public int Etype { get; set; }
         public string Realm { get; set; }
         public string Username { get; set; }
         public string ServiceName { get; set; }

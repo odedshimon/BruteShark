@@ -4,7 +4,7 @@
 	<Product 
 		Id="CE452A31-5E74-41BE-A768-EBEE7B325862" 
 		Name="BruteSharkDesktop" 
-		Language="1033" Version="1.2.8.0" 
+		Language="1033" Version="1.2.9.0" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
@@ -153,6 +153,10 @@
 
 			<Component Id="CommonUi.dll">
 				<File Id="CommonUi.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="CommonUi.dll" />
+			</Component>
+
+			<Component Id="System.Text.Encodings.Web.dll">
+				<File Id="System.Text.Encodings.Web.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="System.Text.Encodings.Web.dll" />
 			</Component>
 
 		</ComponentGroup>

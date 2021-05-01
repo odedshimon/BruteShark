@@ -95,9 +95,13 @@ namespace BruteSharkDesktop
 
                 MessageBox.Show($"Hashes exported: {outputFilePath}");
             }
-            catch (Exception Ex)
+            catch (BruteForce.NotSupportedHashcatHash ex)
             {
-                MessageBox.Show("Failed to export hashes");
+                MessageBox.Show($"Hashcat does not support this hash type: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to export hashes: {ex.Message}");
             }
         }
 

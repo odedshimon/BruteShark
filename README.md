@@ -48,7 +48,8 @@ Please ⭐️ this repository if this project helped you!
 * Prerequisites: 
     * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
     * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime)  
-* Download [Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+* Download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+* For CLI version download [BruteSharkCli Windows 10 Executable](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.exe).  
 ##### Linux
 * Prerequisites: libpcap driver  
 * Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
@@ -63,6 +64,7 @@ Please ⭐️ this repository if this project helped you!
 # Examples
 ##### Videos
 [**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
+[**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes**](https://youtu.be/GjGV5vwIGi8)  
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
@@ -85,15 +87,17 @@ Particular attention should be paid to the "Build TCP Sessions" / "Build UDP Ses
 BruteShark is a modular tool, designed for expansion.
 ##### Credentials Module 
 This module is responsible for extracting and encoding usernames and passwords as well as authentication hashes. In fact this module is responsible for updating two display tables, passwords table and hashes table. While usernames and passwords are straight forward to use, hashes most often used in more complex attacks like pass-the-hash or by brute-forcing them to get the password. BruteShark is integrated with [Hashcat](https://hashcat.net/hashcat/) so all the hashes extracted can be converted to a Hashcat input file.
-| Protocol        | Hash Type        | Hascat Mode (-m) |
-|-----------------|------------------|------------------|
-| HTTP            | HTTP-Digest      |      11400       |
-| SMTP\IMAP       | CRAM-MD5         |      16400       |
-| NTLM (e.g. SMB) | NTLMv1           |      5500        |
-| NTLM (e.g. SMB) | NTLMv2           |      5600        |
-| Kerberos        | AS-REQ etype 23  |      7500        |
-| Kerberos        | TGS-REP etype 23 |      13100       |
-| Kerberos        | AS-REP etype 23  |      18200       |
+| Protocol          | Hash Type        | Hascat Mode (-m) |
+|-------------------|------------------|------------------|
+| HTTP              | HTTP-Digest      |      11400       |
+| SMTP\IMAP         | CRAM-MD5         |      16400       |
+| NTLM (e.g. SMB)   | NTLMv1           |      5500        |
+| NTLM (e.g. SMB)   | NTLMv2           |      5600        |
+| Kerberos          | AS-REQ etype 23  |      7500        |
+| Kerberos          | AS-REP etype 23  |      18200       |
+| Kerberos          | TGS-REP etype 23 |      13100       |
+| Kerberos (AES128) | TGS-REP etype 17 |      19600       |
+| Kerberos (AES256) | TGS-REP etype 18 |      19700       |
 ##### Network Map Module 
 This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
 ![](readme_media/Neo4jMap.png)  
