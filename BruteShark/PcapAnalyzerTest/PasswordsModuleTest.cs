@@ -427,7 +427,6 @@ Accept: text/html,application/xhtml+xml");
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.Sname.Name, "cifs/2012R2");
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.EncrytedPart.Etype, 18);
             Assert.AreEqual(kerberosTgsRepPacket.Ticket.EncrytedPart.Cipher.Length, 1019);
-
         }
 
         [TestMethod]

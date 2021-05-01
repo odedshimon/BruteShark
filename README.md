@@ -63,6 +63,7 @@ Please ⭐️ this repository if this project helped you!
 # Examples
 ##### Videos
 [**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
+[**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes**](https://youtu.be/GjGV5vwIGi8)  
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
