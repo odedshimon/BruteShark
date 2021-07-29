@@ -29,9 +29,7 @@ Feel free to contact me on <contact.oded.shimon@gmail.com> or [create new issue]
 
 Please ⭐️ this repository if this project helped you!
 <div>
-	Also, if you're feeling generous, you can buy me a coffe <a href="https://www.buymeacoffee.com/OdedShimon">
-		<img alt="Buy Me A Coffee" src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" style="height: auto !important; width: auto !important;" />
-	</a>
+	Also, if you're feeling generous, you can buy me a coffe <a href="https://www.buymeacoffee.com/OdedShimon"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=OdedShimon&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"></a>
 </div>
 
 ## What it can do
