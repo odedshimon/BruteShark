@@ -1,6 +1,6 @@
 ![](readme_media/BruteSharkBanner.png)
 
-![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark) <a href="https://www.reddit.com/r/Portapps"><img src="https://img.shields.io/badge/dynamic/json.svg?label=subscribe r/BruteShark&color=red&style=flat&query=$.data.subscribers&url=https://www.reddit.com/r/bruteshark/about.json" alt="Reddit subscribers"></a>   
+![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) <a href="https://www.reddit.com/r/Portapps"><img src="https://img.shields.io/badge/dynamic/json.svg?label=subscribe r/BruteShark&color=red&style=flat&query=$.data.subscribers&url=https://www.reddit.com/r/bruteshark/about.json" alt="Reddit subscribers"></a> [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)     
 <!--ts-->
    * [About](#about)
       * [What it can do](#what-it-can-do)
@@ -47,8 +47,8 @@ Please ⭐️ this repository if this project helped you!
 ##### Windows 
 * Prerequisites: 
     * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
-    * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime)  
-* Download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
+    * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime) (Note that you have to install the proper runtime regard to your needs, that means .NET Core Desktop Runtime for BruteSharkDesktop and .NET Core Runtime for BruteSharkCli).  
+* For desktop version download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
 * For CLI version download [BruteSharkCli Windows 10 Executable](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.exe).  
 ##### Linux
 * Prerequisites: libpcap driver  
