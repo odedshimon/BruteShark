@@ -19,6 +19,7 @@ namespace PcapAnalyzer
 
         public Analyzer()
         {
+            _loadedModules = new List<IModule>();
             InitilyzeModulesList();
         }
 
@@ -42,8 +43,6 @@ namespace PcapAnalyzer
 
         private void InitilyzeModulesList()
         {
-            _loadedModules = new List<IModule>();
-
             // Create an instance for any available modules by looking for every class that 
             // implements IModule.
             this._availbleModules = AppDomain.CurrentDomain.GetAssemblies()
@@ -87,6 +86,8 @@ namespace PcapAnalyzer
                 }
             }
         }
-        
+
+        public void Clear() => InitilyzeModulesList();
+
     }
 }

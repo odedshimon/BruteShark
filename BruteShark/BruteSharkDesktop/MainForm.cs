@@ -287,6 +287,13 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void RunButton_Click(object sender, EventArgs e)
         {
+            // Reset all files status.
+            foreach (ListViewItem item in this.filesListView.Items)
+            {
+                item.ForeColor = Color.Black;
+                item.SubItems[2].Text = "Wait";
+            }
+
             new Thread(() => _processor.ProcessPcaps(this._files)).Start();
         }
 
@@ -495,6 +502,7 @@ This means a faster processing but also that some obects may not be extracted.")
         private void clearResutlsButton_Click(object sender, EventArgs e)
         {
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _analyzer.Clear();
 
             // Clear all modules user controls by recreating them. 
             InitilizeModulesUserControls();
