@@ -47,22 +47,6 @@ namespace BruteSharkDesktop
             _processor.BuildTcpSessions = true;
             _processor.BuildUdpSessions = true;
 
-            // Create the user controls. 
-            _networkMapUserControl = new NetworkMapUserControl();
-            _networkMapUserControl.Dock = DockStyle.Fill;
-            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
-            _sessionsExplorerUserControl.Dock = DockStyle.Fill;
-            _hashesUserControl = new HashesUserControl();
-            _hashesUserControl.Dock = DockStyle.Fill;
-            _passwordsUserControl = new GenericTableUserControl();
-            _passwordsUserControl.Dock = DockStyle.Fill;
-            _filesUserControl = new FilesUserControl();
-            _filesUserControl.Dock = DockStyle.Fill;
-            _dnsResponseUserControl = new DnsResponseUserControl();
-            _dnsResponseUserControl.Dock = DockStyle.Fill;
-            _voipCallsUserControl = new VoipCallsUserControl();
-            _voipCallsUserControl.Dock = DockStyle.Fill;
-
             // Contract the events.
             _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
@@ -80,10 +64,29 @@ namespace BruteSharkDesktop
             _analyzer.ParsedItemDetected += (s, e) => SwitchToMainThreadContext(() => OnParsedItemDetected(s, e));
             _analyzer.UpdatedItemProprertyDetected += (s, e) => SwitchToMainThreadContext(() => OnUpdatedItemProprertyDetected(s, e));
 
+            InitilizeModulesUserControls();
             InitilizeFilesIconsList();
             InitilizeModulesCheckedListBox();
             InitilizeInterfacesComboBox();
             this.modulesTreeView.ExpandAll();
+        }
+
+        private void InitilizeModulesUserControls()
+        {
+            _networkMapUserControl = new NetworkMapUserControl();
+            _networkMapUserControl.Dock = DockStyle.Fill;
+            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
+            _sessionsExplorerUserControl.Dock = DockStyle.Fill;
+            _hashesUserControl = new HashesUserControl();
+            _hashesUserControl.Dock = DockStyle.Fill;
+            _passwordsUserControl = new GenericTableUserControl();
+            _passwordsUserControl.Dock = DockStyle.Fill;
+            _filesUserControl = new FilesUserControl();
+            _filesUserControl.Dock = DockStyle.Fill;
+            _dnsResponseUserControl = new DnsResponseUserControl();
+            _dnsResponseUserControl.Dock = DockStyle.Fill;
+            _voipCallsUserControl = new VoipCallsUserControl();
+            _voipCallsUserControl.Dock = DockStyle.Fill;
         }
 
         private void InitilizeInterfacesComboBox()
@@ -493,23 +496,31 @@ This means a faster processing but also that some obects may not be extracted.")
         {
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
 
-            // Clear all modules user controls. 
-            _networkMapUserControl = new NetworkMapUserControl();
-            _networkMapUserControl.Dock = DockStyle.Fill;
-            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
-            _sessionsExplorerUserControl.Dock = DockStyle.Fill;
-            _hashesUserControl = new HashesUserControl();
-            _hashesUserControl.Dock = DockStyle.Fill;
-            _passwordsUserControl = new GenericTableUserControl();
-            _passwordsUserControl.Dock = DockStyle.Fill;
-            _filesUserControl = new FilesUserControl();
-            _filesUserControl.Dock = DockStyle.Fill;
-            _dnsResponseUserControl = new DnsResponseUserControl();
-            _dnsResponseUserControl.Dock = DockStyle.Fill;
-            _voipCallsUserControl = new VoipCallsUserControl();
-            _voipCallsUserControl.Dock = DockStyle.Fill;
+            // Clear all modules user controls by recreating them. 
+            InitilizeModulesUserControls();
 
-            this.modulesTreeView.ResetText();
+            // Remove the items count of each module from the tree view (e.g "DNS (13)" -> "DNS").
+            foreach (var node in IterateAllNodes(modulesTreeView.Nodes))
+            {
+                var index = node.Text.LastIndexOf('(');
+
+                if (index > 0)
+                {
+                    node.Text = node.Text.Substring(0, index);
+                }
+            }
+        }
+
+        IEnumerable<TreeNode> IterateAllNodes(TreeNodeCollection nodes)
+        {
+            // Recursively iterate over all nodes and sub nodes.
+            foreach (TreeNode node in nodes)
+            {
+                yield return node;
+
+                foreach (var child in IterateAllNodes(node.Nodes))
+                    yield return child;
+            }
         }
 
     }
