@@ -489,6 +489,29 @@ This means a faster processing but also that some obects may not be extracted.")
             }
         }
 
+        private void clearResutlsButton_Click(object sender, EventArgs e)
+        {
+            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+
+            // Clear all modules user controls. 
+            _networkMapUserControl = new NetworkMapUserControl();
+            _networkMapUserControl.Dock = DockStyle.Fill;
+            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
+            _sessionsExplorerUserControl.Dock = DockStyle.Fill;
+            _hashesUserControl = new HashesUserControl();
+            _hashesUserControl.Dock = DockStyle.Fill;
+            _passwordsUserControl = new GenericTableUserControl();
+            _passwordsUserControl.Dock = DockStyle.Fill;
+            _filesUserControl = new FilesUserControl();
+            _filesUserControl.Dock = DockStyle.Fill;
+            _dnsResponseUserControl = new DnsResponseUserControl();
+            _dnsResponseUserControl.Dock = DockStyle.Fill;
+            _voipCallsUserControl = new VoipCallsUserControl();
+            _voipCallsUserControl.Dock = DockStyle.Fill;
+
+            this.modulesTreeView.ResetText();
+        }
+
     }
 }
     
