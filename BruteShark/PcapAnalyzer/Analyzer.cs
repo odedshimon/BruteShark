@@ -87,7 +87,18 @@ namespace PcapAnalyzer
             }
         }
 
-        public void Clear() => InitilyzeModulesList();
+        public void Clear()
+        { 
+            // Recreate modules instances.
+            InitilyzeModulesList();
+
+            //  Replace the current loaded modules with the new clean modules.
+            foreach (var moduleName in this.LoadedModulesNames)
+            {
+                this.RemoveModule(moduleName);
+                this.AddModule(moduleName);
+            }
+        }
 
     }
 }
