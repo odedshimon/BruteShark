@@ -196,9 +196,9 @@ namespace PcapProcessor
             ProcessPacket(packet);
         }
 
-        private void ProcessPcapPacket(object sender, CaptureEventArgs e)
+        private void ProcessPcapPacket(object sender, PacketCapture e)
         {
-            var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
+            var packet = PacketDotNet.Packet.ParsePacket(e.GetPacket().LinkLayerType, e.GetPacket().Data);
             ProcessPacket(packet);
         }
 

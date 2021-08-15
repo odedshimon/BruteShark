@@ -1,7 +1,6 @@
 ﻿using PcapProcessor.Objects;
 using SharpPcap;
 using SharpPcap.LibPcap;
-using SharpPcap.Npcap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,24 +61,10 @@ namespace PcapProcessor
             ClearOldSniffingsData();
             ICaptureDevice selectedDevice = GetSelectedDevice();
 
-            if (selectedDevice is NpcapDevice)
-            {
-                var nPcap = selectedDevice as SharpPcap.Npcap.NpcapDevice;
-                if (PromisciousMode)
-                {
-                    nPcap.Open(SharpPcap.Npcap.OpenFlags.Promiscuous, ReadTimeoutMilliseconds);
-                }
-                else
-                {
-                    nPcap.Open();
-                }
-
-                nPcap.Mode = CaptureMode.Packets;
-            }
-            else if (selectedDevice is SharpPcap.LibPcap.LibPcapLiveDevice)
+            if (selectedDevice is SharpPcap.LibPcap.LibPcapLiveDevice)
             {
                 var livePcapDevice = selectedDevice as SharpPcap.LibPcap.LibPcapLiveDevice;
-                livePcapDevice.Open(PromisciousMode ? DeviceMode.Promiscuous : DeviceMode.Normal);
+                livePcapDevice.Open(PromisciousMode ? SharpPcap.DeviceModes.Promiscuous : SharpPcap.DeviceModes.None);
             }
             else
             {
@@ -261,9 +246,9 @@ namespace PcapProcessor
             return PcapDevice.CheckFilter(filter, out string outString);
         }
 
-        private void InsertPacketToQueue(object sender, CaptureEventArgs e)
+        private void InsertPacketToQueue(object sender, PacketCapture e)
         {
-            var packet = PacketDotNet.Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
+            var packet = PacketDotNet.Packet.ParsePacket(e.GetPacket().LinkLayerType, e.GetPacket().Data);
 
             lock (_packetsQueueLock)
             {
