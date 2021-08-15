@@ -46,6 +46,7 @@
             treeNode8,
             treeNode9});
             this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.clearResutlsButton = new System.Windows.Forms.Button();
             this.exportResutlsButton = new System.Windows.Forms.Button();
             this.liveCaptureGroupBox = new System.Windows.Forms.GroupBox();
             this.filterTextBox = new System.Windows.Forms.TextBox();
@@ -99,6 +100,7 @@
             // 
             // mainSplitContainer.Panel1
             // 
+            this.mainSplitContainer.Panel1.Controls.Add(this.clearResutlsButton);
             this.mainSplitContainer.Panel1.Controls.Add(this.exportResutlsButton);
             this.mainSplitContainer.Panel1.Controls.Add(this.liveCaptureGroupBox);
             this.mainSplitContainer.Panel1.Controls.Add(this.optionsGroupBox);
@@ -113,12 +115,23 @@
             this.mainSplitContainer.SplitterWidth = 1;
             this.mainSplitContainer.TabIndex = 0;
             // 
+            // clearResutlsButton
+            // 
+            this.clearResutlsButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.clearResutlsButton.Location = new System.Drawing.Point(1011, 117);
+            this.clearResutlsButton.Name = "clearResutlsButton";
+            this.clearResutlsButton.Size = new System.Drawing.Size(81, 48);
+            this.clearResutlsButton.TabIndex = 4;
+            this.clearResutlsButton.Text = "Clear Results";
+            this.clearResutlsButton.UseVisualStyleBackColor = true;
+            this.clearResutlsButton.Click += new System.EventHandler(this.clearResutlsButton_Click);
+            // 
             // exportResutlsButton
             // 
-            this.exportResutlsButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.exportResutlsButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.exportResutlsButton.Location = new System.Drawing.Point(924, 117);
             this.exportResutlsButton.Name = "exportResutlsButton";
-            this.exportResutlsButton.Size = new System.Drawing.Size(168, 48);
+            this.exportResutlsButton.Size = new System.Drawing.Size(81, 48);
             this.exportResutlsButton.TabIndex = 3;
             this.exportResutlsButton.Text = "Export Results";
             this.exportResutlsButton.UseVisualStyleBackColor = true;
@@ -351,7 +364,7 @@
             // 
             this.secondaryLowerSplitContainer.Panel2.Controls.Add(this.progressBar);
             this.secondaryLowerSplitContainer.Size = new System.Drawing.Size(1463, 497);
-            this.secondaryLowerSplitContainer.SplitterDistance = 446;
+            this.secondaryLowerSplitContainer.SplitterDistance = 443;
             this.secondaryLowerSplitContainer.SplitterWidth = 5;
             this.secondaryLowerSplitContainer.TabIndex = 0;
             // 
@@ -366,7 +379,7 @@
             // modulesSplitContainer.Panel1
             // 
             this.modulesSplitContainer.Panel1.Controls.Add(this.modulesTreeView);
-            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 446);
+            this.modulesSplitContainer.Size = new System.Drawing.Size(1463, 443);
             this.modulesSplitContainer.SplitterDistance = 228;
             this.modulesSplitContainer.SplitterWidth = 5;
             this.modulesSplitContainer.TabIndex = 0;
@@ -403,7 +416,7 @@
             treeNode3,
             treeNode7,
             treeNode10});
-            this.modulesTreeView.Size = new System.Drawing.Size(228, 446);
+            this.modulesTreeView.Size = new System.Drawing.Size(228, 443);
             this.modulesTreeView.TabIndex = 0;
             this.modulesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ModulesTreeView_AfterSelect);
             // 
@@ -415,7 +428,7 @@
             this.progressBar.Location = new System.Drawing.Point(0, 0);
             this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1463, 46);
+            this.progressBar.Size = new System.Drawing.Size(1463, 49);
             this.progressBar.TabIndex = 0;
             // 
             // MainForm
@@ -475,6 +488,7 @@
         private System.Windows.Forms.CheckBox promiscuousCheckBox;
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.Button exportResutlsButton;
+        private System.Windows.Forms.Button clearResutlsButton;
     }
 }
 
