@@ -64,7 +64,9 @@ namespace PcapProcessor
             if (selectedDevice is SharpPcap.LibPcap.LibPcapLiveDevice)
             {
                 var livePcapDevice = selectedDevice as SharpPcap.LibPcap.LibPcapLiveDevice;
-                livePcapDevice.Open(PromisciousMode ? SharpPcap.DeviceModes.Promiscuous : SharpPcap.DeviceModes.None);
+                livePcapDevice.Open(mode: PromisciousMode ? SharpPcap.DeviceModes.Promiscuous : SharpPcap.DeviceModes.None 
+                                          | DeviceModes.DataTransferUdp 
+                                          | DeviceModes.NoCaptureLocal);
             }
             else
             {
@@ -98,7 +100,7 @@ namespace PcapProcessor
             // Raise events for unfinished sessions.
             HandleUnfinishedSessions();
         }
-
+     
         private void SetupBpfFilter(ICaptureDevice selectedDevice)
         {
             if (this.Filter != null && this.Filter != string.Empty)
@@ -136,14 +138,10 @@ namespace PcapProcessor
 
         private SharpPcap.ICaptureDevice GetSelectedDevice()
         {
-            var availiableDevices = CaptureDeviceList.Instance;
-
-            if (!AvailiableDevicesNames.Contains(this.SelectedDeviceName))
-            {
-                throw new Exception($"No such device {SelectedDeviceName}");
-            }
-
-            return availiableDevices[AvailiableDevicesNames.IndexOf(this.SelectedDeviceName)];
+            return CaptureDeviceList.Instance
+                .Select(d => (PcapDevice)d)
+                .Where(d => d.Interface.FriendlyName == this.SelectedDeviceName)
+                .FirstOrDefault();
         }
 
         private void StartPacketProcessingThread()
