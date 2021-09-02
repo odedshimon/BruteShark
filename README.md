@@ -58,9 +58,10 @@ Please ⭐️ this repository if this project helped you!
 
 # Examples
 ##### Videos
-**Build a network map**  
-https://user-images.githubusercontent.com/18364847/131922221-5714f351-85f7-4490-bec9-8da4339b66b3.mp4
-**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes** [**(also available at youtube)**](https://youtu.be/GjGV5vwIGi8)  
+Building a network map  
+https://user-images.githubusercontent.com/18364847/131922221-5714f351-85f7-4490-bec9-8da4339b66b3.mp4  
+BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes [(also available at youtube)](https://youtu.be/GjGV5vwIGi8)  
+https://user-images.githubusercontent.com/18364847/131924013-8b2aa18b-0941-456e-a09d-799902554166.mp4
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
