@@ -1,6 +1,6 @@
 ![](readme_media/BruteSharkBanner.png)
 
-![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) <a href="https://www.reddit.com/r/bruteshark"><img src="https://img.shields.io/badge/dynamic/json.svg?label=subscribe r/BruteShark&color=red&style=flat&query=$.data.subscribers&url=https://www.reddit.com/r/bruteshark/about.json" alt="Reddit subscribers"></a> [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)     
+![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) ![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/BruteShark?style=social) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)     
 <!--ts-->
    * [About](#about)
       * [What it can do](#what-it-can-do)
@@ -58,8 +58,9 @@ Please ⭐️ this repository if this project helped you!
 
 # Examples
 ##### Videos
-[**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
-[**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes**](https://youtu.be/GjGV5vwIGi8)  
+**Build a network map**  
+https://user-images.githubusercontent.com/18364847/131922221-5714f351-85f7-4490-bec9-8da4339b66b3.mp4
+**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes** [**(also available at youtube)**](https://youtu.be/GjGV5vwIGi8)  
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
