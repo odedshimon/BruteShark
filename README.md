@@ -1,6 +1,6 @@
 ![](readme_media/BruteSharkBanner.png)
 
-![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) <a href="https://www.reddit.com/r/bruteshark"><img src="https://img.shields.io/badge/dynamic/json.svg?label=subscribe r/BruteShark&color=red&style=flat&query=$.data.subscribers&url=https://www.reddit.com/r/bruteshark/about.json" alt="Reddit subscribers"></a> [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark)     
+![badge](https://github.com/odedshimon/BruteShark/workflows/Test%20&%20Build/badge.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/odedshimon/bruteshark) [![Github All Releases](https://img.shields.io/github/downloads/odedshimon/bruteshark/total.svg)]() [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UWUNVCJVPNTUY&source=url) [![Tweet](https://img.shields.io/twitter/url/https/github.com/tterb/hyde.svg?style=social)](https://twitter.com/intent/tweet?text=Check+out+Brute-shark%21+A+free+open+source+PCAP+analyzer+tool+for+security+researchers%3A+https%3A%2F%2Fgithub.com%2Fodedshimon%2FBruteShark) ![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/BruteShark?style=social)       
 <!--ts-->
    * [About](#about)
       * [What it can do](#what-it-can-do)
@@ -44,7 +44,7 @@ Please ⭐️ this repository if this project helped you!
 ## Download
 ##### Windows 
 * Prerequisites: 
-    * WinPcap / Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
+    * Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
     * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime) (Note that you have to install the proper runtime regard to your needs, that means .NET Core Desktop Runtime for BruteSharkDesktop and .NET Core Runtime for BruteSharkCli).  
 * For desktop version download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
 * For CLI version download [BruteSharkCli Windows 10 Executable](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.exe).  
@@ -52,17 +52,16 @@ Please ⭐️ this repository if this project helped you!
 * Prerequisites: libpcap driver  
 * Download [BruteSharkCli](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli) and just run it:  
     ```bash
-    # Create a symbolyc link between libpcap.so and the actual libpcap file (e.g. libpcap.so.0.8)
-    # That needed due to a known issue in SharpPcap (https://github.com/chmorgan/sharppcap/issues/167)
-    find /usr/lib/x86_64-linux-gnu -type f | grep libpcap | head -1 | xargs -i sudo ln -s {} /usr/lib/x86_64-linux-gnu/libpcap.so
     wget https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli
     ./BruteSharkCli
     ```
 
 # Examples
 ##### Videos
-[**How do i crack (by mistake!) Windows 10 user NTLM password**](https://youtu.be/AreguLxCCz4)  
-[**BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes**](https://youtu.be/GjGV5vwIGi8)  
+Building a network map  
+https://user-images.githubusercontent.com/18364847/131922221-5714f351-85f7-4490-bec9-8da4339b66b3.mp4  
+BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes [(also available at youtube)](https://youtu.be/GjGV5vwIGi8)  
+https://user-images.githubusercontent.com/18364847/131924013-8b2aa18b-0941-456e-a09d-799902554166.mp4
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
 ##### Building a Network Diagram
@@ -107,7 +106,7 @@ This module extracts Voip calls from SIP & RTP protocols. The extracted calls ca
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
 BruteSharkCli is the cli version of BruteShark for Linux users (It can also compiled for Windows operating systems). It has all the features of BruteSharkDesktop and designed to operate from a shell.
-As a classic cli tool it works by geting all the relevant parameters for the processing and then printing the results to stdout or files.
+As a classic cli tool it works by getting all the relevant parameters for the processing and then printing the results to stdout or files.
 
 Print the help menu:  
 
@@ -125,7 +124,7 @@ Run multiple modules on all files in a directory and also export all the results
     
      BruteSharkCli -m Credentials,NetworkMap,FileExtracting -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
      
-Sniff an interface named "Wi-Fi", run multiple modules and also export all the results to a directory (the results will be exported only when stoping the sniffer by hitting CTRL + C).
+Sniff an interface named "Wi-Fi", run multiple modules and also export all the results to a directory (the results will be exported only when stopping the sniffer by hitting CTRL + C).
 
     BruteSharkCli -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\Users\King\Desktop\Test Export
 
@@ -205,7 +204,7 @@ When contributing to this repository, please first discuss the change you wish t
 an email before making a change.
 
 ## How Can You Contribute?
-- Implemening new features from [BruteShark Issues](https://github.com/odedshimon/BruteShark/issues), look for "good first isuue" and "help wanted" labels.
+- Implementing new features from [BruteShark Issues](https://github.com/odedshimon/BruteShark/issues), look for "good first issue" and "help wanted" labels.
 - Uploading example PCAP files, especially files, with interesting content.
 - Proposing new features by [Creating an Issue](https://github.com/odedshimon/BruteShark/issues).
 - Reporting a bug by [Creating an Issue](https://github.com/odedshimon/BruteShark/issues).
