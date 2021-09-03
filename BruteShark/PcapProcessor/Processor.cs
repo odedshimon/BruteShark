@@ -65,6 +65,7 @@ namespace PcapProcessor
 
         public void ProcessPcaps(IEnumerable<string> filesPaths, string liveCaptureDevice = null)
         {
+            _processingPrecentsPredicator.Clear();
             _processingPrecentsPredicator.AddFiles(new HashSet<FileInfo>(filesPaths.Select(fp => new FileInfo(fp))));
 
             foreach (var filePath in filesPaths)
