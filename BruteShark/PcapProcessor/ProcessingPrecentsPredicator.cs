@@ -65,6 +65,9 @@ namespace PcapProcessor
 
         private void CheckIfProcessingPrecentsChanged(long additionalData)
         {
+            if (_totalFilesSize == 0)
+                return;
+
             var precentsAfterAddition = (int)((((decimal)additionalData / (decimal)_totalFilesSize) * 100) % 101);
 
             if (precentsAfterAddition > this.ProcessingPrecents)
@@ -77,5 +80,14 @@ namespace PcapProcessor
                 });
             }
         }
+
+        public void Clear()
+        {
+            this._totalFilesSize = 0;
+            this.DataProcessed = 0;
+            this.ProcessingPrecents = 0;
+            this.FilesProcessed.Clear();
+        }
+
     }
 }
