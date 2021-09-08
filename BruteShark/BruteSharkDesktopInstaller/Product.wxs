@@ -4,7 +4,7 @@
 	<Product 
 		Id="CE452A31-5E74-41BE-A768-EBEE7B325862" 
 		Name="BruteSharkDesktop" 
-		Language="1033" Version="1.2.10.0" 
+		Language="1033" Version="1.2.11.0" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
@@ -142,11 +142,7 @@
 			<Component Id="Microsoft.Extensions.Logging.Abstractions.dll">
 				<File Id="Microsoft.Extensions.Logging.Abstractions.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Microsoft.Extensions.Logging.Abstractions.dll" />
 			</Component>
-
-			<Component Id="PcapngUtils.dll">
-				<File Id="PcapngUtils.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="PcapngUtils.dll" />
-			</Component>
-
+			
 			<Component Id="System.Runtime.CompilerServices.Unsafe.dll">
 				<File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="System.Runtime.CompilerServices.Unsafe.dll" />
 			</Component>
