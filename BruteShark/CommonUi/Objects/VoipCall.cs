@@ -13,7 +13,6 @@ namespace CommonUi
         public byte[] RTPStream { get; set; }
         [Browsable(false)]
         public Guid CallGuid { get; set; }
-
         public string From { get; set; }
         [DisplayName("From Host")]
         public string FromHost { get; set; }
