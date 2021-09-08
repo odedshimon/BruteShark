@@ -174,12 +174,5 @@ namespace PcapProcessorTest
             Assert.AreEqual(46, recievedPackets.Count);
         }
 
-        [TestMethod]
-        public void PcapProcessor_identifyPcapFileFormat()
-        {
-            var processor = new PcapProcessor.Processor();
-            Assert.AreEqual(true, processor.IsPcapFile(this.HttpSmallFilePath));
-            Assert.AreEqual(false, processor.IsPcapFile(this.PcapNGFile));
-        }
     }
 }

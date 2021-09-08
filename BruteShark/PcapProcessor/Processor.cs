@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Haukcode.PcapngUtils;
-using Haukcode.PcapngUtils.Common;
 
 
 namespace PcapProcessor
