@@ -517,6 +517,9 @@ This means a faster processing but also that some obects may not be extracted.")
                     node.Text = node.Text.Substring(0, index);
                 }
             }
+
+            // Select the head of the modules tree view to force refreshing of the current user control.
+            modulesTreeView.SelectedNode = modulesTreeView.Nodes[0];
         }
 
         IEnumerable<TreeNode> IterateAllNodes(TreeNodeCollection nodes)
