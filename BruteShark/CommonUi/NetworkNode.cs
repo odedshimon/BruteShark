@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommonUi
 {
-    class NetworkNode
+    public class NetworkNode
     {
         public readonly string IpAddress;
         public HashSet<int> OpenPorts;

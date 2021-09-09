@@ -19,6 +19,7 @@ namespace BruteSharkDesktop
         private CancellationTokenSource _cts;
         private HashSet<string> _files;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private CommonUi.NetworkContext _networkContext;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
@@ -39,6 +40,7 @@ namespace BruteSharkDesktop
             _files = new HashSet<string>();
             _cts = new CancellationTokenSource();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _networkContext = new CommonUi.NetworkContext();
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
@@ -73,7 +75,7 @@ namespace BruteSharkDesktop
 
         private void InitilizeModulesUserControls()
         {
-            _networkMapUserControl = new NetworkMapUserControl();
+            _networkMapUserControl = new NetworkMapUserControl(_networkContext);
             _networkMapUserControl.Dock = DockStyle.Fill;
             _sessionsExplorerUserControl = new SessionsExplorerUserControl();
             _sessionsExplorerUserControl.Dock = DockStyle.Fill;
@@ -220,6 +222,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             {
                 var connection = e.ParsedItem as PcapAnalyzer.NetworkConnection;
                 _connections.Add(connection);
+                _networkContext.HandleNetworkConection(connection);
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
@@ -386,7 +389,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void MessageOnBuildSessionsConfigurationChanged()
         {
-            ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+            Utilities.ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
 This means a faster processing but also that some obects may not be extracted.");
         }
 
@@ -427,25 +430,12 @@ This means a faster processing but also that some obects may not be extracted.")
             // We wait here until the sniffing will be stoped (by the stop button).
             this.progressBar.CustomText = string.Empty;
             this.progressBar.Refresh();
-            ShowInfoMessageBox("Capture Stoped");
+            Utilities.ShowInfoMessageBox("Capture Stoped");
         }
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
             _cts.Cancel();
-        }
-
-        private void ShowInfoMessageBox(string text)
-        {
-            // NOTE: Info message box is also set up at front of the form, it solves the 
-            // problem of message box that is hidden under the form.
-            MessageBox.Show(
-                text: text, 
-                caption: "Info", 
-                buttons: MessageBoxButtons.OK, 
-                icon: MessageBoxIcon.Information,
-                defaultButton: MessageBoxDefaultButton.Button1, 
-                options: MessageBoxOptions.DefaultDesktopOnly);
         }
 
         private void promiscuousCheckBox_CheckStateChanged(object sender, EventArgs e)
@@ -508,7 +498,7 @@ This means a faster processing but also that some obects may not be extracted.")
             InitilizeModulesUserControls();
 
             // Remove the items count of each module from the tree view (e.g "DNS (13)" -> "DNS").
-            foreach (var node in IterateAllNodes(modulesTreeView.Nodes))
+            foreach (var node in Utilities.IterateAllNodes(modulesTreeView.Nodes))
             {
                 var index = node.Text.LastIndexOf('(');
 
@@ -520,18 +510,6 @@ This means a faster processing but also that some obects may not be extracted.")
 
             // Select the head of the modules tree view to force refreshing of the current user control.
             modulesTreeView.SelectedNode = modulesTreeView.Nodes[0];
-        }
-
-        IEnumerable<TreeNode> IterateAllNodes(TreeNodeCollection nodes)
-        {
-            // Recursively iterate over all nodes and sub nodes.
-            foreach (TreeNode node in nodes)
-            {
-                yield return node;
-
-                foreach (var child in IterateAllNodes(node.Nodes))
-                    yield return child;
-            }
         }
 
     }

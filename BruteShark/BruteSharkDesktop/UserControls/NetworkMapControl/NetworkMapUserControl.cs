@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PcapAnalyzer;
 using System.Net;
+using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.GraphViewerGdi;
+using System.IO;
 
 namespace BruteSharkDesktop
 {
     public partial class NetworkMapUserControl : UserControl
     {
+        private CommonUi.NetworkContext _networkContext;
         private Dictionary<string, HashSet<string>> _dnsMappings;
         private HashSet<NetworkMapEdge> _edges;
         Microsoft.Msagl.GraphViewerGdi.GViewer _viewer;
@@ -21,9 +25,10 @@ namespace BruteSharkDesktop
 
         public int NodesCount => _graph.Nodes.Count();
 
-        public NetworkMapUserControl()
+        public NetworkMapUserControl(CommonUi.NetworkContext networkContext)
         {
             InitializeComponent();
+            _networkContext = networkContext;
 
             // Add MSAGL Graph control.
             _dnsMappings = new Dictionary<string, HashSet<string>>();
@@ -33,6 +38,20 @@ namespace BruteSharkDesktop
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
             this.Controls.Add(_viewer);
+
+            _viewer.MouseClick += OnGraphMouseClick;
+        }
+
+        private void OnGraphMouseClick(object sender, MouseEventArgs e)
+        {
+            foreach (var en in _viewer.Entities)
+            {
+                if (en.MarkedForDragging && en is IViewerNode)
+                {
+                    var ipAddress = new StringReader((en as DNode).Node.LabelText).ReadLine();
+                    Utilities.ShowInfoMessageBox(ipAddress);
+                }
+            }
         }
 
         public void AddEdge(string source, string destination, string edgeText = "")

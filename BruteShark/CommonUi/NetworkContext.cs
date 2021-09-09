@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommonUi
 {
-    class NetworkContext
+    public class NetworkContext
     {
         private Dictionary<string, NetworkNode> _networkNodes;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
@@ -41,6 +41,8 @@ namespace CommonUi
             _networkNodes[networkConnection.Source].OpenPorts.Add(networkConnection.SrcPort);
             _networkNodes[networkConnection.Destination].OpenPorts.Add(networkConnection.DestPort);
         }
+
+        public NetworkNode GetNode(string ipAddress) => _networkNodes[ipAddress];
 
     }
 }
