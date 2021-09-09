@@ -30,27 +30,23 @@ namespace BruteSharkDesktop
             InitializeComponent();
             _networkContext = networkContext;
 
-            // Add MSAGL Graph control.
+            // Add MSAGL Graph control and register to click events.
             _dnsMappings = new Dictionary<string, HashSet<string>>();
             _edges = new HashSet<NetworkMapEdge>();
             _viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
+            _viewer.MouseClick += OnGraphMouseClick;
             _graph = new Microsoft.Msagl.Drawing.Graph("graph");
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
             this.Controls.Add(_viewer);
-
-            _viewer.MouseClick += OnGraphMouseClick;
         }
 
         private void OnGraphMouseClick(object sender, MouseEventArgs e)
         {
-            foreach (var en in _viewer.Entities)
+            if (_viewer.SelectedObject is Microsoft.Msagl.Drawing.Node)
             {
-                if (en.MarkedForDragging && en is IViewerNode)
-                {
-                    var ipAddress = new StringReader((en as DNode).Node.LabelText).ReadLine();
-                    Utilities.ShowInfoMessageBox(ipAddress);
-                }
+                var ipAddress = new StringReader((_viewer.SelectedObject as Microsoft.Msagl.Drawing.Node).LabelText).ReadLine();
+                Utilities.ShowInfoMessageBox(ipAddress);
             }
         }
 
