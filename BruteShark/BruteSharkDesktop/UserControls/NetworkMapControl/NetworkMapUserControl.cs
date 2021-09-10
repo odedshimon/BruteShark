@@ -38,7 +38,7 @@ namespace BruteSharkDesktop
             _graph = new Microsoft.Msagl.Drawing.Graph("graph");
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
-            this.Controls.Add(_viewer);
+            this.mainSplitContainer.Panel1.Controls.Add(_viewer);
         }
 
         private void OnGraphMouseClick(object sender, MouseEventArgs e)
@@ -48,7 +48,13 @@ namespace BruteSharkDesktop
                 var ipAddress = new StringReader((_viewer.SelectedObject as Microsoft.Msagl.Drawing.Node).LabelText).ReadLine();
 
                 if (IsIpAddress(ipAddress))
-                    Utilities.ShowInfoMessageBox(_networkContext.GetNodeData(ipAddress));
+                {
+                    // delete
+                    this.nodeDetailsTreeView.Nodes.Add(new TreeNode("bla bla"));
+
+                    JsonTreeViewLoader.LoadJsonToTreeView(this.nodeDetailsTreeView, _networkContext.GetNodeData(ipAddress));
+                    this.mainSplitContainer.Panel2.ResumeLayout();
+                }
             }
         }
 

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
+
 
 namespace CommonUi
 {
@@ -44,7 +45,13 @@ namespace CommonUi
 
         public string GetNodeData(string ipAddress)
         {
-            return JsonSerializer.Serialize(_openPorts[ipAddress]);
+            return JsonConvert.SerializeObject(new
+            {
+                nodeSummerizedData = new
+                {
+                    OpenPorts = _openPorts[ipAddress]
+                }
+            });
         }
 
     }

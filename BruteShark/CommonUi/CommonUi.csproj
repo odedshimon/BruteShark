@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BruteForce\BruteForce.csproj" />
     <ProjectReference Include="..\PcapAnalyzer\PcapAnalyzer.csproj" />
     <ProjectReference Include="..\PcapProcessor\PcapProcessor.csproj" />
