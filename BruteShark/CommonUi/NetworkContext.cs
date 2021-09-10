@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace CommonUi
 {
@@ -49,7 +49,8 @@ namespace CommonUi
             {
                 nodeSummerizedData = new
                 {
-                    OpenPorts = _openPorts[ipAddress]
+                    OpenPorts = _openPorts[ipAddress],
+                    DnsRecords = _dnsMappings.Where(d => d.Destination == ipAddress)
                 }
             });
         }

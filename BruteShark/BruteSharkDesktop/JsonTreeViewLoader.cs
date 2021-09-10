@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -13,7 +14,7 @@ namespace BruteSharkDesktop
 		public static void LoadJsonToTreeView(this TreeView treeView, string json)
 		{
             var root = JToken.Parse(json);
-            DisplayTreeView(treeView, root, "test");
+            DisplayTreeView(treeView, root, ((JObject)root).Properties().Select(p => p.Name).FirstOrDefault());
         }
 
         private static void DisplayTreeView(TreeView treeView, JToken root, string rootName)
