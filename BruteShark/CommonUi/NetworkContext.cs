@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 
 namespace CommonUi
 {
     public class NetworkContext
     {
-        private Dictionary<string, NetworkNode> _networkNodes;
+        private Dictionary<string, HashSet<int>> _openPorts;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
         private HashSet<PcapAnalyzer.NetworkConnection> _connections;
 
         public NetworkContext()
         {
-            _networkNodes = new Dictionary<string, NetworkNode>();
+            _openPorts = new Dictionary<string, HashSet<int>>();
             _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
         }
@@ -27,22 +27,25 @@ namespace CommonUi
             // Create network nodes if needed.
             if (_connections.Add(networkConnection))
             {
-                if (!_networkNodes.ContainsKey(networkConnection.Source))
+                if (!_openPorts.ContainsKey(networkConnection.Source))
                 {
-                    _networkNodes[networkConnection.Source] = new NetworkNode(networkConnection.Source);
+                    _openPorts[networkConnection.Source] = new HashSet<int>();
                 }
-                if (!_networkNodes.ContainsKey(networkConnection.Destination))
+                if (!_openPorts.ContainsKey(networkConnection.Destination))
                 {
-                    _networkNodes[networkConnection.Destination] = new NetworkNode(networkConnection.Destination);
+                    _openPorts[networkConnection.Destination] = new HashSet<int>();
                 }
             }
 
             // Update open ports.
-            _networkNodes[networkConnection.Source].OpenPorts.Add(networkConnection.SrcPort);
-            _networkNodes[networkConnection.Destination].OpenPorts.Add(networkConnection.DestPort);
+            _openPorts[networkConnection.Source].Add(networkConnection.SrcPort);
+            _openPorts[networkConnection.Destination].Add(networkConnection.DestPort);
         }
 
-        public NetworkNode GetNode(string ipAddress) => _networkNodes[ipAddress];
+        public string GetNodeData(string ipAddress)
+        {
+            return JsonSerializer.Serialize(_openPorts[ipAddress]);
+        }
 
     }
 }

@@ -46,7 +46,9 @@ namespace BruteSharkDesktop
             if (_viewer.SelectedObject is Microsoft.Msagl.Drawing.Node)
             {
                 var ipAddress = new StringReader((_viewer.SelectedObject as Microsoft.Msagl.Drawing.Node).LabelText).ReadLine();
-                Utilities.ShowInfoMessageBox(ipAddress);
+
+                if (IsIpAddress(ipAddress))
+                    Utilities.ShowInfoMessageBox(_networkContext.GetNodeData(ipAddress));
             }
         }
 
