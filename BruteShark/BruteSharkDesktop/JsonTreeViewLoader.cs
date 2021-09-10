@@ -11,10 +11,11 @@ namespace BruteSharkDesktop
 {
     public static class JsonTreeViewLoader
     {
-		public static void LoadJsonToTreeView(this TreeView treeView, string json)
+		public static void LoadJsonToTreeView(this TreeView treeView, string json, string rootNodeText)
 		{
             var root = JToken.Parse(json);
-            DisplayTreeView(treeView, root, ((JObject)root).Properties().Select(p => p.Name).FirstOrDefault());
+            //DisplayTreeView(treeView, root, ((JObject)root).Properties().Select(p => p.Name).FirstOrDefault());
+            DisplayTreeView(treeView, root, rootNodeText);
         }
 
         private static void DisplayTreeView(TreeView treeView, JToken root, string rootName)

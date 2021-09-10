@@ -49,7 +49,10 @@ namespace BruteSharkDesktop
 
                 if (IsIpAddress(ipAddress))
                 {
-                    JsonTreeViewLoader.LoadJsonToTreeView(this.nodeTreeView, _networkContext.GetNodeData(ipAddress));
+                    JsonTreeViewLoader.LoadJsonToTreeView(
+                        treeView: this.nodeTreeView, 
+                        json: _networkContext.GetNodeData(ipAddress),
+                        rootNodeText: "Host Details");
                 }
             }
         }
@@ -137,6 +140,9 @@ namespace BruteSharkDesktop
         // are saving the mappings for future hosts.
         public void HandleDnsNameMapping(DnsNameMapping dnsNameMapping)
         {
+            // TODO: use only one dns repository
+            _networkContext.HandleDnsNameMapping(dnsNameMapping);
+
             if (!IsIpAddress(dnsNameMapping.Query) && IsIpAddress(dnsNameMapping.Destination))
             {
                 if (_dnsMappings.ContainsKey(dnsNameMapping.Destination))

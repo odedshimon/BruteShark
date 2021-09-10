@@ -45,15 +45,24 @@ namespace CommonUi
 
         public string GetNodeData(string ipAddress)
         {
-            return JsonConvert.SerializeObject(new
+            return JsonConvert.SerializeObject(new NetworkNode()
             {
-                nodeSummerizedData = new
-                {
-                    OpenPorts = _openPorts[ipAddress],
-                    DnsRecords = _dnsMappings.Where(d => d.Destination == ipAddress)
-                }
+                IpAddress = ipAddress,
+                OpenPorts = _openPorts[ipAddress],
+                DnsMappings = _dnsMappings.Where(d => d.Destination == ipAddress).Select(d => d.Query).ToHashSet()
             });
         }
 
     }
+
+    public static class Extensions
+    {
+        public static HashSet<T> ToHashSet<T>(
+            this IEnumerable<T> source,
+            IEqualityComparer<T> comparer = null)
+        {
+            return new HashSet<T>(source, comparer);
+        }
+    }
+
 }

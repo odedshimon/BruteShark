@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace CommonUi
 {
     public class NetworkNode
     {
-        public readonly string IpAddress;
-        public HashSet<int> OpenPorts;
-
-        public NetworkNode(string ipAddress)
-        {
-            this.IpAddress = ipAddress;
-            this.OpenPorts = new HashSet<int>();
-        }
+        [DisplayName("IP Address")]
+        public string IpAddress { get; set; }
+        [DisplayName("Open Ports")]
+        public HashSet<int> OpenPorts { get; set; }
+        [DisplayName("DNS Mappings")]
+        public HashSet<string> DnsMappings { get; set; }
 
         public override bool Equals(object obj)
         {
