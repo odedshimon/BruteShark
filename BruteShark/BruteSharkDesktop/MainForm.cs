@@ -492,6 +492,7 @@ This means a faster processing but also that some obects may not be extracted.")
         private void clearResutlsButton_Click(object sender, EventArgs e)
         {
             _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _networkContext = new CommonUi.NetworkContext();
             _analyzer.Clear();
 
             // Clear all modules user controls by recreating them. 

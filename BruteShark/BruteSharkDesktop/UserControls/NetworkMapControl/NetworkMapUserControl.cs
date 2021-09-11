@@ -51,7 +51,7 @@ namespace BruteSharkDesktop
                 {
                     JsonTreeViewLoader.LoadJsonToTreeView(
                         treeView: this.nodeTreeView, 
-                        json: _networkContext.GetNodeData(ipAddress),
+                        json: _networkContext.GetNodeDataJson(ipAddress),
                         rootNodeText: "Host Details");
                 }
             }
@@ -90,14 +90,17 @@ namespace BruteSharkDesktop
         private string GetNodeText(string ipAddress)
         {
             var res = ipAddress;
+            var addressDnsRecords = _networkContext.DnsMappings.Where(d => d.Destination == ipAddress)
+                                                               .Select(d => d.Query)
+                                                               .ToList();
 
-            if (_dnsMappings.ContainsKey(ipAddress))
+            if (addressDnsRecords.Count > 0)
             {
-                res += Environment.NewLine + "DNS: " + _dnsMappings[ipAddress].First();
+                res += Environment.NewLine + "DNS: " + addressDnsRecords.First();
 
-                if (_dnsMappings[ipAddress].Count > 1)
+                if (addressDnsRecords.Count > 1)
                 {
-                    res += $" ({_dnsMappings[ipAddress].Count} more)";
+                    res += $" ({addressDnsRecords.Count} more)";
                 }
             }
 
@@ -135,29 +138,14 @@ namespace BruteSharkDesktop
             AddEdge(password.Username, password.Destination, edgeText);
             _graph.FindNode(password.Username).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
         }
-
-        // Normally DNS mappings arriving before real data, but we can't count on it therfore we 
-        // are saving the mappings for future hosts.
+        
         public void HandleDnsNameMapping(DnsNameMapping dnsNameMapping)
         {
-            // TODO: use only one dns repository
-            _networkContext.HandleDnsNameMapping(dnsNameMapping);
-
-            if (!IsIpAddress(dnsNameMapping.Query) && IsIpAddress(dnsNameMapping.Destination))
+            // Normally DNS mappings arriving before real data, but we can't count on it therfore we are saving
+            // the mappings at the network context for future hosts, handled at the AddEdge() function.
+            if (_networkContext.HandleDnsNameMapping(dnsNameMapping))
             {
-                if (_dnsMappings.ContainsKey(dnsNameMapping.Destination))
-                {
-                    if (_dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query))
-                    {
-                        UpdateNodeLabel(dnsNameMapping.Destination);
-                    }
-                }
-                else
-                {
-                    _dnsMappings[dnsNameMapping.Destination] = new HashSet<string>();
-                    _dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query);
-                    UpdateNodeLabel(dnsNameMapping.Destination);
-                }
+                UpdateNodeLabel(dnsNameMapping.Destination);
             }
         }
 

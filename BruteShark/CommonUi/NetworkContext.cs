@@ -7,49 +7,51 @@ namespace CommonUi
 {
     public class NetworkContext
     {
-        private Dictionary<string, HashSet<int>> _openPorts;
-        private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
-        private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
+        public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
+        public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
 
         public NetworkContext()
         {
-            _openPorts = new Dictionary<string, HashSet<int>>();
-            _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
-            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            OpenPorts = new Dictionary<string, HashSet<int>>();
+            DnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
+            Connections = new HashSet<PcapAnalyzer.NetworkConnection>();
         }
 
-        public void HandleDnsNameMapping(PcapAnalyzer.DnsNameMapping dnsNameMapping)
+        public bool HandleDnsNameMapping(PcapAnalyzer.DnsNameMapping dnsNameMapping)
         {
-            _dnsMappings.Add(dnsNameMapping);
+            return DnsMappings.Add(dnsNameMapping);
         }
 
         public void HandleNetworkConection(PcapAnalyzer.NetworkConnection networkConnection)
         {
             // Create network nodes if needed.
-            if (_connections.Add(networkConnection))
+            if (Connections.Add(networkConnection))
             {
-                if (!_openPorts.ContainsKey(networkConnection.Source))
+                if (!OpenPorts.ContainsKey(networkConnection.Source))
                 {
-                    _openPorts[networkConnection.Source] = new HashSet<int>();
+                    OpenPorts[networkConnection.Source] = new HashSet<int>();
                 }
-                if (!_openPorts.ContainsKey(networkConnection.Destination))
+                if (!OpenPorts.ContainsKey(networkConnection.Destination))
                 {
-                    _openPorts[networkConnection.Destination] = new HashSet<int>();
+                    OpenPorts[networkConnection.Destination] = new HashSet<int>();
                 }
             }
 
             // Update open ports.
-            _openPorts[networkConnection.Source].Add(networkConnection.SrcPort);
-            _openPorts[networkConnection.Destination].Add(networkConnection.DestPort);
+            OpenPorts[networkConnection.Source].Add(networkConnection.SrcPort);
+            OpenPorts[networkConnection.Destination].Add(networkConnection.DestPort);
         }
 
-        public string GetNodeData(string ipAddress)
+        public string GetNodeDataJson(string ipAddress)
         {
             return JsonConvert.SerializeObject(new NetworkNode()
             {
                 IpAddress = ipAddress,
-                OpenPorts = _openPorts[ipAddress],
-                DnsMappings = _dnsMappings.Where(d => d.Destination == ipAddress).Select(d => d.Query).ToHashSet()
+                OpenPorts = this.OpenPorts[ipAddress],
+                DnsMappings = this.DnsMappings.Where(d => d.Destination == ipAddress)
+                                              .Select(d => d.Query)
+                                              .ToHashSet()
             });
         }
 
