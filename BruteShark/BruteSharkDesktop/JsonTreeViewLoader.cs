@@ -1,20 +1,15 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
+﻿using Newtonsoft.Json.Linq;
 using System.Windows.Forms;
 
 namespace BruteSharkDesktop
 {
+    // Originally taken from https://stackoverflow.com/questions/39673815/how-to-recursively-populate-a-treeview-with-json-data
+    // Did some customizations for BruteShark needs.
     public static class JsonTreeViewLoader
     {
 		public static void LoadJsonToTreeView(this TreeView treeView, string json, string rootNodeText)
 		{
             var root = JToken.Parse(json);
-            //DisplayTreeView(treeView, root, ((JObject)root).Properties().Select(p => p.Name).FirstOrDefault());
             DisplayTreeView(treeView, root, rootNodeText);
         }
 
@@ -31,10 +26,6 @@ namespace BruteSharkDesktop
 
                 treeView.ExpandAll();
             }
-            catch (Exception ex)
-            {
-
-            }
             finally
             {
                 treeView.EndUpdate();
@@ -50,24 +41,20 @@ namespace BruteSharkDesktop
                 var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(token.ToString()))];
                 childNode.Tag = token;
             }
-            else if (token is JObject)
+            else if (token is JObject jObject)
             {
-                var obj = (JObject)token;
-                foreach (var property in obj.Properties())
+                foreach (var property in jObject.Properties())
                 {
                     var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(property.Name))];
                     childNode.Tag = property;
                     AddNode(property.Value, childNode);
                 }
             }
-            else if (token is JArray)
+            else if (token is JArray jArray)
             {
-                var array = (JArray)token;
-                for (int i = 0; i < array.Count; i++)
+                foreach (JValue jv in jArray)
                 {
-                    var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(i.ToString()))];
-                    childNode.Tag = array[i];
-                    AddNode(array[i], childNode);
+                    var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(jv.ToString()))];
                 }
             }
             else
