@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -7,11 +8,13 @@ namespace CommonUi
 {
     public class NetworkNode
     {
-        [DisplayName("IP Address")]
+        [JsonProperty("IP Address")]
         public string IpAddress { get; set; }
-        [DisplayName("Open Ports")]
+
+        [JsonProperty("Open Ports")]
         public HashSet<int> OpenPorts { get; set; }
-        [DisplayName("DNS Mappings")]
+
+        [JsonProperty("DNS Mappings")]
         public HashSet<string> DnsMappings { get; set; }
 
         public override bool Equals(object obj)

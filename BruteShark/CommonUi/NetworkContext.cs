@@ -54,7 +54,6 @@ namespace CommonUi
                                               .ToHashSet()
             });
         }
-
     }
 
     public static class Extensions
