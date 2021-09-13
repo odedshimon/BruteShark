@@ -10,12 +10,14 @@ namespace CommonUi
         public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
         public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
         public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
+        public HashSet<PcapProcessor.NetworkObject> NetworkSessions { get; private set; }
 
         public NetworkContext()
         {
             OpenPorts = new Dictionary<string, HashSet<int>>();
             DnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
             Connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            NetworkSessions = new HashSet<PcapProcessor.NetworkObject>();
         }
 
         public bool HandleDnsNameMapping(PcapAnalyzer.DnsNameMapping dnsNameMapping)

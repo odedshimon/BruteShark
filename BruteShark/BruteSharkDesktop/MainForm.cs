@@ -51,13 +51,13 @@ namespace BruteSharkDesktop
             _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
-            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.TcpSession));
+            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.UdpSession));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
-            _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.TcpSession));
+            _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.UdpSession));
             _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
@@ -75,7 +75,7 @@ namespace BruteSharkDesktop
         {
             _networkMapUserControl = new NetworkMapUserControl(_networkContext);
             _networkMapUserControl.Dock = DockStyle.Fill;
-            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
+            _sessionsExplorerUserControl = new SessionsExplorerUserControl(_networkContext);
             _sessionsExplorerUserControl.Dock = DockStyle.Fill;
             _hashesUserControl = new HashesUserControl();
             _hashesUserControl.Dock = DockStyle.Fill;
@@ -134,7 +134,13 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             }
         }
 
-        private void OnSessionArived(TransportLayerSession session)
+        private void OnSessionArived(PcapProcessor.TcpSession session)
+        {
+            _sessionsExplorerUserControl.AddSession(session);
+            this.modulesTreeView.Nodes["NetworkNode"].Nodes["SessionsNode"].Text = $"Sessions ({_sessionsExplorerUserControl.SessionsCount})";
+        }
+
+        private void OnSessionArived(PcapProcessor.UdpSession session)
         {
             _sessionsExplorerUserControl.AddSession(session);
             this.modulesTreeView.Nodes["NetworkNode"].Nodes["SessionsNode"].Text = $"Sessions ({_sessionsExplorerUserControl.SessionsCount})";

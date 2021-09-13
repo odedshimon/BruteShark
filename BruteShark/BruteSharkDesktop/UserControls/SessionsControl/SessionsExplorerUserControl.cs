@@ -13,17 +13,16 @@ namespace BruteSharkDesktop
     public partial class SessionsExplorerUserControl : UserControl
     {
         private SessionViewerUserControl _sessionViewerUserControl;
-        private BindingSource _sessionsBindingSource;
+        private CommonUi.NetworkContext _networkContext;
 
         public int SessionsCount => this.sessionsDataGridView.RowCount;
 
-        public SessionsExplorerUserControl()
+        public SessionsExplorerUserControl(CommonUi.NetworkContext networkContext)
         {
             InitializeComponent();
 
             // Initialize the sessions gridview.
-            _sessionsBindingSource = new BindingSource();
-            this.sessionsDataGridView.DataSource = _sessionsBindingSource;
+            _networkContext = networkContext;
             this.sessionsDataGridView.SelectionChanged += OnSessionsDataGridViewSelectionChanged;
             this.sessionsDataGridView.AllowUserToAddRows = false;
 
@@ -33,38 +32,84 @@ namespace BruteSharkDesktop
             this.bottomSplitContainer.Panel1.Controls.Add(_sessionViewerUserControl);
 
             // Initialize the filter columns Combo Box.
-            InitializeColumnsToComboBox();
+            InitializeColumnsNames();
         }
 
-        private void InitializeColumnsToComboBox()
+        private void InitializeColumnsNames()
         {
             // TODO: use reflection to get only the properties with a Browsable attribute, than 
             // extract their DisplayName attribute value.
-            string[] columns = {"Source Ip", "Destination Ip", "Source Port", "Destination Port" };
+            string[] columns = {"Protocol", "Source Ip", "Source Port", "Destination Ip", "Destination Port"};
 
             foreach (var column in columns)
             {
                 this.columnsComboBox.Items.Add(column);
+                this.sessionsDataGridView.Columns.Add(columnName: column, headerText: column);
             }
         }
 
         private void OnSessionsDataGridViewSelectionChanged(object sender, EventArgs e)
         {
-            var session = (this.sessionsDataGridView.SelectedRows.Count > 0 ? 
-                              this.sessionsDataGridView.SelectedRows[0].DataBoundItem : null)
-                              as TransportLayerSession;
+            var selectedRow = this.sessionsDataGridView.SelectedRows.Count > 0 ?
+                              this.sessionsDataGridView.SelectedRows[0] : null;
 
-            if (session != null)
+            if (selectedRow is null)
+                return;
+
+            var session = _networkContext.NetworkSessions.Where(s =>
+                                s.Protocol == Convert.ToString(selectedRow.Cells["Protocol"].Value) &
+                                s.SourceIp == Convert.ToString(selectedRow.Cells["Source Ip"].Value) &
+                                s.SourcePort.ToString() == Convert.ToString(selectedRow.Cells["Source Port"].Value) &
+                                s.DestinationIp == Convert.ToString(selectedRow.Cells["Destination Ip"].Value) &
+                                s.DestinationPort.ToString() == Convert.ToString(selectedRow.Cells["Destination Port"].Value))
+                          .FirstOrDefault();
+
+            if (session == null)
+                return;
+
+            // TODO: refactor session viewer to work with pcap processor network object
+            // (after refactoring Tcp and Udp sessions to work with internet layer base class)
+            if (session is PcapProcessor.TcpSession)
             {
-                _sessionViewerUserControl.SetSessionView(session);
+                _sessionViewerUserControl.SetSessionView(
+                    Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(
+                        session as PcapProcessor.TcpSession));
             }
+            else if (session is PcapProcessor.UdpSession)
+            {
+                _sessionViewerUserControl.SetSessionView(
+                    Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(
+                        session as PcapProcessor.UdpSession));
+            }
+
         }
 
-        public void AddSession(TransportLayerSession session)
+        public void AddSession(PcapProcessor.TcpSession tcpSession)
         {
+            _networkContext.NetworkSessions.Add(tcpSession);
             this.SuspendLayout();
 
-            _sessionsBindingSource.Add(session);
+            this.sessionsDataGridView.Rows.Add(
+                "TCP", 
+                tcpSession.SourceIp, 
+                tcpSession.SourcePort.ToString(), 
+                tcpSession.DestinationIp, 
+                tcpSession.DestinationPort.ToString());
+
+            this.ResumeLayout();
+        }
+
+        public void AddSession(PcapProcessor.UdpSession udpSession)
+        {
+            _networkContext.NetworkSessions.Add(udpSession);
+            this.SuspendLayout();
+
+            this.sessionsDataGridView.Rows.Add(
+                "UDP",
+                udpSession.SourceIp,
+                udpSession.SourcePort.ToString(),
+                udpSession.DestinationIp,
+                udpSession.DestinationPort.ToString());
 
             this.ResumeLayout();
         }
@@ -73,7 +118,7 @@ namespace BruteSharkDesktop
         {
             try
             {
-                var columnName = this.columnsComboBox.SelectedItem.ToString().Replace(" ", "");
+                var columnName = this.columnsComboBox.SelectedItem.ToString();
                 var wantedValue = this.filterTextBox.Text;
 
                 // Get all the rows that do not match the user's filter.
@@ -82,17 +127,10 @@ namespace BruteSharkDesktop
                     .Where(r => !(r.Cells[columnName].Value != null && r.Cells[columnName].Value.ToString().Equals(wantedValue)))
                     .ToArray();
 
-                // Since the sessions gridview is binded to data source we have to suspend the binding on all the rows 
-                // in the currency manager before setting the irelvant rows invisible.
-                CurrencyManager currencyManager = (CurrencyManager)BindingContext[this.sessionsDataGridView.DataSource];
-                currencyManager.SuspendBinding();
-
                 foreach (var row in rows)
                 {
                     row.Visible = false;
                 }
-
-                currencyManager.ResumeBinding();
             }
             catch (Exception ex)
             {
