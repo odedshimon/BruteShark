@@ -17,6 +17,12 @@ namespace CommonUi
         [JsonProperty("DNS Mappings")]
         public HashSet<string> DnsMappings { get; set; }
 
+        [JsonProperty("TCP Sessions Count")]
+        public int TcpSessionsCount { get; set; }
+
+        [JsonProperty("UDP Streams Count")]
+        public int UdpStreamsCount { get; set; }
+
         public override bool Equals(object obj)
         {
             if (!(obj is NetworkNode))

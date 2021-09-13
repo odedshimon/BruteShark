@@ -7,6 +7,12 @@ namespace CommonUi
 {
     public class NetworkContext
     {
+        private enum SessionsType
+        {
+            TCP,
+            UDP
+        };
+
         public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
         public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
         public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
@@ -51,11 +57,29 @@ namespace CommonUi
             {
                 IpAddress = ipAddress,
                 OpenPorts = this.OpenPorts[ipAddress],
-                DnsMappings = this.DnsMappings.Where(d => d.Destination == ipAddress)
-                                              .Select(d => d.Query)
-                                              .ToHashSet()
+                TcpSessionsCount = CountNodeSessions(ipAddress, SessionsType.TCP),
+                UdpStreamsCount = CountNodeSessions(ipAddress, SessionsType.UDP),
+                DnsMappings = GetNodeDnsMappings(ipAddress)
             });
         }
+
+        private int CountNodeSessions(string ipAddress, SessionsType sessionType)
+        {
+            var sessionTypeString = sessionType == SessionsType.TCP ? "TCP" : "UDP";
+
+            return this.NetworkSessions
+                .Count(s => s.Protocol == sessionTypeString &&
+                            (s.DestinationIp == ipAddress || s.SourceIp == ipAddress));
+        }
+
+        private HashSet<string> GetNodeDnsMappings(string ipAddress)
+        {
+            return this.DnsMappings
+                       .Where(d => d.Destination == ipAddress)
+                       .Select(d => d.Query)
+                       .ToHashSet();
+        }
+
     }
 
     public static class Extensions
