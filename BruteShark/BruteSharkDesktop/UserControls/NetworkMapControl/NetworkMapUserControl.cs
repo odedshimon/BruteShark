@@ -38,7 +38,8 @@ namespace BruteSharkDesktop
             _graph = new Microsoft.Msagl.Drawing.Graph("graph");
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
-            this.Controls.Add(_viewer);
+            this.mainSplitContainer.Panel1.Controls.Add(_viewer);
+            this.mainSplitContainer.Panel2.Refresh();
         }
 
         private void OnGraphMouseClick(object sender, MouseEventArgs e)
@@ -55,6 +56,8 @@ namespace BruteSharkDesktop
                         rootNodeText: "Host Details");
                 }
             }
+
+            this.mainSplitContainer.Panel2.Refresh();
         }
 
         public void AddEdge(string source, string destination, string edgeText = "")
