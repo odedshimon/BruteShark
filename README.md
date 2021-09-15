@@ -7,9 +7,9 @@
       * [Download](#download)
    * [Examples](#examples)
    * [Usage](#usage)
-     * [Modules](#modules)
      * [BruteSharkDesktop](#brutesharkdesktop)
      * [BruteSharkCli](#brutesharkcli)
+     * [Modules](#modules)
    * [Architecture](#architecture)
    * [Contributing](#contributing)
 <!--te-->
@@ -35,7 +35,7 @@ Please ⭐️ this repository if this project helped you!
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
-* Build visual network diagram (Network nodes & users)
+* Build visual network diagram (Network nodes, open ports, users)
 * Extract DNS queries
 * Reconstruct all TCP & UDP Sessions
 * File Carving
@@ -72,36 +72,16 @@ https://user-images.githubusercontent.com/18364847/131924013-8b2aa18b-0941-456e-
 ![](readme_media/Passwords.PNG)
 ##### Reconstruct all TCP Sessions
 ![](readme_media/TcpSessions.PNG)
+##### Extract VoIP Calls
+![](readme_media/VoIP.png)
 ##### Brute Shark CLI 
-![](readme_media/BruteSharkCli.PNG)
+![](readme_media/BruteSharkCli.gif)
 
 # Usage
 In general, it is recommended load, run and explore the results.  
 Example PCAP files containing scenarios that demonstrates all BruteShark capabilities can be downloaded from [here](https://github.com/odedshimon/BruteShark/tree/master/Pcap_Examples).  
 Note that analyzing network traffic is an operation that consumes time and resources, so it is recommended to select only the required modules when large files are loaded.  
 Particular attention should be paid to the "Build TCP Sessions" / "Build UDP Sessions" options.  
-## Modules
-BruteShark is a modular tool, designed for expansion.
-##### Credentials Module 
-This module is responsible for extracting and encoding usernames and passwords as well as authentication hashes. In fact this module is responsible for updating two display tables, passwords table and hashes table. While usernames and passwords are straight forward to use, hashes most often used in more complex attacks like pass-the-hash or by brute-forcing them to get the password. BruteShark is integrated with [Hashcat](https://hashcat.net/hashcat/) so all the hashes extracted can be converted to a Hashcat input file.
-| Protocol          | Hash Type        | Hascat Mode (-m) |
-|-------------------|------------------|------------------|
-| HTTP              | HTTP-Digest      |      11400       |
-| SMTP\IMAP         | CRAM-MD5         |      16400       |
-| NTLM (e.g. SMB)   | NTLMv1           |      5500        |
-| NTLM (e.g. SMB)   | NTLMv2           |      5600        |
-| Kerberos          | AS-REQ etype 23  |      7500        |
-| Kerberos          | AS-REP etype 23  |      18200       |
-| Kerberos          | TGS-REP etype 23 |      13100       |
-| Kerberos (AES128) | TGS-REP etype 17 |      19600       |
-| Kerberos (AES256) | TGS-REP etype 18 |      19700       |
-##### Network Map Module 
-This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
-![](readme_media/Neo4jMap.png)  
-##### Files Extracting Module  
-This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
-##### Voip Calls Module  
-This module extracts Voip calls from SIP & RTP protocols. The extracted calls can be exported as raw audio files and can be played using a proper audio player (like [Audacity](https://www.audacityteam.org/))  
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
@@ -127,7 +107,28 @@ Run multiple modules on all files in a directory and also export all the results
 Sniff an interface named "Wi-Fi", run multiple modules and also export all the results to a directory (the results will be exported only when stopping the sniffer by hitting CTRL + C).
 
     BruteSharkCli -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\Users\King\Desktop\Test Export
-
+## Modules
+BruteShark is a modular tool, designed for expansion.
+##### Credentials Module 
+This module is responsible for extracting and encoding usernames and passwords as well as authentication hashes. In fact this module is responsible for updating two display tables, passwords table and hashes table. While usernames and passwords are straight forward to use, hashes most often used in more complex attacks like pass-the-hash or by brute-forcing them to get the password. BruteShark is integrated with [Hashcat](https://hashcat.net/hashcat/) so all the hashes extracted can be converted to a Hashcat input file.
+| Protocol          | Hash Type        | Hascat Mode (-m) |
+|-------------------|------------------|------------------|
+| HTTP              | HTTP-Digest      |      11400       |
+| SMTP\IMAP         | CRAM-MD5         |      16400       |
+| NTLM (e.g. SMB)   | NTLMv1           |      5500        |
+| NTLM (e.g. SMB)   | NTLMv2           |      5600        |
+| Kerberos          | AS-REQ etype 23  |      7500        |
+| Kerberos          | AS-REP etype 23  |      18200       |
+| Kerberos          | TGS-REP etype 23 |      13100       |
+| Kerberos (AES128) | TGS-REP etype 17 |      19600       |
+| Kerberos (AES256) | TGS-REP etype 18 |      19700       |
+##### Network Map Module 
+This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to two JSON files, one file contains all the connections in the network and one contains all the endpoints and the related information about them (like open ports, DNS mappings etc.). Those files can be used for analysis with external tools such as [Neo4j](https://neo4j.com/).  
+![](readme_media/Neo4jMap.png)  
+##### Files Extracting Module  
+This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
+##### Voip Calls Module  
+This module extracts Voip calls from SIP & RTP protocols. The extracted calls can be exported as raw audio files and can be played using a proper audio player (like [Audacity](https://www.audacityteam.org/))
 # Architecture
 All BruteShark projects are implemented using `.Net Core` and `.Net Standard` for modern and cross platform support.
 The solution is designed with three layer architecture, including a one or more projects at each layer - DAL, BLL and PL.
