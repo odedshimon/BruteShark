@@ -5,6 +5,7 @@
         public string Username { get; set; }
         public string Password { get; set; }
 
+
         public override bool Equals(object obj)
         {
             if (!(obj is NetworkPassword))

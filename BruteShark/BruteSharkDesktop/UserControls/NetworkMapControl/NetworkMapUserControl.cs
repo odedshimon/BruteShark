@@ -39,7 +39,11 @@ namespace BruteSharkDesktop
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
             this.mainSplitContainer.Panel1.Controls.Add(_viewer);
+
+            // There is a bit odd behavior of the controls in the second panel when the msagl is at 
+            // the first panel (not drawing the tree view). This force the second panel to refresh.
             this.mainSplitContainer.Panel2.Refresh();
+            this.nodeTreeView.Click += (object sender, EventArgs e) => this.mainSplitContainer.Panel2.Refresh();
         }
 
         private void OnGraphMouseClick(object sender, MouseEventArgs e)
