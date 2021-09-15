@@ -7,9 +7,9 @@
       * [Download](#download)
    * [Examples](#examples)
    * [Usage](#usage)
-     * [Modules](#modules)
      * [BruteSharkDesktop](#brutesharkdesktop)
      * [BruteSharkCli](#brutesharkcli)
+     * [Modules](#modules)
    * [Architecture](#architecture)
    * [Contributing](#contributing)
 <!--te-->
@@ -35,7 +35,7 @@ Please ⭐️ this repository if this project helped you!
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
-* Build visual network diagram (Network nodes, open prts, users)
+* Build visual network diagram (Network nodes, open ports, users)
 * Extract DNS queries
 * Reconstruct all TCP & UDP Sessions
 * File Carving
@@ -123,7 +123,7 @@ This module is responsible for extracting and encoding usernames and passwords a
 | Kerberos (AES128) | TGS-REP etype 17 |      19600       |
 | Kerberos (AES256) | TGS-REP etype 18 |      19700       |
 ##### Network Map Module 
-This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to JSON format for analysis with external tools such as [Neo4j](https://neo4j.com/).  
+This module is responsible for building the network map by identifying components in the network and the connections between them. The network map can be exported to two JSON files, one file contains all the connections in the network and one contains all the endpoints and the related information about them (like open ports, DNS mappings etc.). Those files can be used for analysis with external tools such as [Neo4j](https://neo4j.com/).  
 ![](readme_media/Neo4jMap.png)  
 ##### Files Extracting Module  
 This module tries to extract files from UDP / TCP sessions (Therefore, note that in order for this module to be effective, the "Build TCP Sessions" / "Build UDP Sessions" should be turn on). Currently this module supports classic forensics techniques of file carving by "Header-Footer" algorithm which is effective for files with known file header and footer like JPG, PNG, PDF.
