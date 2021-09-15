@@ -15,10 +15,11 @@ namespace BruteSharkCli
     {
         private SingleCommandFlags _cliFlags;
         private List<string> _files;
+        private CommonUi.NetworkContext _networkContext;
         private HashSet<PcapAnalyzer.NetworkFile> _extractedFiles;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<PcapAnalyzer.NetworkHash> _hashes;
-        private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        //private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private HashSet<CommonUi.VoipCall> _voipCalls;
         private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
 
@@ -41,8 +42,8 @@ namespace BruteSharkCli
             _processor = processor;
             _files = new List<string>();
 
+            _networkContext = new NetworkContext();
             _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
-            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
             _voipCalls = new HashSet<CommonUi.VoipCall>();
@@ -214,10 +215,12 @@ namespace BruteSharkCli
         {
             if (_cliFlags.OutputDir != null)
             { 
-                if (_connections.Any())
+                if (_networkContext.Connections.Any())
                 {
-                    var filePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _connections);
-                    CliPrinter.Info($"Successfully exported network map to json file: {filePath}");
+                    var networkMapFilePath = CommonUi.Exporting.ExportNetworkMap(_cliFlags.OutputDir, _networkContext.Connections);
+                    CliPrinter.Info($"Successfully exported network map to json file: {networkMapFilePath}");
+                    var nodesDataFilePath = CommonUi.Exporting.ExportNetworkNodesData(_cliFlags.OutputDir, _networkContext.GetAllNodes());
+                    CliPrinter.Info($"Successfully exported network nodes data to json file: {nodesDataFilePath}");
                 }
                 if (_hashes.Any())
                 {
@@ -237,7 +240,7 @@ namespace BruteSharkCli
 				if(_voipCalls.Any())
                 {
                    var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
-                    CliPrinter.Info($"Successfully exported voip calss extracted to: {dirPath}");
+                    CliPrinter.Info($"Successfully exported voip calls extracted to: {dirPath}");
                 }
             }
 
@@ -304,7 +307,7 @@ namespace BruteSharkCli
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var networkConnection = e.ParsedItem as NetworkConnection;
-                _connections.Add(networkConnection);
+                _networkContext.Connections.Add(networkConnection);
             }
             else if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
