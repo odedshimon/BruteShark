@@ -229,7 +229,7 @@ namespace BruteSharkCli
 
         private void PrintNetworkMap()
         {
-            Console.WriteLine(CommonUi.Exporting.GetNetworkMapAsJsonString(this._connections));
+            Console.WriteLine(CommonUi.Exporting.GetIndentdJson(this._connections));
         }
 
         private void StartAnalyzing()

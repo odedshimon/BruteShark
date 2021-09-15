@@ -480,6 +480,7 @@ This means a faster processing but also that some obects may not be extracted.")
                     CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
                     CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _networkContext.Connections);
                     CommonUi.Exporting.ExportVoipCalls(outputDirectoryPath, _voipCallsUserControl.VoipCalls);
+                    CommonUi.Exporting.ExportNetworkNodesData(outputDirectoryPath, _networkContext.GetAllNodes());
                     this.progressBar.CustomText = string.Empty;
 
                     MessageBox.Show($"Successfully exported results");

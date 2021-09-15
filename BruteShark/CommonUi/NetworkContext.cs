@@ -51,16 +51,21 @@ namespace CommonUi
             OpenPorts[networkConnection.Destination].Add(networkConnection.DestPort);
         }
 
-        public string GetNodeDataJson(string ipAddress)
+        private NetworkNode GetNode(string ipAddress)
         {
-            return JsonConvert.SerializeObject(new NetworkNode()
+            return new NetworkNode()
             {
                 IpAddress = ipAddress,
                 OpenPorts = this.OpenPorts[ipAddress],
                 TcpSessionsCount = CountNodeSessions(ipAddress, SessionsType.TCP),
                 UdpStreamsCount = CountNodeSessions(ipAddress, SessionsType.UDP),
                 DnsMappings = GetNodeDnsMappings(ipAddress)
-            });
+            };
+        }
+
+        public string GetNodeDataJson(string ipAddress)
+        {
+            return JsonConvert.SerializeObject(GetNode(ipAddress));
         }
 
         private int CountNodeSessions(string ipAddress, SessionsType sessionType)
@@ -78,6 +83,11 @@ namespace CommonUi
                        .Where(d => d.Destination == ipAddress)
                        .Select(d => d.Query)
                        .ToHashSet();
+        }
+
+        public List<NetworkNode> GetAllNodes()
+        {
+            return OpenPorts.Keys.Select(n => GetNode(n)).ToList();
         }
 
     }
