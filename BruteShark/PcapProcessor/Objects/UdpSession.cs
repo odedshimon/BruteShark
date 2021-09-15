@@ -3,21 +3,15 @@ using System.Collections.Generic;
 
 namespace PcapProcessor
 {
-    public class UdpSession
+    public class UdpSession : NetworkObject
     {
-        public string SourceIp { get; set; }
-        public string DestinationIp { get; set; }
-
-        //maybe unneccessary
-        public int SourcePort { get; set; }
-        public int DestinationPort { get; set; }
         public byte[] Data { get; set; }
         public List<UdpPacket> Packets { get; set; }
-
 
         public UdpSession()
         {
             this.Packets = new List<UdpPacket>();
+            this.Protocol = "UDP";
         }
 
         public override bool Equals(object obj)

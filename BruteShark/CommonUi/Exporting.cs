@@ -24,17 +24,26 @@ namespace CommonUi
             }
         }
 
-        public static string GetNetworkMapAsJsonString(HashSet<PcapAnalyzer.NetworkConnection> connections)
+        public static string GetIndentdJson(IEnumerable<object> connections)
         {
-            string connectionsJsonSerialized = JsonSerializer.Serialize(connections, new JsonSerializerOptions() { WriteIndented = true });
-            return connectionsJsonSerialized;
+            return JsonSerializer.Serialize(connections, new JsonSerializerOptions() { WriteIndented = true });
+        }
+
+        public static string ExportToFile(string dirPath, string fileName, IEnumerable<object> dataToExport)
+        {
+            var filePath = GetUniqueFilePath(Path.Combine(dirPath, fileName));
+            File.WriteAllText(filePath, GetIndentdJson(dataToExport));
+            return filePath;
         }
 
         public static string ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
         {
-            var filePath = GetUniqueFilePath(Path.Combine(dirPath, "BruteShark Network Map.json"));
-            File.WriteAllText(filePath, GetNetworkMapAsJsonString(connections));
-            return filePath;
+            return ExportToFile(dirPath, "BruteShark Network Map.json", connections);
+        }
+
+        public static string ExportNetworkNodesData(string dirPath, List<NetworkNode> networkNodes)
+        {
+            return ExportToFile(dirPath, "BruteShark Network Nodes Data.json", networkNodes);
         }
 
         public static string ExportFiles(string dirPath, HashSet<PcapAnalyzer.NetworkFile> networkFiles)

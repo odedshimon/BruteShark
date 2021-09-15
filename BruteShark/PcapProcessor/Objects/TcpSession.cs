@@ -3,13 +3,8 @@ using System.Collections.Generic;
 
 namespace PcapProcessor
 {
-    public class TcpSession
+    public class TcpSession : NetworkObject
     {
-        internal bool isClosed {get; set;} 
-        public string SourceIp { get; set; }
-        public string DestinationIp { get; set; }
-        public int SourcePort{ get; set; }
-        public int DestinationPort { get; set; }
         public byte[] Data { get; set; }
         public List<TcpPacket> Packets { get; set; }
 
@@ -17,6 +12,7 @@ namespace PcapProcessor
         public TcpSession()
         {
             this.Packets = new List<TcpPacket>();
+            this.Protocol = "TCP";
         }
 
         public override bool Equals(object obj)

@@ -18,7 +18,7 @@ namespace BruteSharkDesktop
     {
         private CancellationTokenSource _cts;
         private HashSet<string> _files;
-        private HashSet<PcapAnalyzer.NetworkConnection> _connections;
+        private CommonUi.NetworkContext _networkContext;
         private PcapProcessor.Processor _processor;
         private PcapProcessor.Sniffer _sniffer;
         private PcapAnalyzer.Analyzer _analyzer;
@@ -38,7 +38,7 @@ namespace BruteSharkDesktop
 
             _files = new HashSet<string>();
             _cts = new CancellationTokenSource();
-            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _networkContext = new CommonUi.NetworkContext();
 
             // Create the DAL and BLL objects.
             _processor = new PcapProcessor.Processor();
@@ -51,13 +51,13 @@ namespace BruteSharkDesktop
             _sniffer.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _sniffer.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _sniffer.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
-            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _sniffer.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.TcpSession));
+            _sniffer.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.UdpSession));
             _processor.UdpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorUdpPacketToAnalyzerUdpPacket(e.Packet));
             _processor.TcpPacketArived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpPacketToAnalyzerTcpPacket(e.Packet));
             _processor.TcpSessionArrived += (s, e) => _analyzer.Analyze(CommonUi.Casting.CastProcessorTcpSessionToAnalyzerTcpSession(e.TcpSession));
-            _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorTcpSessionToBruteSharkDesktopTcpSession(e.TcpSession)));
-            _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(Casting.CastProcessorUdpSessionToBruteSharkDesktopUdpSession(e.UdpSession)));
+            _processor.TcpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.TcpSession));
+            _processor.UdpSessionArrived += (s, e) => SwitchToMainThreadContext(() => OnSessionArived(e.UdpSession));
             _processor.FileProcessingStatusChanged += (s, e) => SwitchToMainThreadContext(() => OnFileProcessingStatusChanged(s, e));
             _processor.ProcessingPrecentsChanged += (s, e) => SwitchToMainThreadContext(() => OnProcessingPrecentsChanged(s, e));
             _processor.ProcessingFinished += (s, e) => SwitchToMainThreadContext(() => OnProcessingFinished(s, e));
@@ -73,9 +73,9 @@ namespace BruteSharkDesktop
 
         private void InitilizeModulesUserControls()
         {
-            _networkMapUserControl = new NetworkMapUserControl();
+            _networkMapUserControl = new NetworkMapUserControl(_networkContext);
             _networkMapUserControl.Dock = DockStyle.Fill;
-            _sessionsExplorerUserControl = new SessionsExplorerUserControl();
+            _sessionsExplorerUserControl = new SessionsExplorerUserControl(_networkContext);
             _sessionsExplorerUserControl.Dock = DockStyle.Fill;
             _hashesUserControl = new HashesUserControl();
             _hashesUserControl.Dock = DockStyle.Fill;
@@ -134,7 +134,13 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             }
         }
 
-        private void OnSessionArived(TransportLayerSession session)
+        private void OnSessionArived(PcapProcessor.TcpSession session)
+        {
+            _sessionsExplorerUserControl.AddSession(session);
+            this.modulesTreeView.Nodes["NetworkNode"].Nodes["SessionsNode"].Text = $"Sessions ({_sessionsExplorerUserControl.SessionsCount})";
+        }
+
+        private void OnSessionArived(PcapProcessor.UdpSession session)
         {
             _sessionsExplorerUserControl.AddSession(session);
             this.modulesTreeView.Nodes["NetworkNode"].Nodes["SessionsNode"].Text = $"Sessions ({_sessionsExplorerUserControl.SessionsCount})";
@@ -219,7 +225,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var connection = e.ParsedItem as PcapAnalyzer.NetworkConnection;
-                _connections.Add(connection);
+                _networkContext.HandleNetworkConection(connection);
                 _networkMapUserControl.AddEdge(connection.Source, connection.Destination);
                 this.modulesTreeView.Nodes["NetworkNode"].Nodes["NetworkMapNode"].Text = $"Network Map ({_networkMapUserControl.NodesCount})";
             }
@@ -386,7 +392,7 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void MessageOnBuildSessionsConfigurationChanged()
         {
-            ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
+            Utilities.ShowInfoMessageBox(@"NOTE, Disabling sessions reconstruction means that BruteShark will not analyze full sessions,
 This means a faster processing but also that some obects may not be extracted.");
         }
 
@@ -427,25 +433,12 @@ This means a faster processing but also that some obects may not be extracted.")
             // We wait here until the sniffing will be stoped (by the stop button).
             this.progressBar.CustomText = string.Empty;
             this.progressBar.Refresh();
-            ShowInfoMessageBox("Capture Stoped");
+            Utilities.ShowInfoMessageBox("Capture Stoped");
         }
 
         private void StopCaptureButton_Click(object sender, EventArgs e)
         {
             _cts.Cancel();
-        }
-
-        private void ShowInfoMessageBox(string text)
-        {
-            // NOTE: Info message box is also set up at front of the form, it solves the 
-            // problem of message box that is hidden under the form.
-            MessageBox.Show(
-                text: text, 
-                caption: "Info", 
-                buttons: MessageBoxButtons.OK, 
-                icon: MessageBoxIcon.Information,
-                defaultButton: MessageBoxDefaultButton.Button1, 
-                options: MessageBoxOptions.DefaultDesktopOnly);
         }
 
         private void promiscuousCheckBox_CheckStateChanged(object sender, EventArgs e)
@@ -485,8 +478,9 @@ This means a faster processing but also that some obects may not be extracted.")
                     this.progressBar.CustomText = $"Exporting results to output folder: {outputDirectoryPath}...";
                     this.progressBar.Refresh();
                     CommonUi.Exporting.ExportFiles(outputDirectoryPath, _filesUserControl.Files);
-                    CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _connections);
+                    CommonUi.Exporting.ExportNetworkMap(outputDirectoryPath, _networkContext.Connections);
                     CommonUi.Exporting.ExportVoipCalls(outputDirectoryPath, _voipCallsUserControl.VoipCalls);
+                    CommonUi.Exporting.ExportNetworkNodesData(outputDirectoryPath, _networkContext.GetAllNodes());
                     this.progressBar.CustomText = string.Empty;
 
                     MessageBox.Show($"Successfully exported results");
@@ -501,14 +495,14 @@ This means a faster processing but also that some obects may not be extracted.")
 
         private void clearResutlsButton_Click(object sender, EventArgs e)
         {
-            _connections = new HashSet<PcapAnalyzer.NetworkConnection>();
+            _networkContext = new CommonUi.NetworkContext();
             _analyzer.Clear();
 
             // Clear all modules user controls by recreating them. 
             InitilizeModulesUserControls();
 
             // Remove the items count of each module from the tree view (e.g "DNS (13)" -> "DNS").
-            foreach (var node in IterateAllNodes(modulesTreeView.Nodes))
+            foreach (var node in Utilities.IterateAllNodes(modulesTreeView.Nodes))
             {
                 var index = node.Text.LastIndexOf('(');
 
@@ -517,18 +511,9 @@ This means a faster processing but also that some obects may not be extracted.")
                     node.Text = node.Text.Substring(0, index);
                 }
             }
-        }
 
-        IEnumerable<TreeNode> IterateAllNodes(TreeNodeCollection nodes)
-        {
-            // Recursively iterate over all nodes and sub nodes.
-            foreach (TreeNode node in nodes)
-            {
-                yield return node;
-
-                foreach (var child in IterateAllNodes(node.Nodes))
-                    yield return child;
-            }
+            // Select the head of the modules tree view to force refreshing of the current user control.
+            modulesTreeView.SelectedNode = modulesTreeView.Nodes[0];
         }
 
     }

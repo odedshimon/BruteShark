@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PcapAnalyzer;
 using System.Net;
+using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.GraphViewerGdi;
+using System.IO;
 
 namespace BruteSharkDesktop
 {
     public partial class NetworkMapUserControl : UserControl
     {
+        private CommonUi.NetworkContext _networkContext;
         private Dictionary<string, HashSet<string>> _dnsMappings;
         private HashSet<NetworkMapEdge> _edges;
         Microsoft.Msagl.GraphViewerGdi.GViewer _viewer;
@@ -21,18 +25,43 @@ namespace BruteSharkDesktop
 
         public int NodesCount => _graph.Nodes.Count();
 
-        public NetworkMapUserControl()
+        public NetworkMapUserControl(CommonUi.NetworkContext networkContext)
         {
             InitializeComponent();
+            _networkContext = networkContext;
 
-            // Add MSAGL Graph control.
+            // Add MSAGL Graph control and register to click events.
             _dnsMappings = new Dictionary<string, HashSet<string>>();
             _edges = new HashSet<NetworkMapEdge>();
             _viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
+            _viewer.MouseClick += OnGraphMouseClick;
             _graph = new Microsoft.Msagl.Drawing.Graph("graph");
             _viewer.Graph = _graph;
             _viewer.Dock = DockStyle.Fill;
-            this.Controls.Add(_viewer);
+            this.mainSplitContainer.Panel1.Controls.Add(_viewer);
+
+            // There is a bit odd behavior of the controls in the second panel when the msagl is at 
+            // the first panel (not drawing the tree view). This force the second panel to refresh.
+            this.mainSplitContainer.Panel2.Refresh();
+            this.nodeTreeView.Click += (object sender, EventArgs e) => this.mainSplitContainer.Panel2.Refresh();
+        }
+
+        private void OnGraphMouseClick(object sender, MouseEventArgs e)
+        {
+            if (_viewer.SelectedObject is Microsoft.Msagl.Drawing.Node)
+            {
+                var ipAddress = new StringReader((_viewer.SelectedObject as Microsoft.Msagl.Drawing.Node).LabelText).ReadLine();
+
+                if (IsIpAddress(ipAddress))
+                {
+                    JsonTreeViewLoader.LoadJsonToTreeView(
+                        treeView: this.nodeTreeView, 
+                        json: _networkContext.GetNodeDataJson(ipAddress),
+                        rootNodeText: "Host Details");
+                }
+            }
+
+            this.mainSplitContainer.Panel2.Refresh();
         }
 
         public void AddEdge(string source, string destination, string edgeText = "")
@@ -68,14 +97,17 @@ namespace BruteSharkDesktop
         private string GetNodeText(string ipAddress)
         {
             var res = ipAddress;
+            var addressDnsRecords = _networkContext.DnsMappings.Where(d => d.Destination == ipAddress)
+                                                               .Select(d => d.Query)
+                                                               .ToList();
 
-            if (_dnsMappings.ContainsKey(ipAddress))
+            if (addressDnsRecords.Count > 0)
             {
-                res += Environment.NewLine + "DNS: " + _dnsMappings[ipAddress].First();
+                res += Environment.NewLine + "DNS: " + addressDnsRecords.First();
 
-                if (_dnsMappings[ipAddress].Count > 1)
+                if (addressDnsRecords.Count > 1)
                 {
-                    res += $" ({_dnsMappings[ipAddress].Count} more)";
+                    res += $" ({addressDnsRecords.Count} more)";
                 }
             }
 
@@ -113,26 +145,14 @@ namespace BruteSharkDesktop
             AddEdge(password.Username, password.Destination, edgeText);
             _graph.FindNode(password.Username).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
         }
-
-        // Normally DNS mappings arriving before real data, but we can't count on it therfore we 
-        // are saving the mappings for future hosts.
+        
         public void HandleDnsNameMapping(DnsNameMapping dnsNameMapping)
         {
-            if (!IsIpAddress(dnsNameMapping.Query) && IsIpAddress(dnsNameMapping.Destination))
+            // Normally DNS mappings arriving before real data, but we can't count on it therfore we are saving
+            // the mappings at the network context for future hosts, handled at the AddEdge() function.
+            if (_networkContext.HandleDnsNameMapping(dnsNameMapping))
             {
-                if (_dnsMappings.ContainsKey(dnsNameMapping.Destination))
-                {
-                    if (_dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query))
-                    {
-                        UpdateNodeLabel(dnsNameMapping.Destination);
-                    }
-                }
-                else
-                {
-                    _dnsMappings[dnsNameMapping.Destination] = new HashSet<string>();
-                    _dnsMappings[dnsNameMapping.Destination].Add(dnsNameMapping.Query);
-                    UpdateNodeLabel(dnsNameMapping.Destination);
-                }
+                UpdateNodeLabel(dnsNameMapping.Destination);
             }
         }
 

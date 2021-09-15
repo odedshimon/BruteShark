@@ -44,7 +44,7 @@ namespace PcapAnalyzerTest
 ]";
 
             // Act.
-            string jsonString = CommonUi.Exporting.GetNetworkMapAsJsonString(connections);
+            string jsonString = CommonUi.Exporting.GetIndentdJson(connections);
 
             // Assert.
             Assert.AreEqual(expectedJson, jsonString);
