@@ -9,9 +9,7 @@
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
-
-		<WixVariable Id="WixUILicenseRtf" Value="..\..\LICENSE.rtf"/>
-		
+		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf"/>
 		<Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
 		<Upgrade Id="9bec2dfd-0f30-466a-9077-cf86db101cac">  
 			<UpgradeVersion
