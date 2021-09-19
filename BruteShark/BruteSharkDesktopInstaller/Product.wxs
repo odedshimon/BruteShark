@@ -4,11 +4,13 @@
 	<Product 
 		Id="9bec2dfd-0f30-466a-9077-cf86db101cac" 
 		Name="BruteSharkDesktop" 
-		Language="1033" Version="1.2.12.0" 
+		Language="1033" Version="1.2.13.0" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
+
+		<WixVariable Id="WixUILicenseRtf" Value="..\..\LICENSE.rtf"/>
 		
 		<Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
 		<Upgrade Id="9bec2dfd-0f30-466a-9077-cf86db101cac">  
