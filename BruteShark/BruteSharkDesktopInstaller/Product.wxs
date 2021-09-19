@@ -2,14 +2,26 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
 	<Product 
-		Id="CE452A31-5E74-41BE-A768-EBEE7B325862" 
+		Id="9bec2dfd-0f30-466a-9077-cf86db101cac" 
 		Name="BruteSharkDesktop" 
-		Language="1033" Version="1.2.12.0" 
+		Language="1033" Version="1.2.13.0" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
+		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf"/>
+		<Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+		<Upgrade Id="9bec2dfd-0f30-466a-9077-cf86db101cac">  
+			<UpgradeVersion
+				Minimum="1.0.0.0" Maximum="99.0.0.0"
+				Property="PREVIOUSVERSIONSINSTALLED"
+				IncludeMinimum="yes" IncludeMaximum="no" />
+		</Upgrade>
+		
+		<InstallExecuteSequence>
+			<RemoveExistingProducts Before="InstallInitialize" />
+		</InstallExecuteSequence>
+		
 		<MediaTemplate EmbedCab="yes"/>
 		<UIRef Id="WixUI_Minimal" />
 		
