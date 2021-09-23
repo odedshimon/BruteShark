@@ -32,14 +32,21 @@ namespace BruteSharkDesktop
             }
         }
 
-        private static void AddNode(JToken token, TreeNode inTreeNode)
+        private static void AddNode(JToken token, TreeNode inTreeNode, bool flatSingleValues = true)
         {
             if (token == null)
                 return;
             if (token is JValue)
             {
-                var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(token.ToString()))];
-                childNode.Tag = token;
+                if (flatSingleValues)
+                {
+                    inTreeNode.Text += ": " + token.ToString();
+                }
+                else
+                {
+                    var childNode = inTreeNode.Nodes[inTreeNode.Nodes.Add(new TreeNode(token.ToString()))];
+                    childNode.Tag = token;
+                }
             }
             else if (token is JObject jObject)
             {
