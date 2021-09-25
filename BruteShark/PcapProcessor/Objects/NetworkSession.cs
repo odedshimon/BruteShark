@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PcapProcessor
 {
-    public class NetworkObject
+    public class NetworkSession
     {
         public string SourceIp { get; set; }
         public string DestinationIp { get; set; }

@@ -116,26 +116,23 @@ namespace BruteSharkDesktop
 
         public void HandleHash(PcapAnalyzer.NetworkHash hash)
         {
-            // Usually the hashes username is named "User" \ "Username".
-            var user = GetPropValue(hash, "User");
-            var username = GetPropValue(hash, "Username");
-            var displayUserName = user != null ? user : username;
+            // Usually the hashes username is named "User" or "Username".
+            var userName = GetPropertyValue(hash, new string[] { "User", "Username"});
 
-            if (displayUserName != null)
+            if (userName.Length > 0)
             {
-                var domain = GetPropValue(hash, "Domain");
-                if (domain != null)
-                {
-                    if (domain.ToString().Length > 0)
-                    {
-                        displayUserName = domain.ToString() + @"\" + displayUserName;
-                    }
-                }
-
                 var edgeText = $"{hash.HashType} Hash";
 
-                AddEdge(displayUserName.ToString(), hash.Destination, edgeText);
-                _graph.FindNode(displayUserName.ToString()).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
+                // We want to get domain only if it is a Kerberos or NTLM hash.
+                if (hash.HashType.ToLower().StartsWith("kerberos") || hash.HashType.ToLower().StartsWith("ntlm"))
+                {
+                    // Usually the hashes domain is named "Domain" or "Realm".
+                    var domain = GetPropertyValue(hash, new string[] { "Domain", "Realm" });
+                    userName = domain.Length > 0 ? @$"{domain}\{userName}" : userName;
+                }
+
+                AddEdge(userName, hash.Destination, edgeText);
+                _graph.FindNode(userName).Attr.FillColor = Microsoft.Msagl.Drawing.Color.LightGreen;
             }
         }
 
@@ -171,9 +168,28 @@ namespace BruteSharkDesktop
             return IPAddress.TryParse(ip, out IPAddress ipAddress);
         }
 
-        private static object GetPropValue(object src, string propName)
+        private static object GetPropertyValue(object src, string propName)
         {
             return src.GetType().GetProperty(propName)?.GetValue(src, null);
+        }
+
+        private string GetPropertyValue(object src, IEnumerable<string> propertiesNames)
+        {
+            var res = string.Empty;
+
+            foreach (var name in propertiesNames)
+            {
+                var value = GetPropertyValue(src, name);
+                var stringValue = value == null ? string.Empty : value.ToString();
+
+                if (stringValue.Length > 0)
+                {
+                    res = stringValue;
+                    break;
+                }
+            }
+
+            return res;
         }
 
     }

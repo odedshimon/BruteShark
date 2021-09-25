@@ -16,14 +16,14 @@ namespace CommonUi
         public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
         public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
         public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
-        public HashSet<PcapProcessor.NetworkObject> NetworkSessions { get; private set; }
+        public HashSet<PcapProcessor.NetworkSession> NetworkSessions { get; private set; }
 
         public NetworkContext()
         {
             OpenPorts = new Dictionary<string, HashSet<int>>();
             DnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
             Connections = new HashSet<PcapAnalyzer.NetworkConnection>();
-            NetworkSessions = new HashSet<PcapProcessor.NetworkObject>();
+            NetworkSessions = new HashSet<PcapProcessor.NetworkSession>();
         }
 
         public bool HandleDnsNameMapping(PcapAnalyzer.DnsNameMapping dnsNameMapping)
@@ -53,6 +53,17 @@ namespace CommonUi
 
         private NetworkNode GetNode(string ipAddress)
         {
+            var tcpSessionsCount = 0;
+            var udpSessionsCount = 0;
+
+            foreach (var session in this.NetworkSessions)
+            {
+                if (session.Protocol == "TCP")
+                    tcpSessionsCount++;
+                else
+                    udpSessionsCount++;
+            }
+
             return new NetworkNode()
             {
                 IpAddress = ipAddress,

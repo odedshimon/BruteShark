@@ -22,6 +22,7 @@ namespace CommonUi
 
         [JsonProperty("UDP Streams Count")]
         public int UdpStreamsCount { get; set; }
+       
 
         public override bool Equals(object obj)
         {

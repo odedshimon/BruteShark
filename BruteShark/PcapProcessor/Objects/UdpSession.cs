@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PcapProcessor
 {
-    public class UdpSession : NetworkObject
+    public class UdpSession : NetworkSession
     {
         public byte[] Data { get; set; }
         public List<UdpPacket> Packets { get; set; }
