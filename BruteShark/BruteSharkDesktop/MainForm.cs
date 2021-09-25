@@ -108,6 +108,7 @@ namespace BruteSharkDesktop
         private void OnProcessingFinished(object sender, EventArgs e)
         {
             this.progressBar.Value = this.progressBar.Maximum;
+            this.ResumeLayout();
             HandleFailedFiles();
         }
 

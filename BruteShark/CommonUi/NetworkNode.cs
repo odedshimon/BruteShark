@@ -26,7 +26,7 @@ namespace CommonUi
         [JsonProperty("Sent Data")]
         public int SentData { get; set; }
 
-        [JsonProperty("Receive Data")]
+        [JsonProperty("Received Data")]
         public int ReceiveData { get; set; }
 
 
