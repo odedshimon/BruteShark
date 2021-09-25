@@ -22,7 +22,13 @@ namespace CommonUi
 
         [JsonProperty("UDP Streams Count")]
         public int UdpStreamsCount { get; set; }
-       
+
+        [JsonProperty("Sent Data")]
+        public int SentData { get; set; }
+
+        [JsonProperty("Receive Data")]
+        public int ReceiveData { get; set; }
+
 
         public override bool Equals(object obj)
         {

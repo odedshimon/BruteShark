@@ -14,7 +14,7 @@ namespace PcapProcessor
         public DateTime SentTime { get; set; }
     }
 
-    public class NetworkPacket : INetworkPacket
+    public abstract class NetworkPacket : INetworkPacket
     {
         public string SourceIp { get; set; }
         public string DestinationIp { get; set; }

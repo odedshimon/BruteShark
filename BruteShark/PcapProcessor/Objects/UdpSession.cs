@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace PcapProcessor
 {
-    public class UdpSession : NetworkSession
+    public class UdpSession : NetworkSession<UdpPacket>
     {
         public byte[] Data { get; set; }
-        public List<UdpPacket> Packets { get; set; }
+        public override List<UdpPacket> Packets { get; set; }
 
         public UdpSession()
         {

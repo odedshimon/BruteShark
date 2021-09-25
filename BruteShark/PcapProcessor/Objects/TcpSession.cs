@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace PcapProcessor
 {
-    public class TcpSession : NetworkSession
+    public class TcpSession : NetworkSession<TcpPacket>
     {
         public byte[] Data { get; set; }
-        public List<TcpPacket> Packets { get; set; }
+        public override List<TcpPacket> Packets { get; set; }
 
         public TcpSession()
         {
