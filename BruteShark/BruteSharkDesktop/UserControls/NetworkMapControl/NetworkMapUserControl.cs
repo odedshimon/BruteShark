@@ -123,11 +123,10 @@ namespace BruteSharkDesktop
             {
                 var edgeText = $"{hash.HashType} Hash";
 
-                // We want to get domain only if it is a Kerberos or NTLM hash.
-                if (hash.HashType.ToLower().StartsWith("kerberos") || hash.HashType.ToLower().StartsWith("ntlm"))
+                // If it is a domain related hash (e.g Kerberos, NTLM)
+                if (hash is PcapAnalyzer.IDomainCredential)
                 {
-                    // Usually the hashes domain is named "Domain" or "Realm".
-                    var domain = GetPropertyValue(hash, new string[] { "Domain", "Realm" });
+                    var domain = (hash as IDomainCredential).GetDoamin();
                     userName = domain.Length > 0 ? @$"{domain}\{userName}" : userName;
                 }
 

@@ -4,11 +4,16 @@ using System.Text;
 
 namespace PcapAnalyzer
 {
-    public class KerberosAsRepHash : NetworkHash
+    public class KerberosAsRepHash : NetworkHash, IDomainCredential
     {
         public string Realm { get; set; }
         public string Username { get; set; }
         public string ServiceName { get; set; }
         public int Etype { get; set; }
+
+        public string GetDoamin() => this.Realm;
+
+        public string GetUsername() => this.Username;
+
     }
 }

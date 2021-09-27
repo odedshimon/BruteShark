@@ -5,6 +5,12 @@ using System.Text;
 
 namespace PcapProcessor
 {
+    // This is a generic interface with a covariant parameter T (using the "out" keyword).
+    // The covariant is necessary because we want to return a specific derived type later (e.g TcpPacket)
+    // but still to treat to INetworkSession as base, e.g. create a list of types INetworkSession
+    // and add to that list different derived types like TcpSessions and UdpSessions on the fly.
+    // Another example at: 
+    // https://stackoverflow.com/questions/13280108/collection-of-derived-classes-that-have-generic-base-class
     public interface INetworkSession<out T> where T : INetworkPacket
     {
         public string SourceIp { get; set; }
