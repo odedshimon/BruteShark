@@ -50,6 +50,8 @@ namespace BruteSharkCli
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
 
+            _processor.UdpSessionArrived += (s, e) => OnSessionArrived(e.UdpSession as PcapProcessor.INetworkSession<NetworkPacket>);
+            _processor.TcpSessionArrived += (s, e) => OnSessionArrived(e.TcpSession as PcapProcessor.INetworkSession<NetworkPacket>);
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
@@ -58,6 +60,11 @@ namespace BruteSharkCli
 
             // Parse user arguments.
             CommandLine.Parser.Default.ParseArguments<SingleCommandFlags>(args).WithParsed<SingleCommandFlags>((cliFlags) => _cliFlags = cliFlags);
+        }
+
+        private void OnSessionArrived(PcapProcessor.INetworkSession<NetworkPacket> session)
+        {
+            _networkContext.NetworkSessions.Add(session);
         }
 
         public void Run()
