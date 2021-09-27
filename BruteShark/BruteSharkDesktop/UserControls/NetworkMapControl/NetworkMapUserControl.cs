@@ -68,7 +68,7 @@ namespace BruteSharkDesktop
         {
             this.SuspendLayout();
 
-            // We creaete an edge object and save it in a HashTable to avoid inserting
+            // We create an edge object and save it in a HashTable to avoid inserting
             // double edges.
             var newEdge = new NetworkMapEdge()
             {

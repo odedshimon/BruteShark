@@ -14,13 +14,15 @@ namespace BruteSharkDesktop
 {
     public partial class HashesUserControl : UserControl
     {
+        private CommonUi.NetworkContext _networkContext;
         private GenericTableUserControl _hashesTableUserControl; 
 
         public int HashesCount => _hashesTableUserControl.ItemsCount;
 
-        public HashesUserControl()
+        public HashesUserControl(CommonUi.NetworkContext networkContext)
         {
             InitializeComponent();
+            _networkContext = networkContext;
 
             this._hashesTableUserControl = new GenericTableUserControl();
             _hashesTableUserControl.Dock = DockStyle.Fill;
@@ -30,10 +32,11 @@ namespace BruteSharkDesktop
             this.mainSplitContainer.Panel1.Controls.Add(_hashesTableUserControl);
         }
 
-        // TODO: use PL object
         public void AddHash(PcapAnalyzer.NetworkHash networkHash)
         {
+            // TODO: use network context hashes as the only data source
             _hashesTableUserControl.AddDataToTable(networkHash);
+            _networkContext.Hashes.Add(networkHash);
 
             if (!this.hashesComboBox.Items.Contains(networkHash.HashType))
             {

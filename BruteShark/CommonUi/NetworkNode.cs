@@ -29,6 +29,11 @@ namespace CommonUi
         [JsonProperty("Received Data")]
         public int ReceiveData { get; set; }
 
+        [JsonProperty("Domains and Users")]
+        public HashSet<string> Domains { get; set; }
+
+        [JsonProperty("Domain Users")]
+        public HashSet<string> DomainUsers { get; set; }
 
         public override bool Equals(object obj)
         {

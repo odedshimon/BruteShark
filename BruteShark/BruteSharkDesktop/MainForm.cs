@@ -77,7 +77,7 @@ namespace BruteSharkDesktop
             _networkMapUserControl.Dock = DockStyle.Fill;
             _sessionsExplorerUserControl = new SessionsExplorerUserControl(_networkContext);
             _sessionsExplorerUserControl.Dock = DockStyle.Fill;
-            _hashesUserControl = new HashesUserControl();
+            _hashesUserControl = new HashesUserControl(_networkContext);
             _hashesUserControl.Dock = DockStyle.Fill;
             _passwordsUserControl = new GenericTableUserControl();
             _passwordsUserControl.Dock = DockStyle.Fill;

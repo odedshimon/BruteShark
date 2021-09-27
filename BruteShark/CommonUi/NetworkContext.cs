@@ -15,6 +15,7 @@ namespace CommonUi
 
         public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
         public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
+        public HashSet<PcapAnalyzer.NetworkHash> Hashes { get; private set; }
         public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
         public HashSet<PcapProcessor.INetworkSession<PcapProcessor.NetworkPacket>> NetworkSessions { get; private set; }
 
@@ -22,6 +23,7 @@ namespace CommonUi
         {
             OpenPorts = new Dictionary<string, HashSet<int>>();
             DnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
+            Hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             Connections = new HashSet<PcapAnalyzer.NetworkConnection>();
             NetworkSessions = new HashSet<PcapProcessor.INetworkSession<PcapProcessor.NetworkPacket>>();
         }
@@ -57,6 +59,8 @@ namespace CommonUi
             var udpSessionsCount = 0;
             var sentData = 0;
             var receivedData = 0;
+            var domains = new HashSet<string>();
+            var domainUsers = new HashSet<string>();
 
             // We iterate all the session once and calculate various things at 
             // once (sessions count, data sent etc..)
@@ -80,6 +84,21 @@ namespace CommonUi
                 }
             }
 
+            foreach (var hash in this.Hashes.Where(h => h.Destination == ipAddress))
+            {
+                if (hash is PcapAnalyzer.IDomainCredential)
+                {
+                    var domainHash = hash as PcapAnalyzer.IDomainCredential;
+                    var domain = domainHash.GetDoamin();
+                    var user = domainHash.GetUsername();
+
+                    if (!string.IsNullOrWhiteSpace(domain))
+                        domains.Add(domain);
+                    if (!string.IsNullOrWhiteSpace(user))
+                        domainUsers.Add(@$"{domain}\{user}");
+                }
+            }
+
             return new NetworkNode()
             {
                 IpAddress = ipAddress,
@@ -88,7 +107,9 @@ namespace CommonUi
                 UdpStreamsCount = udpSessionsCount,
                 DnsMappings = GetNodeDnsMappings(ipAddress),
                 SentData = sentData,
-                ReceiveData = receivedData
+                ReceiveData = receivedData,
+                Domains = domains,
+                DomainUsers = domainUsers
             };
         }
 
