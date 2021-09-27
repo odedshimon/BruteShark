@@ -19,7 +19,6 @@ namespace BruteSharkCli
         private HashSet<PcapAnalyzer.NetworkFile> _extractedFiles;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
         private HashSet<CommonUi.VoipCall> _voipCalls;
-        private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
 
         private Sniffer _sniffer; 
         private PcapProcessor.Processor _processor;
@@ -44,8 +43,6 @@ namespace BruteSharkCli
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
             _voipCalls = new HashSet<CommonUi.VoipCall>();
-            _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
-
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
@@ -78,7 +75,7 @@ namespace BruteSharkCli
                     SetupSniffer();
 
                     CliPrinter.Info(_sniffer.PromisciousMode ?
-                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press Ctrl + C to stop" :
+                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscuous mode) - Press Ctrl + C to stop" :
                         $"Started analyzing packets from {_cliFlags.CaptureDevice} device - Press Ctrl + C to stop");
                     
                     _sniffer.StartSniffing(new System.Threading.CancellationToken());
@@ -140,7 +137,7 @@ namespace BruteSharkCli
 
         private void SetupRun()
         {
-            // That can happen when the user enter vesion \ help commad, exit gracefully.
+            // That can happen when the user enter version \ help command, exit gracefully.
             if (_cliFlags is null)
             {
                 Environment.Exit(0);
@@ -153,7 +150,7 @@ namespace BruteSharkCli
             }
             else
             {
-                throw new Exception("No mudules selected");
+                throw new Exception("No modules selected");
             }
 
             if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
@@ -236,9 +233,9 @@ namespace BruteSharkCli
                     var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
                     CliPrinter.Info($"Successfully exported extracted files to: {dirPath}");
                 }
-                if (_dnsMappings.Any())
+                if (_networkContext.DnsMappings.Any())
                 {
-                    var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _dnsMappings);
+                    var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _networkContext.DnsMappings);
                     CliPrinter.Info($"Successfully exported DNS mappings to file: {dnsFilePath}");
                 }
 				if(_voipCalls.Any())

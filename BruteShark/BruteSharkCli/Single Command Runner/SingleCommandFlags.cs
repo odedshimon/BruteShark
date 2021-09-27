@@ -7,29 +7,25 @@ namespace BruteSharkCli
 {
     public class SingleCommandFlags
     {
-        [Option('d', "input-dir", Required = false, SetName ="dir_input",  HelpText = "The input directory containing the files to be processed.")]
+        [Option('d', "input-dir", Required=false, SetName="dir_input",  HelpText="The input directory containing the files to be processed.")]
         public string InputDir { get; set; }
 
-        [Option('i', "input", Required = false, SetName = "files_input", Separator = ',', HelpText = "The files to be processed seperated by comma")]
+        [Option('i', "input", Required=false, SetName="files_input", Separator=',', HelpText ="The files to be processed separated by comma.")]
         public IEnumerable<string> InputFiles { get; set; }
 
-        [Option('m', "modules", Required = false , Separator = ',', HelpText = "The modules to be separterd by comma: Credentials, FileExtracting, NetworkMap, DNS, Voip")]
+        [Option('m', "modules", Required=false, Separator=',', HelpText="The modules to be separated by comma: Credentials, FileExtracting, NetworkMap, DNS, Voip.")]
         public IEnumerable<string> Modules { get; set; }
 
-        // TODO - merge parallel processing feature branch to make this flag really work
-        // [Option('p', "parallel", Required = false, HelpText = "Whether to process the files in parallel, default value is false.")]
-        // public bool ParallelProcessing { get; set; }
-
-        [Option('o', "output", Required = false, HelpText = "Output direcorty for the results files.")]
+        [Option('o', "output", Required=false, HelpText="Output directory for the results files.")]
         public string OutputDir { get; set; }
 
-        [Option('p', "promiscious", Required = false, HelpText = "Configures whether to start live capture on normal or promiscious mode (sometimes needs super user privileges to to do so),use along with -l for live catpure.")]
+        [Option('p', "promiscuous", Required=false, HelpText="Configures whether to start live capture with promiscuous mode (sometimes needs super user privileges to do so),use along with -l for live capture.")]
         public bool PromisciousMode { get; set; }
 
-        [Option('l', "live-capture", Required = false, Default = null, HelpText = "Caputre and process packets live from a network interface.")]
+        [Option('l', "live-capture", Required=false, Default=null, HelpText="Capture and process packets live from a network interface.")]
         public string CaptureDevice { get; set; }
         
-        [Option('f', "filter", Required = false, Default = null, HelpText = "add a capture bpf filter to the live traffic processing.")]
+        [Option('f', "filter", Required=false, Default=null, HelpText="Set a capture BPF filter to the live traffic processing.")]
         public string CaptrueFilter { get; set; }
     }
 }

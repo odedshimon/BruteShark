@@ -62,6 +62,10 @@ namespace BruteSharkCli
         {
             if (_args.Length == 0)
             {
+                Console.WriteLine("No arguments detected, type --help for usage.");
+            }
+            else if (_args[0] == "--debug")
+            {
                 RunShellMode();
             }
             else

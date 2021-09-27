@@ -2,7 +2,11 @@
   "profiles": {
     "BruteSharkCli": {
       "commandName": "Project",
-      "commandLineArgs": "-d C:\\\\Users\\King\\\\github\\BS_NETWORK\\BruteShark\\Pcap_Examples -m Credentials,NetworkMap,FileExtracting,DNS -o C:\\\\Users\\King\\Desktop\\Test"
+      "commandLineArgs": " -l Wi-Fi -m Credentials,NetworkMap,FileExtracting,DNS -o C:\\Users\\King\\Desktop\\Test Export"
+    },
+    "No Parameters": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
     }
   }
 }
