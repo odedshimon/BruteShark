@@ -149,12 +149,12 @@ tshark -F pcap -r <pcapng file> -w <pcap file>";
 
         private void SwitchToMainThreadContext(Action func)
         {
-            // Thread-Safe mechanizm:
-            // Check if we are currently runing in a different thread than the one that 
+            // Thread-Safe mechanism:
+            // Check if we are currently running in a different thread than the one that 
             // control was created on, if so we invoke a call to our function again, but because 
             // we used the invoke method again from our form the caller this time will be the 
             // the thread that created the form.
-            // For more detailes: 
+            // For more details: 
             // https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-make-thread-safe-calls-to-windows-forms-controls
             if (InvokeRequired)
             {
