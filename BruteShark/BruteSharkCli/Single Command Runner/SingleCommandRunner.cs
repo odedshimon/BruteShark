@@ -18,10 +18,7 @@ namespace BruteSharkCli
         private CommonUi.NetworkContext _networkContext;
         private HashSet<PcapAnalyzer.NetworkFile> _extractedFiles;
         private HashSet<PcapAnalyzer.NetworkPassword> _passwords;
-        private HashSet<PcapAnalyzer.NetworkHash> _hashes;
-        //private HashSet<PcapAnalyzer.NetworkConnection> _connections;
         private HashSet<CommonUi.VoipCall> _voipCalls;
-        private HashSet<PcapAnalyzer.DnsNameMapping> _dnsMappings;
 
         private Sniffer _sniffer; 
         private PcapProcessor.Processor _processor;
@@ -43,16 +40,15 @@ namespace BruteSharkCli
             _files = new List<string>();
 
             _networkContext = new NetworkContext();
-            _hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             _passwords = new HashSet<NetworkPassword>();
             _extractedFiles = new HashSet<NetworkFile>();
             _voipCalls = new HashSet<CommonUi.VoipCall>();
-            _dnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
-
 
             _analyzer.ParsedItemDetected += OnParsedItemDetected;
             _analyzer.UpdatedItemProprertyDetected += UpdatedPropertyInItemDetected;
 
+            _processor.UdpSessionArrived += (s, e) => OnSessionArrived(e.UdpSession as PcapProcessor.INetworkSession<NetworkPacket>);
+            _processor.TcpSessionArrived += (s, e) => OnSessionArrived(e.TcpSession as PcapProcessor.INetworkSession<NetworkPacket>);
             _processor.ProcessingFinished += (s, e) => this.ExportResults();
             _processor.FileProcessingStatusChanged += (s, e) => this.PrintFileStatusUpdate(s, e);
 
@@ -61,6 +57,11 @@ namespace BruteSharkCli
 
             // Parse user arguments.
             CommandLine.Parser.Default.ParseArguments<SingleCommandFlags>(args).WithParsed<SingleCommandFlags>((cliFlags) => _cliFlags = cliFlags);
+        }
+
+        private void OnSessionArrived(PcapProcessor.INetworkSession<NetworkPacket> session)
+        {
+            _networkContext.NetworkSessions.Add(session);
         }
 
         public void Run()
@@ -74,7 +75,7 @@ namespace BruteSharkCli
                     SetupSniffer();
 
                     CliPrinter.Info(_sniffer.PromisciousMode ?
-                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscious mode) - Press Ctrl + C to stop" :
+                        $"Started analyzing packets from {_cliFlags.CaptureDevice} device (Promiscuous mode) - Press Ctrl + C to stop" :
                         $"Started analyzing packets from {_cliFlags.CaptureDevice} device - Press Ctrl + C to stop");
                     
                     _sniffer.StartSniffing(new System.Threading.CancellationToken());
@@ -136,7 +137,7 @@ namespace BruteSharkCli
 
         private void SetupRun()
         {
-            // That can happen when the user enter vesion \ help commad, exit gracefully.
+            // That can happen when the user enter version \ help command, exit gracefully.
             if (_cliFlags is null)
             {
                 Environment.Exit(0);
@@ -149,7 +150,7 @@ namespace BruteSharkCli
             }
             else
             {
-                throw new Exception("No mudules selected");
+                throw new Exception("No modules selected");
             }
 
             if (_cliFlags.InputFiles.Count() != 0 && _cliFlags.InputDir != null)
@@ -222,9 +223,9 @@ namespace BruteSharkCli
                     var nodesDataFilePath = CommonUi.Exporting.ExportNetworkNodesData(_cliFlags.OutputDir, _networkContext.GetAllNodes());
                     CliPrinter.Info($"Successfully exported network nodes data to json file: {nodesDataFilePath}");
                 }
-                if (_hashes.Any())
+                if (_networkContext.Hashes.Any())
                 {
-                    Utilities.ExportHashes(_cliFlags.OutputDir, _hashes);
+                    Utilities.ExportHashes(_cliFlags.OutputDir, _networkContext.Hashes);
                     CliPrinter.Info($"Successfully exported hashes");
                 }
                 if (_files.Any())
@@ -232,19 +233,19 @@ namespace BruteSharkCli
                     var dirPath = CommonUi.Exporting.ExportFiles(_cliFlags.OutputDir, _extractedFiles);
                     CliPrinter.Info($"Successfully exported extracted files to: {dirPath}");
                 }
-                if (_dnsMappings.Any())
+                if (_networkContext.DnsMappings.Any())
                 {
-                    var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _dnsMappings);
+                    var dnsFilePath = CommonUi.Exporting.ExportDnsMappings(_cliFlags.OutputDir, _networkContext.DnsMappings);
                     CliPrinter.Info($"Successfully exported DNS mappings to file: {dnsFilePath}");
                 }
 				if(_voipCalls.Any())
                 {
                    var dirPath = CommonUi.Exporting.ExportVoipCalls(_cliFlags.OutputDir, _voipCalls);
-                    CliPrinter.Info($"Successfully exported voip calls extracted to: {dirPath}");
+                    CliPrinter.Info($"Successfully exported Voip calls extracted to: {dirPath}");
                 }
             }
 
-            CliPrinter.Info("Bruteshark finished processing");
+            CliPrinter.Info("BruteShark finished processing");
         }
 
         private void AddFile(string filePath)
@@ -292,7 +293,7 @@ namespace BruteSharkCli
             }
             else if (e.ParsedItem is PcapAnalyzer.NetworkHash)
             {
-                if (_hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash))
+                if (_networkContext.Hashes.Add(e.ParsedItem as PcapAnalyzer.NetworkHash))
                 {
                     PrintDetectedItem(e.ParsedItem);
                 }
@@ -307,7 +308,7 @@ namespace BruteSharkCli
             else if (e.ParsedItem is PcapAnalyzer.NetworkConnection)
             {
                 var networkConnection = e.ParsedItem as NetworkConnection;
-                _networkContext.Connections.Add(networkConnection);
+                _networkContext.HandleNetworkConection(networkConnection);
             }
             else if (e.ParsedItem is PcapAnalyzer.VoipCall)
             {
@@ -318,7 +319,7 @@ namespace BruteSharkCli
 			}
             else if (e.ParsedItem is PcapAnalyzer.DnsNameMapping)
             {
-                if (_dnsMappings.Add(e.ParsedItem as DnsNameMapping))
+                if (_networkContext.HandleDnsNameMapping(e.ParsedItem as DnsNameMapping))
                 {
                     PrintDetectedItem(e.ParsedItem);
                 }

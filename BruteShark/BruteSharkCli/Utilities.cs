@@ -69,7 +69,7 @@ namespace BruteSharkCli
 
         internal static void ExportHashes(string dirPath, HashSet<PcapAnalyzer.NetworkHash> hashes)
         {
-            string hashesPath = Path.Combine(dirPath, "Hasehs");
+            string hashesPath = Path.Combine(dirPath, "Hashes");
             Directory.CreateDirectory(hashesPath);
 
             // Run on each Hash Type we found.

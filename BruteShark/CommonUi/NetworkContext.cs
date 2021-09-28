@@ -15,15 +15,17 @@ namespace CommonUi
 
         public Dictionary<string, HashSet<int>> OpenPorts { get; private set; }
         public HashSet<PcapAnalyzer.DnsNameMapping> DnsMappings { get; private set; }
+        public HashSet<PcapAnalyzer.NetworkHash> Hashes { get; private set; }
         public HashSet<PcapAnalyzer.NetworkConnection> Connections { get; private set; }
-        public HashSet<PcapProcessor.NetworkObject> NetworkSessions { get; private set; }
+        public HashSet<PcapProcessor.INetworkSession<PcapProcessor.NetworkPacket>> NetworkSessions { get; private set; }
 
         public NetworkContext()
         {
             OpenPorts = new Dictionary<string, HashSet<int>>();
             DnsMappings = new HashSet<PcapAnalyzer.DnsNameMapping>();
+            Hashes = new HashSet<PcapAnalyzer.NetworkHash>();
             Connections = new HashSet<PcapAnalyzer.NetworkConnection>();
-            NetworkSessions = new HashSet<PcapProcessor.NetworkObject>();
+            NetworkSessions = new HashSet<PcapProcessor.INetworkSession<PcapProcessor.NetworkPacket>>();
         }
 
         public bool HandleDnsNameMapping(PcapAnalyzer.DnsNameMapping dnsNameMapping)
@@ -53,28 +55,67 @@ namespace CommonUi
 
         private NetworkNode GetNode(string ipAddress)
         {
+            var tcpSessionsCount = 0;
+            var udpSessionsCount = 0;
+            var sentData = 0;
+            var receivedData = 0;
+            var domains = new HashSet<string>();
+            var domainUsers = new HashSet<string>();
+
+            // We iterate all the session once and calculate various things at 
+            // once (sessions count, data sent etc..)
+            foreach (var session in this.NetworkSessions
+                .Where(s => s.SourceIp == ipAddress || s.DestinationIp == ipAddress))
+            {
+                if (session.Protocol == "TCP")
+                    tcpSessionsCount++;
+                else if (session.Protocol == "UDP")
+                    udpSessionsCount++;
+
+                if (session.SourceIp == ipAddress)
+                {
+                    sentData += session.SentData;
+                    receivedData += session.ReceivedData;
+                }
+                else
+                {
+                    sentData += session.ReceivedData;
+                    receivedData += session.SentData;
+                }
+            }
+
+            foreach (var hash in this.Hashes.Where(h => h.Destination == ipAddress))
+            {
+                if (hash is PcapAnalyzer.IDomainCredential)
+                {
+                    var domainHash = hash as PcapAnalyzer.IDomainCredential;
+                    var domain = domainHash.GetDoamin();
+                    var user = domainHash.GetUsername();
+
+                    if (!string.IsNullOrWhiteSpace(domain))
+                        domains.Add(domain);
+                    if (!string.IsNullOrWhiteSpace(user))
+                        domainUsers.Add(@$"{domain}\{user}");
+                }
+            }
+
             return new NetworkNode()
             {
                 IpAddress = ipAddress,
                 OpenPorts = this.OpenPorts[ipAddress],
-                TcpSessionsCount = CountNodeSessions(ipAddress, SessionsType.TCP),
-                UdpStreamsCount = CountNodeSessions(ipAddress, SessionsType.UDP),
-                DnsMappings = GetNodeDnsMappings(ipAddress)
+                TcpSessionsCount = tcpSessionsCount,
+                UdpStreamsCount = udpSessionsCount,
+                DnsMappings = GetNodeDnsMappings(ipAddress),
+                SentData = sentData,
+                ReceiveData = receivedData,
+                Domains = domains,
+                DomainUsers = domainUsers
             };
         }
 
         public string GetNodeDataJson(string ipAddress)
         {
             return JsonConvert.SerializeObject(GetNode(ipAddress));
-        }
-
-        private int CountNodeSessions(string ipAddress, SessionsType sessionType)
-        {
-            var sessionTypeString = sessionType == SessionsType.TCP ? "TCP" : "UDP";
-
-            return this.NetworkSessions
-                .Count(s => s.Protocol == sessionTypeString &&
-                            (s.DestinationIp == ipAddress || s.SourceIp == ipAddress));
         }
 
         private HashSet<string> GetNodeDnsMappings(string ipAddress)

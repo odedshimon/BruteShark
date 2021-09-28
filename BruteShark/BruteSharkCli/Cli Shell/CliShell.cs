@@ -76,10 +76,10 @@ namespace BruteSharkCli
             AddCommand(new CliShellCommand("show-modules", p => PrintModules(), "Print modules."));
             AddCommand(new CliShellCommand("show-hashes", p => PrintHashes(), "Print Hashes"));
             AddCommand(new CliShellCommand("show-networkmap", p => PrintNetworkMap(), "Prints the network map as a json string. Usage: show-networkmap"));
-            AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hascat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
+            AddCommand(new CliShellCommand("export-hashes", p => Utilities.ExportHashes(p, _hashes), "Export all Hashes to Hashcat format input files. Usage: export-hashes <OUTPUT-DIRECTORY>"));
             AddCommand(new CliShellCommand("capture-from-device", p => InitLiveCapture(p), "Capture live traffic from a network device, Usage: capture-from-device <device-name>"));
-            AddCommand(new CliShellCommand("capture-promiscious-mode", p => sniffer.PromisciousMode = true, "Capture live traffic from a network device on promiscious mode (requires superuser privileges, default is normal mode)"));
-            AddCommand(new CliShellCommand("set-captrue-filter", p => VerifyFilter(p), "Set a capture filter to the live traffic capture(filters must be bpf syntax filters)"));
+            AddCommand(new CliShellCommand("capture-promiscuous-mode", p => sniffer.PromisciousMode = true, "Capture live traffic from a network device on promiscuous mode (requires superuser privileges, default is normal mode)"));
+            AddCommand(new CliShellCommand("set-capture-filter", p => VerifyFilter(p), "Set a capture filter to the live traffic capture(filters must be bpf syntax filters)"));
             AddCommand(new CliShellCommand("show-network-devices", p => PrintNetworkDevices(), "Show the available network devices for live capture"));
             AddCommand(new CliShellCommand("export-networkmap", p => CommonUi.Exporting.ExportNetworkMap(p, _connections), "Export network map to a json file for neo4j. Usage: export-networkmap <OUTPUT-file>"));
             AddCommand(new CliShellCommand("export-voip-calls", p => CommonUi.Exporting.ExportVoipCalls(p, _voipCalls), "Export the VoIP calls media to files. Usage: export-networkmap <OUTPUT-DIR>"));
@@ -239,7 +239,7 @@ namespace BruteSharkCli
                 try
                 {
                     Console.WriteLine(_sniffer.PromisciousMode ? 
-                        $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device (Promiscious mode) - Press Ctrl + C to stop" : 
+                        $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device (Promiscuous mode) - Press Ctrl + C to stop" : 
                         $"[+] Started analyzing packets from {_sniffer.SelectedDeviceName} device- Press Ctrl + C to stop");
 
                     _sniffer.StartSniffing(new System.Threading.CancellationToken());

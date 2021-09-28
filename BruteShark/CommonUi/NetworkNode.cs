@@ -23,6 +23,18 @@ namespace CommonUi
         [JsonProperty("UDP Streams Count")]
         public int UdpStreamsCount { get; set; }
 
+        [JsonProperty("Sent Data")]
+        public int SentData { get; set; }
+
+        [JsonProperty("Received Data")]
+        public int ReceiveData { get; set; }
+
+        [JsonProperty("Domains and Users")]
+        public HashSet<string> Domains { get; set; }
+
+        [JsonProperty("Domain Users")]
+        public HashSet<string> DomainUsers { get; set; }
+
         public override bool Equals(object obj)
         {
             if (!(obj is NetworkNode))
