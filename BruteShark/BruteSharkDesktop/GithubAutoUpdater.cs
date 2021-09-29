@@ -20,7 +20,7 @@ namespace BruteSharkDesktop
 
     public static class GithubAutoUpdater
     {
-        public static string GetCurrentVersion()
+        public static string GetAssemblyVersion()
         {
             System.Reflection.Assembly executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
             var fieVersionInfo = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
@@ -42,8 +42,9 @@ namespace BruteSharkDesktop
 
         public static async Task<GithubUpdateReleaseResponse> ShouldUpdate(string ownerName, string projectName)
         {
+            // Get current running assembly version and the latest release from GitHub.
             Task<GithubReleaseVersion> getRemoteVersion = GithubAutoUpdater.GetRemoteVersion(ownerName, projectName);
-            string currentVersionName = GithubAutoUpdater.GetCurrentVersion();
+            string currentVersionName = GithubAutoUpdater.GetAssemblyVersion();
             GithubReleaseVersion remoteVersionDetails = await getRemoteVersion;
             string remoteVersionName = remoteVersionDetails.Version;
 

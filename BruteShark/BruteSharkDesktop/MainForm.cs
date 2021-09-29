@@ -486,13 +486,12 @@ This means a faster processing but also that some obects may not be extracted.")
                     CommonUi.Exporting.ExportNetworkNodesData(outputDirectoryPath, _networkContext.GetAllNodes());
                     this.progressBar.CustomText = string.Empty;
 
-                    MessageBox.Show($"Successfully exported results");
+                    Utilities.ShowInfoMessageBox($"Successfully exported results");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to export results: {ex.Message}");
+                    Utilities.ShowInfoMessageBox($"Failed to export results: {ex.Message}");
                 }
-
             }
         }
 
