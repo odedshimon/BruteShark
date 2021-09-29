@@ -2,9 +2,9 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
 	<Product 
-		Id="9bec2dfd-0f30-466a-9077-cf86db101cac" 
+		Id="*" 
 		Name="BruteSharkDesktop" 
-		Language="1033" Version="1.2.13.0" 
+		Language="1033" Version="1.2.14.0" 
 		Manufacturer="Oded Shimon" 
 		UpgradeCode="9bec2dfd-0f30-466a-9077-cf86db101cac">
 		

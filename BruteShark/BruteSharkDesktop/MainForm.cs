@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -69,6 +70,7 @@ namespace BruteSharkDesktop
             InitilizeModulesCheckedListBox();
             InitilizeInterfacesComboBox();
             this.modulesTreeView.ExpandAll();
+            CheckForUpdates();
         }
 
         private void InitilizeModulesUserControls()
@@ -484,13 +486,12 @@ This means a faster processing but also that some obects may not be extracted.")
                     CommonUi.Exporting.ExportNetworkNodesData(outputDirectoryPath, _networkContext.GetAllNodes());
                     this.progressBar.CustomText = string.Empty;
 
-                    MessageBox.Show($"Successfully exported results");
+                    Utilities.ShowInfoMessageBox($"Successfully exported results");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to export results: {ex.Message}");
+                    Utilities.ShowInfoMessageBox($"Failed to export results: {ex.Message}");
                 }
-
             }
         }
 
@@ -515,6 +516,33 @@ This means a faster processing but also that some obects may not be extracted.")
 
             // Select the head of the modules tree view to force refreshing of the current user control.
             modulesTreeView.SelectedNode = modulesTreeView.Nodes[0];
+        }
+
+        private async void CheckForUpdates()
+        {
+            try
+            {
+                var updaterResponse = await GithubAutoUpdater.ShouldUpdate(
+                    ownerName: "odedshimon",
+                    projectName: "bruteshark");
+
+                if (updaterResponse.ShouldUpdate)
+                {
+                    var userResponse = Utilities.ShowInfoMessageBox(
+                        "New version of BruteShark is available!", 
+                        MessageBoxButtons.YesNo);
+
+                    if (userResponse == DialogResult.Yes)
+                    {
+                        // Open the new version URL using the default browser.
+                        Process browserProcess = new Process();
+                        browserProcess.StartInfo.UseShellExecute = true;
+                        browserProcess.StartInfo.FileName = updaterResponse.NewVersionUrl;
+                        browserProcess.Start();
+                    }
+                }
+            }
+            catch { }
         }
 
     }
