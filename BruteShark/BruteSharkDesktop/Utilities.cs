@@ -7,14 +7,14 @@ namespace BruteSharkDesktop
 {
     public static class Utilities
     {
-        public static void ShowInfoMessageBox(string text)
+        public static DialogResult ShowInfoMessageBox(string text, MessageBoxButtons buttons=MessageBoxButtons.OK)
         {
             // NOTE: Info message box is also set up at front of the form, it solves the 
             // problem of message box that is hidden under the form.
-            MessageBox.Show(
+            return MessageBox.Show(
                 text: text,
                 caption: "Info",
-                buttons: MessageBoxButtons.OK,
+                buttons: buttons,
                 icon: MessageBoxIcon.Information,
                 defaultButton: MessageBoxDefaultButton.Button1,
                 options: MessageBoxOptions.DefaultDesktopOnly);
