@@ -171,6 +171,10 @@
 				<File Id="Newtonsoft.Json.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Newtonsoft.Json.dll" />
 			</Component>
 
+			<Component Id="Octokit.dll">
+				<File Id="Octokit.dll" Source="$(var.BruteSharkDesktop.TargetDir)" Name="Octokit.dll" />
+			</Component>
+
 		</ComponentGroup>
 	</Fragment>
 </Wix>
