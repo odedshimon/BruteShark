@@ -35,7 +35,7 @@ Please ⭐️ this repository if this project helped you!
 ## What it can do
 * Extracting and encoding usernames and passwords (HTTP, FTP, Telnet, IMAP, SMTP...)
 * Extract authentication hashes and crack them using Hashcat (Kerberos, NTLM, CRAM-MD5, HTTP-Digest...)
-* Build visual network diagram (Network nodes, open ports, users)
+* Build visual network diagram (Network nodes, Open Ports, Domain Users)
 * Extract DNS queries
 * Reconstruct all TCP & UDP Sessions
 * File Carving
@@ -45,7 +45,7 @@ Please ⭐️ this repository if this project helped you!
 ##### Windows 
 * Prerequisites: 
     * Npcap driver  ([Wireshark](https://www.wireshark.org/download.html) installs one of this by default)  
-    * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime) (Note that you have to install the proper runtime regard to your needs, that means .NET Core Desktop Runtime for BruteSharkDesktop and .NET Core Runtime for BruteSharkCli).  
+    * [.NET Core Runtime](https://dotnet.microsoft.com/download/dotnet/3.1/runtime) (Note that you have to install the proper runtime regard to your needs, that means **.NET Core Desktop Runtime** for BruteSharkDesktop and **.NET Core Runtime** for BruteSharkCli).  
 * For desktop version download [BruteSharkDesktop Windows Installer (64 Bit)](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkDesktopInstaller_x64.msi).  
 * For CLI version download [BruteSharkCli Windows 10 Executable](https://github.com/odedshimon/BruteShark/releases/latest/download/BruteSharkCli.exe).  
 ##### Linux
@@ -64,6 +64,8 @@ BruteSharkCli Usage Example - Extract Multiple Passwords and Hashes [(also avail
 https://user-images.githubusercontent.com/18364847/131924013-8b2aa18b-0941-456e-a09d-799902554166.mp4
 ##### Hashes Extracting
 ![](readme_media/Hashes.PNG)
+##### Building a Network Diagram
+![](readme_media/NetworkMapGif.gif)
 ##### Building a Network Diagram
 ![](readme_media/NetworkMap.png)
 ##### File Carving
@@ -85,8 +87,8 @@ Particular attention should be paid to the "Build TCP Sessions" / "Build UDP Ses
 ## BruteSharkDesktop
 The GUI is pretty self-explanatory, just load the wanted files, configure the wanted modules and press the run button.
 ## BruteSharkCli
-BruteSharkCli is the cli version of BruteShark for Linux users (It can also compiled for Windows operating systems). It has all the features of BruteSharkDesktop and designed to operate from a shell.
-As a classic cli tool it works by getting all the relevant parameters for the processing and then printing the results to stdout or files.
+BruteSharkCli is the CLI version of BruteShark for Linux & Windows users. It has all the features of BruteSharkDesktop and designed to operate from a shell.
+As a classic CLI tool it works by getting all the relevant parameters for the processing and then printing the results to stdout or files.
 
 Print the help menu:  
 
