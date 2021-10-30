@@ -98,7 +98,7 @@ Get credentials from all files in a directory (passwords and hashes will be prin
   
      BruteSharkCli -m Credentials -d "C:\Users\King\Desktop\Pcap Files"
 
-Get credentials from all files in a directory and also export extracted hashes (if found) to a Hashcat input files.  
+Get credentials from all files in a directory and also export extracted hashes (if found) to Hashcat input files.  
     
      BruteSharkCli -m Credentials -d C:\Users\King\Desktop\Pcap_Examples -o C:\Users\King\Desktop\Results
     
