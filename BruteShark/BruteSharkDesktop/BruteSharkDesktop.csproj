@@ -12,7 +12,7 @@
 	  <PackageReference Include="AutomaticGraphLayout" Version="1.1.9" />
 	  <PackageReference Include="AutomaticGraphLayout.Drawing" Version="1.1.9" />
 	  <PackageReference Include="AutomaticGraphLayout.GraphViewerGDI" Version="1.1.9" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	  <PackageReference Include="Octokit" Version="0.50.0" />
 	</ItemGroup>
 
