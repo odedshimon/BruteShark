@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Asn1DotNet" Version="1.0.4" />
-    <PackageReference Include="DNS" Version="6.1.0" />
+    <PackageReference Include="DNS" Version="7.0.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="SIPSorcery" Version="5.2.0" />
   </ItemGroup>
