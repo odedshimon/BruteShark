@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 
 namespace CommonUi
@@ -38,12 +36,12 @@ namespace CommonUi
 
         public static string ExportNetworkMap(string dirPath, HashSet<PcapAnalyzer.NetworkConnection> connections)
         {
-            return ExportToFile(dirPath, "BruteShark Network Map.json", connections);
+            return ExportToFile(dirPath, "BruteShark_Network_Map.json", connections);
         }
 
         public static string ExportNetworkNodesData(string dirPath, List<NetworkNode> networkNodes)
         {
-            return ExportToFile(dirPath, "BruteShark Network Nodes Data.json", networkNodes);
+            return ExportToFile(dirPath, "BruteShark_Network_Nodes_Data.json", networkNodes);
         }
 
         public static string ExportFiles(string dirPath, HashSet<PcapAnalyzer.NetworkFile> networkFiles)
@@ -79,7 +77,7 @@ namespace CommonUi
 
         public static string ExportDnsMappings(string dirPath, HashSet<PcapAnalyzer.DnsNameMapping> dnsMappings)
         {
-            var filePath = GetUniqueFilePath(Path.Combine(dirPath, "BruteShark DNS Mappings.json"));
+            var filePath = GetUniqueFilePath(Path.Combine(dirPath, "BruteShark_DNS_Mappings.json"));
 
             File.WriteAllLines(
                 filePath, 

@@ -351,3 +351,8 @@ MigrationBackup/
 
 # Ignore Visual Studio launchSettings (e.g application arguments)
 **/Properties/launchSettings.json
+
+# Ignore exported files
+/BruteShark/BruteShark_Network_Map.json
+/BruteShark/BruteShark_Network_Nodes_Data.json
+/BruteShark/BruteShark_DNS_Mappings.json
